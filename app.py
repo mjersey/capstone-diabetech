@@ -1,14 +1,14 @@
-import os
-from dotenv import load_dotenv
-
-load_dotenv()  # Load environment variables from .env file
-
 from flask import Flask, request, jsonify, render_template, send_from_directory, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
+import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -110,6 +110,14 @@ def index():
 @app.route('/sign-in')
 def sign_in():
     return render_template('sign-in.html')
+
+@app.route('/loading')
+def loading():
+    return render_template('loading.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
 # Register API
 @app.route('/api/register', methods=['POST'])
@@ -213,11 +221,6 @@ def api_sign_in():
         return jsonify({'success': False, 'message': 'Email not verified'}), 403
 
     return jsonify({'success': True, 'message': 'Login successful'})
-
-# Simple dashboard route example
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
