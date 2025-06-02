@@ -1,9 +1,13 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
+
 from flask import Flask, request, jsonify, render_template, send_from_directory, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
-import os
 from datetime import datetime
 
 app = Flask(__name__)
