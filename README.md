@@ -1,4 +1,4 @@
-# Diabetech Sign-Up System
+# Diabetech System
 
 A sign-up system for Diabetech with Flask backend and MySQL database.
 
