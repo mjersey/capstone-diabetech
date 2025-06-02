@@ -56,6 +56,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Start loading animation
     setTimeout(updateProgress, 500)
+  
+    // Add Enter key support to skip loading (for testing)
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        window.location.href = "/dashboard"
+      }
+    })
   })
   
   // Function to be called from sign-in page

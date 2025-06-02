@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordInput = document.getElementById("password")
   const timerElement = document.getElementById("timer")
   const userEmailSpan = document.getElementById("userEmail")
+  const otpError = document.getElementById("otpError")
 
   let countdown = 300 // 5 minutes in seconds
   let timerInterval
@@ -71,6 +72,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Show/hide OTP error
+  function showOtpError(message) {
+    otpError.textContent = message
+    otpError.style.display = "block"
+  }
+
+  function hideOtpError() {
+    otpError.style.display = "none"
+  }
+
   // Real-time validation
   inputs.forEach((input) => {
     input.addEventListener("blur", function () {
@@ -85,6 +96,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Real-time password validation
       if (this.id === "password") {
         updatePasswordStrength(this.value)
+      }
+    })
+
+    // Add Enter key support for form inputs
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault()
+        signupForm.dispatchEvent(new Event("submit"))
       }
     })
   })
@@ -203,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function showEmailModal(email) {
     userEmailSpan.textContent = email
     emailModal.classList.add("active")
+    hideOtpError() // Hide any previous OTP errors
     startTimer()
     otpInputs[0].focus()
   }
@@ -280,6 +300,9 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("input", (e) => {
       e.target.value = e.target.value.replace(/[^0-9]/g, "")
 
+      // Hide OTP error when user starts typing
+      hideOtpError()
+
       if (e.target.value.length === 1 && index < otpInputs.length - 1) {
         otpInputs[index + 1].focus()
       }
@@ -288,6 +311,11 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("keydown", (e) => {
       if (e.key === "Backspace" && e.target.value === "" && index > 0) {
         otpInputs[index - 1].focus()
+      }
+      // Add Enter key support for OTP confirmation
+      if (e.key === "Enter") {
+        e.preventDefault()
+        confirmOTP()
       }
     })
   })
@@ -306,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(timerInterval)
         timerElement.textContent = "0:00"
         timerElement.style.color = "#EF4444"
+        showOtpError("OTP has expired. Please request a new one.")
       }
       countdown--
     }, 1000)
@@ -313,6 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetModal() {
     otpInputs.forEach((input) => (input.value = ""))
+    hideOtpError()
     clearInterval(timerInterval)
     countdown = 300
     timerElement.style.color = "#8B0000"
@@ -324,49 +354,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const otp = Array.from(otpInputs)
       .map((input) => input.value)
       .join("")
-    if (otp.length === 4) {
-      confirmBtn.textContent = "Verifying..."
-      confirmBtn.disabled = true
 
-      const email = userEmailSpan.textContent
-
-      fetch("/api/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          otp: otp,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          emailModal.classList.remove("active")
-          resetModal()
-          confirmBtn.textContent = "Confirm"
-          confirmBtn.disabled = false
-
-          if (data.success) {
-            showSuccessModal()
-            signupForm.reset()
-            // Clear password strength indicator
-            const strengthIndicator = document.getElementById("passwordStrength")
-            if (strengthIndicator) {
-              strengthIndicator.style.display = "none"
-            }
-          } else {
-            alert(data.message || "Invalid OTP. Please try again.")
-            otpInputs[0].focus()
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error)
-          confirmBtn.textContent = "Confirm"
-          confirmBtn.disabled = false
-          alert("An error occurred. Please try again.")
-        })
-    } else {
+    if (otp.length !== 4) {
+      showOtpError("Please enter all 4 digits")
       otpInputs.forEach((input) => {
         if (!input.value) {
           input.style.borderColor = "#ef4444"
@@ -380,7 +370,51 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 2000)
 
       otpInputs[0].focus()
+      return
     }
+
+    confirmBtn.textContent = "Verifying..."
+    confirmBtn.disabled = true
+
+    const email = userEmailSpan.textContent
+
+    fetch("/api/verify-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        otp: otp,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        confirmBtn.textContent = "Confirm"
+        confirmBtn.disabled = false
+
+        if (data.success) {
+          emailModal.classList.remove("active")
+          resetModal()
+          showSuccessModal()
+          signupForm.reset()
+          // Clear password strength indicator
+          const strengthIndicator = document.getElementById("passwordStrength")
+          if (strengthIndicator) {
+            strengthIndicator.style.display = "none"
+          }
+        } else {
+          // Show error below OTP inputs instead of alert
+          showOtpError(data.message || "Invalid OTP. Please try again.")
+          otpInputs[0].focus()
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+        confirmBtn.textContent = "Confirm"
+        confirmBtn.disabled = false
+        showOtpError("An error occurred. Please try again.")
+      })
   }
 
   confirmBtn.addEventListener("click", confirmOTP)
@@ -413,7 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error:", error)
         resendBtn.textContent = "Resend"
         resendBtn.disabled = false
-        alert("An error occurred. Please try again.")
+        showOtpError("Failed to resend OTP. Please try again.")
       })
   })
 
@@ -434,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isValid) {
       const submitBtn = signupForm.querySelector(".signup-btn")
       const originalText = submitBtn.textContent
-      submitBtn.textContent = "Creating Account..."
+      submitBtn.textContent = "Sending OTP..."
       submitBtn.disabled = true
 
       const formData = new FormData(signupForm)
@@ -458,7 +492,7 @@ document.addEventListener("DOMContentLoaded", () => {
           submitBtn.disabled = false
 
           if (data.success) {
-            // Only show OTP modal if registration was successful
+            // Show OTP modal for verification
             const email = document.getElementById("email").value
             showEmailModal(email)
           } else {
@@ -483,8 +517,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  // Close modals with Escape key
+  // Global Enter key support for modals
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      // Success modal - Continue button
+      if (successModal.classList.contains("show")) {
+        e.preventDefault()
+        successBtn.click()
+      }
+      // Resend modal - OK button
+      else if (resendModal.classList.contains("show")) {
+        e.preventDefault()
+        resendOkBtn.click()
+      }
+    }
+
     if (e.key === "Escape") {
       if (successModal.classList.contains("show")) {
         hideSuccessModal()
