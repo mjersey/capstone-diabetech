@@ -7,15 +7,21 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/diabetech'
+
+# Database configuration - also should use environment variables
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql://root:root@localhost/diabetech')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Flask-Mail config
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'diabetech.system@gmail.com'
-app.config['MAIL_PASSWORD'] = 'hyia izho qozh gxnq'
+# Flask-Mail config - NOW USING ENVIRONMENT VARIABLES
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+# Validate that required environment variables are set
+if not app.config['MAIL_USERNAME'] or not app.config['MAIL_PASSWORD']:
+    raise ValueError("MAIL_USERNAME and MAIL_PASSWORD environment variables must be set")
 
 mail = Mail(app)
 db = SQLAlchemy(app)
@@ -53,7 +59,7 @@ def send_otp_email(to_email, otp_code, first_name):
         )
 
         # HTML content
-        html_content = f"""\ 
+        html_content = f"""
         <!DOCTYPE html>
         <html>
         <head>
@@ -202,11 +208,9 @@ def api_sign_in():
     if not user.is_verified:
         return jsonify({'success': False, 'message': 'Email not verified'}), 403
 
-    # Here you can add session login if you want
-
     return jsonify({'success': True, 'message': 'Login successful'})
 
-# Simple dashboard route example (change as needed)
+# Simple dashboard route example
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
