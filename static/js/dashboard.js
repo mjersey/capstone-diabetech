@@ -9,6 +9,101 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalYes = document.getElementById("modalYes")
   const modalNo = document.getElementById("modalNo")
 
+  // Profile popup elements
+  const profileSection = document.getElementById("profileSection")
+  const profileOverlay = document.getElementById("profileOverlay")
+  const profilePopup = document.getElementById("profilePopup")
+  const profileClose = document.getElementById("profileClose")
+  const profileCancel = document.getElementById("profileCancel")
+  const profileForm = document.getElementById("profileForm")
+  const passwordToggleProfile = document.getElementById("passwordToggleProfile")
+  const profilePasswordInput = document.getElementById("profilePassword")
+
+  // Profile popup functionality
+  profileSection.addEventListener("click", () => {
+    showProfilePopup()
+  })
+
+  profileClose.addEventListener("click", hideProfilePopup)
+  profileCancel.addEventListener("click", hideProfilePopup)
+
+  profileOverlay.addEventListener("click", (e) => {
+    if (e.target === profileOverlay) {
+      hideProfilePopup()
+    }
+  })
+
+  function showProfilePopup() {
+    profileOverlay.classList.add("show")
+    document.body.style.overflow = "hidden"
+  }
+
+  function hideProfilePopup() {
+    profileOverlay.classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
+
+  // Password toggle in profile
+  passwordToggleProfile.addEventListener("click", () => {
+    const type = profilePasswordInput.getAttribute("type") === "password" ? "text" : "password"
+    profilePasswordInput.setAttribute("type", type)
+
+    const icon = passwordToggleProfile.querySelector(".material-symbols-outlined")
+    icon.textContent = type === "password" ? "visibility" : "visibility_off"
+  })
+
+  // Profile form submission
+  profileForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(profileForm)
+    const profileData = {
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      role: formData.get("role"),
+      email: formData.get("email"),
+    }
+
+    // Only include password if it's not empty
+    if (formData.get("password").trim()) {
+      profileData.password = formData.get("password")
+    }
+
+    const saveBtn = document.getElementById("profileSave")
+    saveBtn.disabled = true
+    saveBtn.textContent = "Saving..."
+
+    fetch("/api/update-profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          // Update UI with new data
+          document.getElementById("userFullName").textContent = `${profileData.firstName} ${profileData.lastName}`
+          document.getElementById("userRole").textContent = profileData.role
+          document.querySelector(".greeting-section h1").textContent = `Hello, @${profileData.firstName}!`
+
+          hideProfilePopup()
+          alert("Profile updated successfully!")
+        } else {
+          alert(data.message || "Failed to update profile")
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating profile:", err)
+        alert("An error occurred while updating profile")
+      })
+      .finally(() => {
+        saveBtn.disabled = false
+        saveBtn.textContent = "Save Changes"
+      })
+  })
+
   // Sidebar toggle functionality
   sidebarToggle.addEventListener("click", function () {
     sidebar.classList.toggle("collapsed")
@@ -58,10 +153,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const originalText = navText.textContent
     navText.textContent = "Signing Out..."
 
-    // Simulate sign out delay
-    setTimeout(() => {
-      window.location.href = "/sign-in" // Changed from "sign-in.html" to Flask route
-    }, 1000)
+    // Call logout API
+    fetch("/api/logout", {
+      method: "POST",
+    })
+      .then(() => {
+        window.location.href = "/sign-in"
+      })
+      .catch(() => {
+        window.location.href = "/sign-in"
+      })
   })
 
   modalNo.addEventListener("click", hideModal)
@@ -75,8 +176,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Close modal with Escape key
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modalOverlay.classList.contains("show")) {
-      hideModal()
+    if (e.key === "Escape") {
+      if (modalOverlay.classList.contains("show")) {
+        hideModal()
+      }
+      if (profileOverlay.classList.contains("show")) {
+        hideProfilePopup()
+      }
     }
   })
 
@@ -156,16 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("More options clicked")
     })
   })
-
-  // Notification bell
-  const notificationBtn = document.querySelector(".btn-link")
-  if (notificationBtn) {
-    notificationBtn.addEventListener("click", () => {
-      // Show notifications
-      console.log("Notifications clicked")
-      // You can implement notifications dropdown here
-    })
-  }
 
   // Update page content function
   function updatePageContent(section) {
@@ -266,6 +362,17 @@ style.textContent = `
 
     .card {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .profile-section {
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .profile-section:hover {
+        background-color: rgba(0, 0, 0, 0.05);
     }
 `
 document.head.appendChild(style)

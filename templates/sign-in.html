@@ -88,6 +88,132 @@
         </div>
     </div>
 
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotPasswordModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeForgotModal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Forgot Password?</h2>
+                <p>Enter the email address associated with your account.<br>We'll send you an One-Time Password (OTP) to reset your password.</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="forgotEmail">
+                    <span class="material-symbols-outlined">email</span>
+                    Email Address
+                </label>
+                <input
+                    type="email"
+                    id="forgotEmail"
+                    placeholder="Enter your email address"
+                    required
+                />
+                <div class="error-message" id="forgotEmailError" style="display:none;">
+                    Please enter a valid email address
+                </div>
+            </div>
+            
+            <button class="confirm-btn" id="confirmForgotBtn">Confirm</button>
+        </div>
+    </div>
+
+    <!-- Email Confirmation Modal (OTP) -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Email Confirmation</h2>
+                <p>Enter the OTP sent to <span id="userEmail">youremail@gmail.com</span><br>to confirm your identity.</p>
+            </div>
+            
+            <div class="otp-container">
+                <input type="text" class="otp-input" maxlength="1" id="otp1">
+                <input type="text" class="otp-input" maxlength="1" id="otp2">
+                <input type="text" class="otp-input" maxlength="1" id="otp3">
+                <input type="text" class="otp-input" maxlength="1" id="otp4">
+            </div>
+            
+            <div class="timer" id="timer">5:00</div>
+            
+            <button class="confirm-btn" id="confirmBtn">Confirm</button>
+            
+            <button class="resend-btn" id="resendBtn">Resend</button>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeChangeModal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Change Password</h2>
+                <p>Your identity has been verified!<br>Set your new password.</p>
+            </div>
+            
+            <div class="form-group password-group">
+                <label for="newPassword">New Password</label>
+                <input
+                    type="password"
+                    id="newPassword"
+                    placeholder="New Password"
+                    required
+                />
+                <button type="button" class="password-toggle" id="newPasswordToggle">
+                    <span class="material-symbols-outlined">visibility</span>
+                </button>
+                <div class="error-message" id="newPasswordError" style="display:none;">
+                    Password must be at least 8 characters long
+                </div>
+            </div>
+            
+            <div class="form-group password-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Confirm Password"
+                    required
+                />
+                <button type="button" class="password-toggle" id="confirmPasswordToggle">
+                    <span class="material-symbols-outlined">visibility</span>
+                </button>
+                <div class="error-message" id="confirmPasswordError" style="display:none;">
+                    Passwords do not match
+                </div>
+            </div>
+            
+            <button class="confirm-btn" id="changePasswordBtn">Change Password</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeSuccessModal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Password Updated!</h2>
+                <div class="success-icon">
+                    <span class="material-symbols-outlined">check_circle</span>
+                </div>
+                <p>Your password has been changed successfully!</p>
+            </div>
+            
+            <button class="confirm-btn" id="backToSignInBtn">Back to Sign In</button>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/sign-in.js') }}"></script>
 </body>
 </html>

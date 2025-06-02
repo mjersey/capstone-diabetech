@@ -321,6 +321,316 @@ body {
   }
 }
 
+/* Modal Styles - ENLARGED FRAMES */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 50px; /* Increased from 40px */
+  max-width: 500px; /* Increased from 400px */
+  width: 90%;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  min-height: 400px; /* Added minimum height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 25px; /* Adjusted for larger padding */
+  right: 25px; /* Adjusted for larger padding */
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-header h2 {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 2rem; /* Increased from 1.8rem */
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 15px; /* Reduced from 20px */
+}
+
+.modal-header p {
+  font-family: "Instrument Sans", sans-serif;
+  color: #666;
+  font-size: 0.9rem; /* Reduced from 1rem */
+  line-height: 1.4; /* Reduced from 1.6 */
+  margin-bottom: 25px; /* Reduced from 35px */
+  max-width: 350px; /* Reduced from 400px */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-header span {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* OTP Styles */
+.otp-container {
+  display: flex;
+  gap: 20px; /* Increased from 15px */
+  justify-content: center;
+  margin-bottom: 25px; /* Increased from 20px */
+}
+
+.otp-input {
+  width: 70px; /* Increased from 60px */
+  height: 70px; /* Increased from 60px */
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.8rem; /* Increased from 1.5rem */
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: #8b0000;
+  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+}
+
+.timer {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.4rem; /* Increased from 1.2rem */
+  font-weight: 600;
+  color: #8b0000;
+  margin-bottom: 35px; /* Increased from 30px */
+}
+
+/* Modal Form Groups */
+.modal-content .form-group {
+  text-align: left;
+  margin-bottom: 30px; /* Increased from 25px */
+}
+
+.modal-content .form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px; /* Increased from 8px */
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 500;
+  color: #333;
+  font-size: 1rem; /* Increased from 0.9rem */
+}
+
+.modal-content .form-group input {
+  width: 100%;
+  padding: 18px; /* Increased from 15px */
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.1rem; /* Increased from 1rem */
+  font-weight: 400;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.modal-content .form-group input:focus {
+  outline: none;
+  border-color: #8b0000;
+  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+}
+
+/* Modal Password Groups - FIXED POSITIONING */
+.modal-content .password-group {
+  position: relative;
+}
+
+.modal-content .password-group input {
+  padding-right: 55px; /* Increased from 50px */
+}
+
+.modal-content .password-group .password-toggle {
+  position: absolute;
+  right: 15px; /* Increased from 12px */
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 10px; /* Increased from 8px */
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  height: 36px; /* Increased from 32px */
+  width: 36px; /* Increased from 32px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-content .password-group .password-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+/* Button Styles */
+.confirm-btn {
+  width: 100%;
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 18px; /* Increased from 16px */
+  border-radius: 100px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.2rem; /* Increased from 1.1rem */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 25px; /* Increased from 20px */
+}
+
+.confirm-btn:hover {
+  background: #a50000;
+  transform: translateY(-1px);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: #8b0000;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.1rem; /* Increased from 1rem */
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.resend-btn:hover {
+  color: #a50000;
+}
+
+.resend-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Success Icon */
+.success-icon {
+  margin: 25px 0; /* Increased from 20px */
+}
+
+.success-icon .material-symbols-outlined {
+  font-size: 5rem; /* Increased from 4rem */
+  color: #22c55e;
+  background: #f0fdf4;
+  border-radius: 50%;
+  padding: 25px; /* Increased from 20px */
+  width: 100px; /* Increased from 80px */
+  height: 100px; /* Increased from 80px */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Success Modal Styles */
+.success-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.success-modal.active {
+  display: flex;
+}
+
+.success-modal .modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 50px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.success-modal h2 {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 15px;
+}
+
+.success-modal p {
+  font-family: "Instrument Sans", sans-serif;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 25px;
+}
+
+.success-modal .success-icon {
+  margin: 25px 0;
+}
+
+.success-modal .success-icon .material-symbols-outlined {
+  font-size: 4rem;
+  color: #22c55e;
+  background: #f0fdf4;
+  border-radius: 50%;
+  padding: 20px;
+  width: 80px;
+  height: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-modal .confirm-btn {
+  margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -366,5 +676,37 @@ body {
 
   .password-toggle .material-symbols-outlined {
     font-size: 16px;
+  }
+
+  /* Mobile modal adjustments */
+  .modal-content {
+    padding: 35px 25px; /* Adjusted for mobile */
+    margin: 20px;
+    min-height: 350px; /* Reduced for mobile */
+  }
+
+  .modal-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .modal-header p {
+    font-size: 0.85rem;
+  }
+
+  .otp-container {
+    gap: 12px;
+  }
+
+  .otp-input {
+    width: 55px;
+    height: 55px;
+    font-size: 1.4rem;
+  }
+
+  .success-icon .material-symbols-outlined {
+    font-size: 3.5rem;
+    width: 70px;
+    height: 70px;
+    padding: 18px;
   }
 }

@@ -23,6 +23,72 @@
         </div>
     </div>
 
+    <!-- Profile Popup Overlay -->
+    <div class="profile-overlay" id="profileOverlay">
+        <div class="profile-popup" id="profilePopup">
+            <div class="profile-header">
+                <h3>Profile Settings</h3>
+                <button class="profile-close" id="profileClose">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Profile Avatar" id="profileAvatarImg">
+                        <button class="avatar-edit-btn" id="avatarEditBtn">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <form class="profile-form" id="profileForm">
+                    <div class="form-group">
+                        <label for="profileFirstName">First Name</label>
+                        <input type="text" id="profileFirstName" name="firstName" value="{{ user.first_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileLastName">Last Name</label>
+                        <input type="text" id="profileLastName" name="lastName" value="{{ user.last_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileRole">Role</label>
+                        <select id="profileRole" name="role">
+                            <option value="User" {{ 'selected' if user.role == 'User' else '' }}>User</option>
+                            <option value="Doctor" {{ 'selected' if user.role == 'Doctor' else '' }}>Doctor</option>
+                            <option value="Nurse" {{ 'selected' if user.role == 'Nurse' else '' }}>Nurse</option>
+                            <option value="Admin" {{ 'selected' if user.role == 'Admin' else '' }}>Admin</option>
+                            <option value="Specialist" {{ 'selected' if user.role == 'Specialist' else '' }}>Specialist</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" id="profileEmail" name="email" value="{{ user.email }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profilePassword">New Password (optional)</label>
+                        <div class="password-input-group">
+                            <input type="password" id="profilePassword" name="password" placeholder="Leave blank to keep current password">
+                            <button type="button" class="password-toggle-profile" id="passwordToggleProfile">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button type="button" class="btn-cancel" id="profileCancel">Cancel</button>
+                        <button type="submit" class="btn-save" id="profileSave">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="bg-white border-bottom px-4 py-3">
         <div class="d-flex align-items-center justify-content-between">
@@ -43,13 +109,13 @@
                     <span class="material-symbols-outlined">notifications</span>
                 </button>
                 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center profile-section" id="profileSection">
                     <div class="avatar me-2">
                         <img src="/placeholder.svg?height=40&width=40" alt="User Avatar" class="rounded-circle">
                     </div>
                     <div class="text-start">
-                        <div class="fw-medium text-dark small">John Doe</div>
-                        <div class="text-muted small">Doctor</div>
+                        <div class="fw-medium text-dark small" id="userFullName">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="text-muted small" id="userRole">{{ user.role }}</div>
                     </div>
                 </div>
             </div>
@@ -100,7 +166,7 @@
 
             <div class="position-absolute bottom-0 start-0 p-3 w-100">
                 <div class="nav-item">
-                    <a href="{{ url_for('sign_in') }}" class="nav-link d-flex align-items-center" id="signOutBtn">
+                    <a href="#" class="nav-link d-flex align-items-center" id="signOutBtn">
                         <span class="material-symbols-outlined nav-icon">logout</span>
                         <span class="nav-text">Sign Out</span>
                     </a>
@@ -115,7 +181,7 @@
                 <div class="col-lg-9">
                     <!-- Greeting Section -->
                     <div class="mb-4">
-                        <h1 class="h2 fw-bold text-dark mb-0">Hello, John!</h1>
+                        <h1 class="h2 fw-bold text-dark mb-0">Hello, @{{ user.first_name }}!</h1>
                     </div>
 
                     <!-- Stats Cards -->
