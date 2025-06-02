@@ -63,7 +63,7 @@
                         <span class="material-symbols-outlined">visibility</span>
                     </button>
                     <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
-                    
+                    <!-- Password strength indicator will be added here by JavaScript -->
                 </div>
                 
                 <button type="submit" class="signup-btn">Sign Up</button>
@@ -94,6 +94,9 @@
                 <input type="text" class="otp-input" maxlength="1" id="otp4">
             </div>
             
+            <!-- OTP Error Message -->
+            <div class="error-message" id="otpError" style="text-align: center; margin-top: 10px;">Invalid OTP. Please try again.</div>
+            
             <div class="timer" id="timer">5:00</div>
             
             <button class="confirm-btn" id="confirmBtn">Confirm</button>
@@ -109,7 +112,7 @@
                 <div class="success-icon">
                     <span class="material-symbols-outlined">check_circle</span>
                 </div>
-                <p class="success-message">Account Verified Successfully!</p>
+                <p class="success-message">Account Created Successfully!</p>
                 <button class="success-btn" id="successBtn">Continue</button>
             </div>
         </div>
