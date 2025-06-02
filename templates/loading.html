@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diabetech - Loading</title>
-    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
 </head>
 <body>
     <div class="loading-container">
         <div class="logo-container">
-            <img src="assets/diabetech-logo.png" alt="Diabetech Logo" class="logo">
+            <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech Logo" class="logo">
         </div>
         
         <div class="loading-content">
@@ -20,6 +20,6 @@
         </div>
     </div>
 
-    <script src="js/loading.js"></script>
+    <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
 </body>
 </html>

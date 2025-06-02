@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Diabetech - Sign In</title>
-    <link rel="stylesheet" href="static/css/sign-in.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sign-in.css') }}" />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
@@ -13,20 +13,19 @@
 <body>
     <div class="container">
         <div class="logo-container">
-            <img src="static/assets/diabetech-logo.png" alt="Diabetech Logo" class="logo" />
+            <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech Logo" class="logo" />
         </div>
         <div class="left-section">
             <div class="left-content">
                 <h1>Return to Work!</h1>
                 <p>Log in to access your intelligent dashboard, manage patient data seamlessly, and stay ahead with AI-powered healthcare insights.</p>
                 <div class="dashboard-image">
-                    <img src="static/assets/signup-image.png" alt="Diabetech Dashboard Interface" />
+                    <img src="{{ url_for('static', filename='assets/signup-image.png') }}" alt="Diabetech Dashboard Interface" />
                 </div>
             </div>
         </div>
 
         <div class="right-section">
-            <!-- Fixed class name from signin-form to signinForm as in JS -->
             <form id="signinForm">
                 <div class="form-header">
                     <h2>Sign In</h2>
@@ -83,12 +82,12 @@
                 <button type="submit" class="signin-btn">Sign In</button>
 
                 <div class="signup-link">
-                    Don't have an account? <a href="/sign-up" id="signUpLink">Sign Up</a>
+                    Don't have an account? <a href="{{ url_for('index') }}" id="signUpLink">Sign Up</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="js/sign-in.js"></script>
+    <script src="{{ url_for('static', filename='js/sign-in.js') }}"></script>
 </body>
 </html>

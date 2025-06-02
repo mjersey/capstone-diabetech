@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diabetech - Join Us</title>
-    <link rel="stylesheet" href="/static/css/sign-up.css">
-    <link rel="stylesheet" href="/static/css/email-modal.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sign-up.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/email-modal.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <body>
     <div class="container">
         <div class="logo-container">
-            <img src="/static/assets/diabetech-logo.png" alt="Diabetech Logo" class="logo">
+            <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech Logo" class="logo">
         </div>
         <div class="left-section">
             <div class="left-content">
@@ -19,7 +19,7 @@
                 <p>Sign up today to access intelligent diagnostics, streamline your workflow, and provide smarter care for every patient.</p>
                 
                 <div class="dashboard-image">
-                    <img src="/static/assets/signup-image.png" alt="Diabetech Sign Up Image" />
+                    <img src="{{ url_for('static', filename='assets/signup-image.png') }}" alt="Diabetech Sign Up Image" />
                 </div>
             </div>
         </div>
@@ -63,12 +63,13 @@
                         <span class="material-symbols-outlined">visibility</span>
                     </button>
                     <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+                    
                 </div>
                 
                 <button type="submit" class="signup-btn">Sign Up</button>
                 
                 <div class="signin-link">
-                    Already have an account? <a href="templates/sign-in.html" id="signInLink">Sign In</a>
+                    Already have an account? <a href="{{ url_for('sign_in') }}" id="signInLink">Sign In</a>
                 </div>
             </form>
         </div>
@@ -127,6 +128,6 @@
         </div>
     </div>
 
-    <script src="/static/js/sign-up.js"></script>
+    <script src="{{ url_for('static', filename='js/sign-up.js') }}"></script>
 </body>
 </html>
