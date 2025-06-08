@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const timerElement = document.getElementById("timer")
   const userEmailSpan = document.getElementById("userEmail")
   const otpError = document.getElementById("otpError")
+  const otpNotification = document.getElementById("otpNotification")
 
   let countdown = 300 // 5 minutes in seconds
   let timerInterval
@@ -80,6 +81,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function hideOtpError() {
     otpError.style.display = "none"
+  }
+
+  // Show OTP resent notification
+  function showOtpResentNotification() {
+    if (otpNotification) {
+      const modalContent = document.querySelector(".modal-content")
+      modalContent.classList.add("notification-active")
+      otpNotification.classList.add("show")
+
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        hideOtpResentNotification()
+      }, 3000)
+    }
+  }
+
+  function hideOtpResentNotification() {
+    if (otpNotification) {
+      const modalContent = document.querySelector(".modal-content")
+      modalContent.classList.remove("notification-active")
+      otpNotification.classList.remove("show")
+    }
   }
 
   // Real-time validation
@@ -219,10 +242,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Modal functions
-  function showEmailModal(email) {
+  function showEmailModal(email, token) {
     userEmailSpan.textContent = email
     emailModal.classList.add("active")
     hideOtpError() // Hide any previous OTP errors
+    hideOtpResentNotification() // Hide any previous notifications
     startTimer()
     otpInputs[0].focus()
   }
@@ -343,6 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetModal() {
     otpInputs.forEach((input) => (input.value = ""))
     hideOtpError()
+    hideOtpResentNotification() // Hide notification when resetting
     clearInterval(timerInterval)
     countdown = 300
     timerElement.style.color = "#8B0000"
@@ -419,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   confirmBtn.addEventListener("click", confirmOTP)
 
-  // Resend OTP
+  // Resend OTP with notification
   resendBtn.addEventListener("click", () => {
     resendBtn.textContent = "Sending..."
     resendBtn.disabled = true
@@ -441,7 +466,21 @@ document.addEventListener("DOMContentLoaded", () => {
         startTimer()
         resendBtn.textContent = "Resend"
         resendBtn.disabled = false
-        showResendModal()
+
+        if (data.success) {
+          // Show the green notification
+          showOtpResentNotification()
+          console.log("✅ OTP Resent successfully!")
+          if (data.development_otp) {
+            console.log(`🔐 Development OTP: ${data.development_otp}`)
+          }
+        } else {
+          showOtpError(data.message || "Failed to resend OTP. Please try again.")
+        }
+
+        setTimeout(() => {
+          otpInputs[0].focus()
+        }, 100)
       })
       .catch((error) => {
         console.error("Error:", error)
@@ -492,9 +531,9 @@ document.addEventListener("DOMContentLoaded", () => {
           submitBtn.disabled = false
 
           if (data.success) {
-            // Show OTP modal for verification
+            // Show OTP modal for verification with token
             const email = document.getElementById("email").value
-            showEmailModal(email)
+            showEmailModal(email, data.token)
           } else {
             // Show error below email field instead of popup
             if (

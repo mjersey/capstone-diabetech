@@ -1,155 +1,260 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
 
 /* Email Confirmation Modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-overlay.active {
-    display: flex;
+  display: flex;
 }
 
 .modal-content {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
-    max-width: 400px;
-    width: 90%;
-    position: relative;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .modal-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-    padding: 5px;
-    border-radius: 50%;
-    transition: background-color 0.2s ease;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  z-index: 10;
 }
 
 .modal-close:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* OTP Resent Notification - Pill Shape */
+.otp-resent-notification {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  padding: 12px 20px;
+  border-radius: 50px; /* Full rounded pill shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  z-index: 15;
+}
+
+.otp-resent-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.otp-resent-notification .check-icon {
+  background: #28a745;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.modal-header {
+  margin-top: 0;
+  transition: margin-top 0.4s ease;
+}
+
+.modal-content.notification-active .modal-header {
+  margin-top: 15px;
 }
 
 .modal-header h2 {
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 15px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 15px;
 }
 
 .modal-header p {
-    font-family: 'Instrument Sans', sans-serif;
-    color: #666;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 30px;
+  font-family: "Instrument Sans", sans-serif;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 30px;
 }
 
 .modal-header span {
-    font-weight: 600;
-    color: #1a1a1a;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .otp-container {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .otp-input {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #E5E7EB;
-    border-radius: 12px;
-    text-align: center;
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
+  width: 60px;
+  height: 60px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .otp-input:focus {
-    outline: none;
-    border-color: #8B0000;
-    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+  outline: none;
+  border-color: #8b0000;
+  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
 }
 
 .timer {
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #8B0000;
-    margin-bottom: 30px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #8b0000;
+  margin-bottom: 30px;
 }
 
 .confirm-btn {
-    width: 100%;
-    background: #8B0000;
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 100px;
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
+  width: 100%;
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 100px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 
 .confirm-btn:hover {
-    background: #A50000;
-    transform: translateY(-1px);
+  background: #a50000;
+  transform: translateY(-1px);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  background: #999;
 }
 
 .resend-btn {
-    background: none;
-    border: none;
-    color: #8B0000;
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
+  background: none;
+  border: none;
+  color: #8b0000;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all 0.2s ease;
 }
 
 .resend-btn:hover {
-    color: #A50000;
+  color: #a50000;
+}
+
+.resend-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error message styling */
+.error-message {
+  color: #ef4444;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: none;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
-    .modal-content {
-        padding: 30px 20px;
-        margin: 20px;
-    }
-    
-    .otp-container {
-        gap: 10px;
-    }
-    
-    .otp-input {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
-    }
+  .modal-content {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+
+  .otp-container {
+    gap: 10px;
+  }
+
+  .otp-input {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .otp-resent-notification {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    top: 12px;
+  }
+
+  .otp-resent-notification .check-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+  }
+
+  .modal-content.notification-active .modal-header {
+    margin-top: 12px;
+  }
 }
