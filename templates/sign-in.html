@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Diabetech - Sign In</title>
+    <title>DiabeTech - Sign In</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sign-in.css') }}" />
     <link
       rel="stylesheet"
@@ -13,14 +13,14 @@
 <body>
     <div class="container">
         <div class="logo-container">
-            <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech Logo" class="logo" />
+            <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="DiabeTech Logo" class="logo" />
         </div>
         <div class="left-section">
             <div class="left-content">
                 <h1>Return to Work!</h1>
                 <p>Log in to access your intelligent dashboard, manage patient data seamlessly, and stay ahead with AI-powered healthcare insights.</p>
                 <div class="dashboard-image">
-                    <img src="{{ url_for('static', filename='assets/signup-image.png') }}" alt="Diabetech Dashboard Interface" />
+                    <img src="{{ url_for('static', filename='assets/signup-image.png') }}" alt="DiabeTech Dashboard Interface" />
                 </div>
             </div>
         </div>
@@ -97,7 +97,7 @@
             
             <div class="modal-header">
                 <h2>Forgot Password?</h2>
-                <p>Enter the email address associated with your account.<br>We'll send you an One-Time Password (OTP) to reset your password.</p>
+                <p class="modal-instruction-forgot">Enter the email address associated with your account.<br>We'll send you an One-Time Password (OTP) to reset your password.</p>
             </div>
             
             <div class="form-group">
@@ -123,13 +123,21 @@
     <!-- Email Confirmation Modal (OTP) -->
     <div class="modal-overlay" id="emailModal">
         <div class="modal-content">
+            <!-- In-Modal Notification -->
+            <div class="modal-notification" id="modalNotification" style="display: none;">
+                <div class="notification-content">
+                    <span class="material-symbols-outlined notification-icon">check</span>
+                    <span class="notification-message">OTP Resent!</span>
+                </div>
+            </div>
+
             <button class="modal-close" id="closeModal">
                 <span class="material-symbols-outlined">close</span>
             </button>
             
             <div class="modal-header">
                 <h2>Email Confirmation</h2>
-                <p>Enter the OTP sent to <span id="userEmail">youremail@gmail.com</span><br>to confirm your identity.</p>
+                <p class="modal-instruction">Enter the OTP sent to <span id="userEmail">youremail@gmail.com</span><br>to confirm your identity.</p>
             </div>
             
             <div class="otp-container">
@@ -138,6 +146,9 @@
                 <input type="text" class="otp-input" maxlength="1" id="otp3">
                 <input type="text" class="otp-input" maxlength="1" id="otp4">
             </div>
+            
+            <!-- OTP Error Message Below Fields -->
+            <div class="otp-error" id="otpError">Invalid OTP. Please try again.</div>
             
             <div class="timer" id="timer">5:00</div>
             
@@ -156,7 +167,7 @@
             
             <div class="modal-header">
                 <h2>Change Password</h2>
-                <p>Your identity has been verified!<br>Set your new password.</p>
+                <p class="modal-instruction">Your identity has been verified!<br>Set your new password.</p>
             </div>
             
             <div class="form-group password-group">
@@ -207,7 +218,7 @@
                 <div class="success-icon">
                     <span class="material-symbols-outlined">check_circle</span>
                 </div>
-                <p>Your password has been changed successfully!</p>
+                <p class="modal-instruction">Your password has been changed successfully!</p>
             </div>
             
             <button class="confirm-btn" id="backToSignInBtn">Back to Sign In</button>
