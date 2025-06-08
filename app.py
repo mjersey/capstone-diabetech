@@ -291,6 +291,87 @@ def register():
         traceback.print_exc()
         return jsonify({'success': False, 'message': 'Internal server error. Please try again.'}), 500
 
+# UPDATE PROFILE API (NEW)
+@app.route('/api/update-profile', methods=['POST'])
+def update_profile():
+    try:
+        print("=== UPDATE PROFILE REQUEST ===")
+        
+        # Check if user is logged in
+        if 'user_id' not in session:
+            return jsonify({'success': False, 'message': 'User not authenticated'}), 401
+        
+        data = request.get_json()
+        user_id = session['user_id']
+        
+        # Validate required fields
+        first_name = data.get('firstName', '').strip()
+        last_name = data.get('lastName', '').strip()
+        contact_number = data.get('contactNumber', '').strip()
+        
+        if not first_name or not last_name:
+            return jsonify({'success': False, 'message': 'First name and last name are required'}), 400
+        
+        print(f"🔄 Updating profile for user ID: {user_id}")
+        
+        # Update database
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+        
+        try:
+            cursor = connection.cursor()
+            
+            # Update user profile
+            update_query = """
+                UPDATE users 
+                SET first_name = %s, last_name = %s, updated_at = %s
+                WHERE id = %s
+            """
+            
+            cursor.execute(update_query, (
+                first_name,
+                last_name,
+                datetime.now(),
+                user_id
+            ))
+            
+            if cursor.rowcount == 0:
+                print(f"❌ User not found for update: {user_id}")
+                return jsonify({'success': False, 'message': 'User not found'}), 404
+            
+            connection.commit()
+            
+            # Update session data
+            session['user_name'] = f"{first_name} {last_name}"
+            
+            print(f"✅ Profile updated successfully for user ID: {user_id}")
+            return jsonify({
+                'success': True, 
+                'message': 'Profile updated successfully!',
+                'user': {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': session.get('user_email', ''),
+                    'contact_number': contact_number
+                }
+            })
+            
+        except mysql.connector.Error as err:
+            print(f"❌ Database error during profile update: {err}")
+            connection.rollback()
+            return jsonify({'success': False, 'message': 'Failed to update profile'}), 500
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+                
+    except Exception as e:
+        print(f"❌ Update profile error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': 'Internal server error'}), 500
+
 # SEND OTP API (for forgot password)
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
@@ -328,7 +409,7 @@ def send_otp():
             # Generate OTP and token
             otp = generate_otp()
             token = generate_token()
-            expires_at = datetime.now() + timedelta(minutes=5)  # Changed from 10 to 5 minutes
+            expires_at = datetime.now() + timedelta(minutes=5)
             
             print(f"🔐 Generated password reset OTP: {otp} for {email}")
             
@@ -591,7 +672,7 @@ def resend_otp():
             
             # Generate new OTP
             new_otp = generate_otp()
-            new_expires_at = datetime.now() + timedelta(minutes=5)  # Changed from 10 to 5 minutes
+            new_expires_at = datetime.now() + timedelta(minutes=5)
             
             # Update pending data
             registration_data['otp'] = new_otp
@@ -619,7 +700,7 @@ def resend_otp():
             
             # Generate new OTP
             new_otp = generate_otp()
-            new_expires_at = datetime.now() + timedelta(minutes=5)  # Changed from 10 to 5 minutes
+            new_expires_at = datetime.now() + timedelta(minutes=5)
             new_token = generate_token()
             
             # Update reset data
@@ -631,7 +712,7 @@ def resend_otp():
             session[reset_key] = reset_data
             
             # Send new OTP
-            if send_otp_email(email, new_otp, "password_reset", "User"):  # You might want to fetch the actual name from database
+            if send_otp_email(email, new_otp, "password_reset", "User"):
                 print(f"✅ New password reset OTP sent to {email}")
                 return jsonify({
                     'success': True, 
@@ -669,13 +750,13 @@ def sign_in_api():
         
         try:
             cursor = connection.cursor()
-            cursor.execute("SELECT id, first_name, last_name, email, password, role, is_verified FROM users WHERE email = %s", (email,))
+            cursor.execute("SELECT id, first_name, last_name, email, password, role, is_verified, created_at FROM users WHERE email = %s", (email,))
             user_data = cursor.fetchone()
             
             if not user_data:
                 return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
 
-            user_id, first_name, last_name, user_email, hashed_password, role, is_verified = user_data
+            user_id, first_name, last_name, user_email, hashed_password, role, is_verified, created_at = user_data
 
             if not check_password_hash(hashed_password, password):
                 return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
@@ -685,6 +766,7 @@ def sign_in_api():
             session['user_email'] = user_email
             session['user_name'] = f"{first_name} {last_name}"
             session['user_role'] = role
+            session['user_created_at'] = created_at.isoformat() if created_at else None
             session.permanent = True
 
             print(f"✅ User {email} signed in successfully")
@@ -720,12 +802,55 @@ def dashboard():
     if 'user_id' not in session:
         return redirect('/sign-in')
     
-    user_data = {
-        'first_name': session.get('user_name', 'User').split()[0],
-        'last_name': session.get('user_name', 'User').split()[-1],
-        'email': session.get('user_email', ''),
-        'role': session.get('user_role', 'User')
-    }
+    # Get user data from database for the most up-to-date info
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT first_name, last_name, email, role, created_at FROM users WHERE id = %s", (session['user_id'],))
+            user_data_db = cursor.fetchone()
+            
+            if user_data_db:
+                first_name, last_name, email, role, created_at = user_data_db
+                user_data = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': email,
+                    'role': role,
+                    'created_at': created_at
+                }
+            else:
+                # Fallback to session data
+                user_data = {
+                    'first_name': session.get('user_name', 'User').split()[0],
+                    'last_name': session.get('user_name', 'User').split()[-1],
+                    'email': session.get('user_email', ''),
+                    'role': session.get('user_role', 'User'),
+                    'created_at': None
+                }
+        except mysql.connector.Error as err:
+            print(f"Database error getting user data: {err}")
+            # Fallback to session data
+            user_data = {
+                'first_name': session.get('user_name', 'User').split()[0],
+                'last_name': session.get('user_name', 'User').split()[-1],
+                'email': session.get('user_email', ''),
+                'role': session.get('user_role', 'User'),
+                'created_at': None
+            }
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+    else:
+        # Fallback to session data
+        user_data = {
+            'first_name': session.get('user_name', 'User').split()[0],
+            'last_name': session.get('user_name', 'User').split()[-1],
+            'email': session.get('user_email', ''),
+            'role': session.get('user_role', 'User'),
+            'created_at': None
+        }
     
     return render_template('dashboard.html', user=user_data)
 

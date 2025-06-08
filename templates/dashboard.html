@@ -303,6 +303,12 @@
     <!-- Profile Modal -->
     <div class="modal-overlay" id="profileModalOverlay">
         <div class="modal profile-modal">
+            <!-- Profile Success Notification - Move outside modal-content -->
+            <div class="profile-success-notification" id="profileSuccessNotification">
+                <div class="check-icon">✓</div>
+                <span>Profile updated successfully!</span>
+            </div>
+            
             <div class="modal-content">
                 <div class="profile-modal-header">
                     <h3>Profile Information</h3>
@@ -312,28 +318,57 @@
                 </div>
                 <div class="profile-modal-body">
                     <div class="profile-avatar-section">
-                        <img src="/placeholder.svg?height=80&width=80" alt="Profile" class="profile-avatar-large">
-                        <button class="change-avatar-btn">
-                            <span class="material-symbols-outlined">photo_camera</span>
-                        </button>
-                    </div>
-                    <div class="profile-info">
-                        <div class="info-group">
-                            <label>Full Name</label>
-                            <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="profile-avatar-container">
+                            <img src="/placeholder.svg?height=100&width=100" alt="Profile" class="profile-avatar-large">
+                            <div class="avatar-overlay">
+                                <span class="material-symbols-outlined">photo_camera</span>
+                            </div>
                         </div>
-                        <div class="info-group">
-                            <label>Email</label>
-                            <div class="info-value">{{ user.email }}</div>
-                        </div>
-                        <div class="info-group">
-                            <label>Member Since</label>
-                            <div class="info-value">January 2024</div>
+                        <div class="profile-basic-info">
+                            <h4 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h4>
+                            <p class="profile-email">{{ user.email }}</p>
+                            <p class="profile-join-date">Joined {{ user.created_at.strftime('%B %Y') if user.created_at else 'June 2025' }}</p>
                         </div>
                     </div>
+                    
+                    <div class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" value="{{ user.first_name }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" value="{{ user.last_name }}" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emailAddress">Email Address</label>
+                            <input type="email" id="emailAddress" name="emailAddress" value="{{ user.email }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number</label>
+                            <div class="phone-input">
+                                <select class="country-code" disabled>
+                                    <option value="+63">+ 63</option>
+                                </select>
+                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="912 3456 7890" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="password-input-container">
+                                <input type="password" id="password" name="password" value="••••••••••••••••••••••••" readonly>
+                                <button type="button" class="change-password-btn" id="changePasswordBtn">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="profile-actions">
-                        <button class="btn-edit-profile">Edit Profile</button>
-                        <button class="btn-change-password">Change Password</button>
+                        <button class="btn-edit-profile" id="editProfileBtn">Edit Profile</button>
                     </div>
                 </div>
             </div>

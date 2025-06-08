@@ -13,6 +13,12 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
             
+            <!-- OTP Resent Notification -->
+            <div class="otp-resent-notification" id="otpNotification">
+                <div class="check-icon">✓</div>
+                <span>OTP sent successfully!</span>
+            </div>
+            
             <div class="modal-header">
                 <h2>Email Confirmation</h2>
                 <p>Enter the OTP sent to <span id="userEmail">youremail@gmail.com</span><br>to confirm your identity.</p>
@@ -24,6 +30,8 @@
                 <input type="text" class="otp-input" maxlength="1" id="otp3">
                 <input type="text" class="otp-input" maxlength="1" id="otp4">
             </div>
+            
+            <div class="error-message" id="otpError"></div>
             
             <div class="timer" id="timer">5:00</div>
             

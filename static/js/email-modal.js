@@ -12,6 +12,7 @@ const otpNotification = document.getElementById("otpNotification")
 let countdown = 300 // 5 minutes in seconds
 let timerInterval
 let currentToken = null // Store the token for OTP verification
+let currentPurpose = "verification" // Track the purpose: 'verification' or 'password_change'
 
 // Show/hide OTP error
 function showOtpError(message) {
@@ -49,15 +50,34 @@ function hideOtpResentNotification() {
   }
 }
 
-// Show modal function - now accepts token parameter
-function showEmailModal(email, token = null) {
+// Show modal function - only for registration and password reset
+function showEmailModal(email, token = null, purpose = "verification") {
+  // Only handle verification and password_reset, not password_change
+  if (purpose !== "verification" && purpose !== "password_reset") {
+    console.warn("Email modal only supports 'verification' and 'password_reset' purposes")
+    return
+  }
+
   userEmailSpan.textContent = email
-  currentToken = token // Store the token
+  currentToken = token
+  currentPurpose = purpose
   emailModal.classList.add("active")
   hideOtpError()
   hideOtpResentNotification()
   startTimer()
   otpInputs[0].focus()
+
+  // Update modal header based on purpose
+  const modalHeader = document.querySelector(".modal-header h2")
+  const modalDescription = document.querySelector(".modal-header p")
+
+  if (purpose === "password_reset") {
+    modalHeader.textContent = "Password Reset Confirmation"
+    modalDescription.innerHTML = `Enter the OTP sent to <span id="userEmail">${email}</span><br>to confirm your password reset.`
+  } else {
+    modalHeader.textContent = "Email Confirmation"
+    modalDescription.innerHTML = `Enter the OTP sent to <span id="userEmail">${email}</span><br>to confirm your identity.`
+  }
 }
 
 // Close modal
@@ -153,9 +173,10 @@ function resetModal() {
   timerElement.style.color = "#8B0000"
   timerElement.textContent = "5:00"
   currentToken = null // Clear the token
+  currentPurpose = "verification" // Reset purpose
 }
 
-// Confirm OTP function
+// Confirm OTP function - only for registration and password reset
 function confirmOTP() {
   const otp = Array.from(otpInputs)
     .map((input) => input.value)
@@ -184,6 +205,7 @@ function confirmOTP() {
 
   const email = userEmailSpan.textContent
 
+  // Only use verify-otp endpoint for registration and password reset
   fetch("/api/verify-otp", {
     method: "POST",
     headers: {
@@ -192,6 +214,7 @@ function confirmOTP() {
     body: JSON.stringify({
       email: email,
       otp: otp,
+      token: currentToken,
     }),
   })
     .then((response) => response.json())
@@ -202,12 +225,20 @@ function confirmOTP() {
       if (data.success) {
         emailModal.classList.remove("active")
         resetModal()
-        // Show success modal or redirect
-        if (window.showSuccessModal) {
-          window.showSuccessModal()
+
+        if (currentPurpose === "password_reset") {
+          // Handle password reset success
+          if (window.handlePasswordResetSuccess) {
+            window.handlePasswordResetSuccess()
+          }
         } else {
-          alert("Account created successfully!")
-          window.location.href = "/sign-in"
+          // Handle registration success
+          if (window.showSuccessModal) {
+            window.showSuccessModal()
+          } else {
+            alert("Account created successfully!")
+            window.location.href = "/sign-in"
+          }
         }
       } else {
         showOtpError(data.message || "Invalid OTP. Please try again.")
@@ -239,6 +270,7 @@ resendBtn.addEventListener("click", () => {
     },
     body: JSON.stringify({
       email: email,
+      purpose: currentPurpose,
     }),
   })
     .then((response) => response.json())
@@ -254,6 +286,9 @@ resendBtn.addEventListener("click", () => {
         console.log("✅ OTP Resent successfully!")
         if (data.development_otp) {
           console.log(`🔐 Development OTP: ${data.development_otp}`)
+        }
+        if (data.token) {
+          currentToken = data.token
         }
       } else {
         showOtpError(data.message || "Failed to resend OTP. Please try again.")
