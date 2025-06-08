@@ -3,324 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diabetech Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Dashboard - Diabetech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
-<body class="bg-gray-50">
-    <!-- Custom Modal Overlay -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="custom-modal" id="customModal">
-            <div class="modal-content">
-                <p class="modal-message" id="modalMessage">Are you sure you want to sign out?</p>
-                <div class="modal-buttons">
-                    <button class="btn-yes" id="modalYes">Yes</button>
-                    <button class="btn-no" id="modalNo">No</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Profile Popup Overlay -->
-    <div class="profile-overlay" id="profileOverlay">
-        <div class="profile-popup" id="profilePopup">
-            <div class="profile-header">
-                <h3>Profile Settings</h3>
-                <button class="profile-close" id="profileClose">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            
-            <div class="profile-content">
-                <div class="profile-avatar-section">
-                    <div class="profile-avatar">
-                        <img src="/placeholder.svg?height=80&width=80" alt="Profile Avatar" id="profileAvatarImg">
-                        <button class="avatar-edit-btn" id="avatarEditBtn">
-                            <span class="material-symbols-outlined">edit</span>
-                        </button>
-                    </div>
-                </div>
-
-                <form class="profile-form" id="profileForm">
-                    <div class="form-group">
-                        <label for="profileFirstName">First Name</label>
-                        <input type="text" id="profileFirstName" name="firstName" value="{{ user.first_name }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="profileLastName">Last Name</label>
-                        <input type="text" id="profileLastName" name="lastName" value="{{ user.last_name }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="profileRole">Role</label>
-                        <select id="profileRole" name="role">
-                            <option value="User" {{ 'selected' if user.role == 'User' else '' }}>User</option>
-                            <option value="Doctor" {{ 'selected' if user.role == 'Doctor' else '' }}>Doctor</option>
-                            <option value="Nurse" {{ 'selected' if user.role == 'Nurse' else '' }}>Nurse</option>
-                            <option value="Admin" {{ 'selected' if user.role == 'Admin' else '' }}>Admin</option>
-                            <option value="Specialist" {{ 'selected' if user.role == 'Specialist' else '' }}>Specialist</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="profileEmail">Email</label>
-                        <input type="email" id="profileEmail" name="email" value="{{ user.email }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="profilePassword">New Password (optional)</label>
-                        <div class="password-input-group">
-                            <input type="password" id="profilePassword" name="password" placeholder="Leave blank to keep current password">
-                            <button type="button" class="password-toggle-profile" id="passwordToggleProfile">
-                                <span class="material-symbols-outlined">visibility</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="profile-actions">
-                        <button type="button" class="btn-cancel" id="profileCancel">Cancel</button>
-                        <button type="submit" class="btn-save" id="profileSave">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
+<body>
     <!-- Header -->
-    <header class="bg-white border-bottom px-4 py-3">
-        <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-                <button class="btn btn-link text-muted me-3 p-2 sidebar-toggle" id="sidebarToggle">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech Logo" class="logo-header me-3">
+    <header class="header">
+        <div class="header-left">
+            <div class="logo" id="headerLogo">
+                <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech">
+                <span>diabetech</span>
             </div>
-
-            <div class="d-flex align-items-center">
-                <div class="position-relative me-3">
-                    <span class="material-symbols-outlined position-absolute search-icon">search</span>
-                    <input type="text" class="form-control ps-5 bg-light border-light search-input" placeholder="Search...">
-                </div>
-                
-                <button class="btn btn-link text-muted me-3 p-2">
-                    <span class="material-symbols-outlined">notifications</span>
-                </button>
-                
-                <div class="d-flex align-items-center profile-section" id="profileSection">
-                    <div class="avatar me-2">
-                        <img src="/placeholder.svg?height=40&width=40" alt="User Avatar" class="rounded-circle">
-                    </div>
-                    <div class="text-start">
-                        <div class="fw-medium text-dark small" id="userFullName">{{ user.first_name }} {{ user.last_name }}</div>
-                        <div class="text-muted small" id="userRole">{{ user.role }}</div>
-                    </div>
-                </div>
+            <h1 class="page-title">Dashboard</h1>
+        </div>
+        
+        <div class="header-right">
+            <div class="search-container">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input type="text" placeholder="Search ..." class="search-input">
+            </div>
+            <button class="notification-btn">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div class="user-profile" id="userProfile">
+                <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
             </div>
         </div>
     </header>
 
-    <div class="d-flex">
+    <div class="main-container">
         <!-- Sidebar -->
-        <aside class="sidebar bg-white border-end" id="sidebar">
-            <nav class="p-3">
-                <div class="nav-item active mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center">
-                        <span class="material-symbols-outlined nav-icon">dashboard</span>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <div class="nav-item active">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="nav-text">Dashboard</span>
                 </div>
-                <div class="nav-item mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center">
-                        <span class="material-symbols-outlined nav-icon">medication</span>
-                        <span class="nav-text">Prescription</span>
-                    </a>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">description</span>
+                    <span class="nav-text">Prescription</span>
                 </div>
-                <div class="nav-item mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center">
-                        <span class="material-symbols-outlined nav-icon">group</span>
-                        <span class="nav-text">Patients</span>
-                    </a>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">person</span>
+                    <span class="nav-text">Patients</span>
                 </div>
-                <div class="nav-item mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center">
-                        <span class="material-symbols-outlined nav-icon">analytics</span>
-                        <span class="nav-text">Analytics</span>
-                    </a>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <span class="nav-text">Analytics</span>
                 </div>
-                <div class="nav-item mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center">
-                        <span class="material-symbols-outlined nav-icon">lightbulb</span>
-                        <span class="nav-text">Insights</span>
-                    </a>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">lightbulb</span>
+                    <span class="nav-text">Insights</span>
                 </div>
-                <div class="nav-item mb-2">
-                    <a href="#" class="nav-link d-flex align-items-center">
-                        <span class="material-symbols-outlined nav-icon">settings</span>
-                        <span class="nav-text">Settings</span>
-                    </a>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="nav-text">Settings</span>
                 </div>
             </nav>
-
-            <div class="position-absolute bottom-0 start-0 p-3 w-100">
-                <div class="nav-item">
-                    <a href="#" class="nav-link d-flex align-items-center" id="signOutBtn">
-                        <span class="material-symbols-outlined nav-icon">logout</span>
-                        <span class="nav-text">Sign Out</span>
-                    </a>
+            
+            <div class="sidebar-bottom">
+                <div class="nav-item" id="signOutBtn">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="nav-text">Sign Out</span>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-grow-1 p-4 main-content" id="mainContent">
-            <div class="row g-4">
-                <!-- Left Content -->
-                <div class="col-lg-9">
-                    <!-- Greeting Section -->
-                    <div class="mb-4">
-                        <h1 class="h2 fw-bold text-dark mb-0">Hello, @{{ user.first_name }}!</h1>
-                    </div>
-
-                    <!-- Stats Cards -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <div class="text-muted small mb-1">Total No. of Patients</div>
-                                    <div class="h2 fw-bold text-dark mb-0">547</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <div class="text-muted small mb-1">High Risk Patients</div>
-                                    <div class="h2 fw-bold text-danger mb-0">309</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <div class="text-muted small mb-1">Reports Generated</div>
-                                    <div class="h2 fw-bold text-dark mb-0">128</div>
-                                </div>
-                            </div>
+        <main class="content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Patients</div>
+                    <div class="stat-value">6024</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>68.85%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
                         </div>
                     </div>
-
-                    <!-- Risk Level Indicators -->
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="d-flex align-items-center me-4">
-                            <div class="risk-indicator bg-success me-2"></div>
-                            <span class="small text-muted">Low</span>
-                        </div>
-                        <div class="d-flex align-items-center me-4">
-                            <div class="risk-indicator bg-warning me-2"></div>
-                            <span class="small text-muted">Moderate</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="risk-indicator bg-danger me-2"></div>
-                            <span class="small text-muted">High</span>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">New Patients</div>
+                    <div class="stat-value">4201</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>30.78%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
                         </div>
                     </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">High Risk Patients</div>
+                    <div class="stat-value">359</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change negative">
+                            <span>7.45%</span>
+                            <span class="material-symbols-outlined">trending_down</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Analyzed Reports</div>
+                    <div class="stat-value">3001</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>12.17%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Analytics Section -->
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Analytics</h5>
-                            <button class="btn btn-outline-secondary btn-sm">
-                                <span class="material-symbols-outlined me-1" style="font-size: 16px;">filter_list</span>
+            <div class="dashboard-grid">
+                <!-- Left Column -->
+                <div class="left-column">
+                    <!-- Overview Section -->
+                    <div class="overview-section">
+                        <div class="section-header">
+                            <h2>Overview</h2>
+                            <div class="risk-indicators">
+                                <div class="risk-indicator">
+                                    <div class="risk-dot low-risk"></div>
+                                    <span>Low Risk</span>
+                                </div>
+                                <div class="risk-indicator">
+                                    <div class="risk-dot moderate-risk"></div>
+                                    <span>Moderate Risk</span>
+                                </div>
+                                <div class="risk-indicator">
+                                    <div class="risk-dot high-risk"></div>
+                                    <span>High Risk</span>
+                                </div>
+                            </div>
+                            <button class="filter-btn">
+                                <span class="material-symbols-outlined">tune</span>
                                 Filter
                             </button>
                         </div>
-                        <div class="card-body">
-                            <div class="analytics-placeholder">
-                                <span class="text-muted">Analytics Chart Placeholder</span>
+                        
+                        <div class="chart-container">
+                            <div class="chart-placeholder">
+                                <span>Chart visualization will be implemented here</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Insights Section -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Insights</h5>
+                    <!-- Prescription Section -->
+                    <div class="prescription-section">
+                        <div class="section-header">
+                            <h2>Prescription</h2>
+                            <button class="add-patient-btn">
+                                <span class="material-symbols-outlined">add</span>
+                                Add Patient
+                            </button>
                         </div>
-                        <div class="card-body">
-                            <div class="insights-placeholder">
-                                <span class="text-muted">Insights Content Placeholder</span>
+                        
+                        <div class="prescription-list">
+                            <div class="prescription-item high-risk">
+                                <div class="patient-number">1</div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Patient #1</div>
+                                    <div class="complication-score">Complication Risk Score: <span class="score-value">97%</span></div>
+                                    <div class="insight">Insight: Most likely to develop Retinopathy within 6-12 months.</div>
+                                    <div class="suggestion">Suggested Action: Schedule ophthalmology referral. Monitor blood pressure weekly.</div>
+                                </div>
+                                <div class="risk-badge high">High Risk</div>
+                            </div>
+                            
+                            <div class="prescription-item moderate-risk">
+                                <div class="patient-number">2</div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Patient #2</div>
+                                    <div class="complication-score">Complication Risk Score: <span class="score-value">52%</span></div>
+                                    <div class="insight">Insight: Glucose levels are trending upward - risk may increase without intervention.</div>
+                                    <div class="suggestion">Suggested Action: Monitor blood pressure and glucose weekly.</div>
+                                </div>
+                                <div class="risk-badge moderate">Moderate Risk</div>
+                            </div>
+                            
+                            <div class="prescription-item low-risk">
+                                <div class="patient-number">3</div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Patient #3</div>
+                                    <div class="complication-score">Complication Risk Score: <span class="score-value">10%</span></div>
+                                    <div class="insight">Insight: Stable condition — no alarming trends detected.</div>
+                                    <div class="suggestion">Suggested Action: Maintain current medication and routine.</div>
+                                </div>
+                                <div class="risk-badge low">Low Risk</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Sidebar -->
-                <div class="col-lg-3">
-                    <!-- Prescription Section -->
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Prescription</h5>
-                            <a href="#" class="text-danger text-decoration-none small">See all</a>
-                        </div>
-                        <div class="card-body">
-                            <div class="prescription-item high-priority mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="fw-medium text-dark">1. Sarah</div>
-                                        <div class="small text-muted">Respiratory Syst</div>
-                                    </div>
-                                    <button class="btn btn-link text-muted p-1">
-                                        <span class="material-symbols-outlined">more_horiz</span>
-                                    </button>
+                <!-- Right Column -->
+                <div class="right-column">
+                    <!-- Average Diagnose Chart -->
+                    <div class="diagnose-section">
+                        <h2>Average Diagnose</h2>
+                        <div class="diagnose-chart">
+                            <div class="chart-circle">
+                                <div class="chart-center">
+                                    <div class="total-patients">Total Patients</div>
+                                    <div class="total-number">762</div>
                                 </div>
                             </div>
-                            <div class="prescription-item medium-priority mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="fw-medium text-dark">2. David</div>
-                                        <div class="small text-muted">Diabetes</div>
-                                    </div>
-                                    <button class="btn btn-link text-muted p-1">
-                                        <span class="material-symbols-outlined">more_horiz</span>
-                                    </button>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-dot retinopathy"></div>
+                                    <span>Retinopathy</span>
                                 </div>
-                            </div>
-                            <div class="prescription-item low-priority mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="fw-medium text-dark">3. James</div>
-                                        <div class="small text-muted">Hypertension</div>
-                                    </div>
-                                    <button class="btn btn-link text-muted p-1">
-                                        <span class="material-symbols-outlined">more_horiz</span>
-                                    </button>
+                                <div class="legend-item">
+                                    <div class="legend-dot neuropathy"></div>
+                                    <span>Neuropathy</span>
                                 </div>
-                            </div>
-                            <div class="prescription-item medium-priority">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="fw-medium text-dark">4. Joseph</div>
-                                        <div class="small text-muted">Migraine</div>
-                                    </div>
-                                    <button class="btn btn-link text-muted p-1">
-                                        <span class="material-symbols-outlined">more_horiz</span>
-                                    </button>
+                                <div class="legend-item">
+                                    <div class="legend-dot cardiovascular"></div>
+                                    <span>Cardiovascular</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Complications Section -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Complications</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="complications-placeholder">
-                                <span class="text-muted">No complications</span>
+                    <!-- Insights Section -->
+                    <div class="insights-section">
+                        <h2>Insights</h2>
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <span class="material-symbols-outlined">visibility</span>
+                                <div class="insight-text">
+                                    <strong>Retinopathy affects nearly 35% of diabetic individuals.</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <span class="material-symbols-outlined">healing</span>
+                                <div class="insight-text">
+                                    <strong>Foot ulcers are a common result of diabetic neuropathy and can lead to amputation.</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <span class="material-symbols-outlined">visibility</span>
+                                <div class="insight-text">
+                                    <strong>Diabetic retinopathy is the leading cause of blindness in adults aged 20-74.</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <span class="material-symbols-outlined">sensors</span>
+                                <div class="insight-text">
+                                    <strong>Nerve damage starts silently — tingling, numbness, or burning may be first signs.</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <span class="material-symbols-outlined">favorite</span>
+                                <div class="insight-text">
+                                    <strong>Controlling HbA1c, blood pressure, and cholesterol reduces heart risk significantly.</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <span class="material-symbols-outlined">directions_walk</span>
+                                <div class="insight-text">
+                                    <strong>Even 30 minutes of walking per day can lower cardiovascular risk in diabetics by over 25%.</strong>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -329,7 +286,60 @@
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Sign Out Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-content">
+                <h3>Sign Out</h3>
+                <p>Are you sure you want to sign out?</p>
+                <div class="modal-actions">
+                    <button class="btn-cancel" id="modalCancel">Cancel</button>
+                    <button class="btn-confirm" id="modalConfirm">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModalOverlay">
+        <div class="modal profile-modal">
+            <div class="modal-content">
+                <div class="profile-modal-header">
+                    <h3>Profile Information</h3>
+                    <button class="close-btn" id="profileCloseBtn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="profile-modal-body">
+                    <div class="profile-avatar-section">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Profile" class="profile-avatar-large">
+                        <button class="change-avatar-btn">
+                            <span class="material-symbols-outlined">photo_camera</span>
+                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <div class="info-group">
+                            <label>Full Name</label>
+                            <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                        </div>
+                        <div class="info-group">
+                            <label>Email</label>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                        <div class="info-group">
+                            <label>Member Since</label>
+                            <div class="info-value">January 2024</div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-edit-profile">Edit Profile</button>
+                        <button class="btn-change-password">Change Password</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>

@@ -1,171 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Diabetech Dashboard loaded successfully!")
-
-  const sidebarToggle = document.getElementById("sidebarToggle")
+  // Elements
   const sidebar = document.getElementById("sidebar")
-  const mainContent = document.getElementById("mainContent")
   const signOutBtn = document.getElementById("signOutBtn")
   const modalOverlay = document.getElementById("modalOverlay")
-  const modalYes = document.getElementById("modalYes")
-  const modalNo = document.getElementById("modalNo")
+  const modalCancel = document.getElementById("modalCancel")
+  const modalConfirm = document.getElementById("modalConfirm")
+  const navItems = document.querySelectorAll(".nav-item:not(#signOutBtn)")
 
-  // Profile popup elements
-  const profileSection = document.getElementById("profileSection")
-  const profileOverlay = document.getElementById("profileOverlay")
-  const profilePopup = document.getElementById("profilePopup")
-  const profileClose = document.getElementById("profileClose")
-  const profileCancel = document.getElementById("profileCancel")
-  const profileForm = document.getElementById("profileForm")
-  const passwordToggleProfile = document.getElementById("passwordToggleProfile")
-  const profilePasswordInput = document.getElementById("profilePassword")
+  // Profile modal elements
+  const userProfile = document.getElementById("userProfile")
+  const profileModalOverlay = document.getElementById("profileModalOverlay")
+  const profileCloseBtn = document.getElementById("profileCloseBtn")
 
-  // Profile popup functionality
-  profileSection.addEventListener("click", () => {
-    showProfilePopup()
+  // Profile modal functionality
+  userProfile.addEventListener("click", () => {
+    showProfileModal()
   })
 
-  profileClose.addEventListener("click", hideProfilePopup)
-  profileCancel.addEventListener("click", hideProfilePopup)
+  profileCloseBtn.addEventListener("click", hideProfileModal)
 
-  profileOverlay.addEventListener("click", (e) => {
-    if (e.target === profileOverlay) {
-      hideProfilePopup()
+  profileModalOverlay.addEventListener("click", (e) => {
+    if (e.target === profileModalOverlay) {
+      hideProfileModal()
     }
   })
 
-  function showProfilePopup() {
-    profileOverlay.classList.add("show")
+  function showProfileModal() {
+    profileModalOverlay.classList.add("show")
     document.body.style.overflow = "hidden"
   }
 
-  function hideProfilePopup() {
-    profileOverlay.classList.remove("show")
+  function hideProfileModal() {
+    profileModalOverlay.classList.remove("show")
     document.body.style.overflow = "auto"
   }
 
-  // Password toggle in profile
-  passwordToggleProfile.addEventListener("click", () => {
-    const type = profilePasswordInput.getAttribute("type") === "password" ? "text" : "password"
-    profilePasswordInput.setAttribute("type", type)
+  // Navigation
+  navItems.forEach((item) => {
+    item.addEventListener("click", function () {
+      // Remove active class from all items
+      navItems.forEach((nav) => nav.classList.remove("active"))
 
-    const icon = passwordToggleProfile.querySelector(".material-symbols-outlined")
-    icon.textContent = type === "password" ? "visibility" : "visibility_off"
-  })
+      // Add active class to clicked item
+      this.classList.add("active")
 
-  // Profile form submission
-  profileForm.addEventListener("submit", (e) => {
-    e.preventDefault()
+      // Get the navigation text
+      const navText = this.querySelector(".nav-text").textContent
 
-    const formData = new FormData(profileForm)
-    const profileData = {
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      role: formData.get("role"),
-      email: formData.get("email"),
-    }
-
-    // Only include password if it's not empty
-    if (formData.get("password").trim()) {
-      profileData.password = formData.get("password")
-    }
-
-    const saveBtn = document.getElementById("profileSave")
-    saveBtn.disabled = true
-    saveBtn.textContent = "Saving..."
-
-    fetch("/api/update-profile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(profileData),
+      // Update page content based on navigation
+      updatePageContent(navText)
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          // Update UI with new data
-          document.getElementById("userFullName").textContent = `${profileData.firstName} ${profileData.lastName}`
-          document.getElementById("userRole").textContent = profileData.role
-          document.querySelector(".greeting-section h1").textContent = `Hello, @${profileData.firstName}!`
-
-          hideProfilePopup()
-          alert("Profile updated successfully!")
-        } else {
-          alert(data.message || "Failed to update profile")
-        }
-      })
-      .catch((err) => {
-        console.error("Error updating profile:", err)
-        alert("An error occurred while updating profile")
-      })
-      .finally(() => {
-        saveBtn.disabled = false
-        saveBtn.textContent = "Save Changes"
-      })
   })
-
-  // Sidebar toggle functionality
-  sidebarToggle.addEventListener("click", function () {
-    sidebar.classList.toggle("collapsed")
-    mainContent.classList.toggle("expanded")
-
-    // Save state to localStorage
-    const collapsed = sidebar.classList.contains("collapsed")
-    localStorage.setItem("sidebarCollapsed", collapsed)
-
-    // Update toggle icon
-    const icon = this.querySelector(".material-symbols-outlined")
-    if (collapsed) {
-      icon.textContent = "menu_open"
-    } else {
-      icon.textContent = "menu"
-    }
-  })
-
-  // Check if sidebar should be collapsed from localStorage
-  const isCollapsed = localStorage.getItem("sidebarCollapsed") === "true"
-  if (isCollapsed) {
-    sidebar.classList.add("collapsed")
-  }
 
   // Sign out functionality
-  signOutBtn.addEventListener("click", (e) => {
-    e.preventDefault()
+  signOutBtn.addEventListener("click", () => {
     showModal()
   })
 
-  // Modal functions
-  function showModal() {
-    modalOverlay.classList.add("show")
-    document.body.style.overflow = "hidden"
-  }
-
-  function hideModal() {
-    modalOverlay.classList.remove("show")
-    document.body.style.overflow = "auto"
-  }
-
-  // Modal button handlers
-  modalYes.addEventListener("click", () => {
+  modalCancel.addEventListener("click", hideModal)
+  modalConfirm.addEventListener("click", () => {
     hideModal()
-    // Add loading state to sign out button
-    const navText = signOutBtn.querySelector(".nav-text")
-    const originalText = navText.textContent
-    navText.textContent = "Signing Out..."
-
-    // Call logout API
-    fetch("/api/logout", {
-      method: "POST",
-    })
-      .then(() => {
-        window.location.href = "/sign-in"
-      })
-      .catch(() => {
-        window.location.href = "/sign-in"
-      })
+    signOut()
   })
-
-  modalNo.addEventListener("click", hideModal)
 
   // Close modal when clicking overlay
   modalOverlay.addEventListener("click", (e) => {
@@ -180,62 +76,105 @@ document.addEventListener("DOMContentLoaded", () => {
       if (modalOverlay.classList.contains("show")) {
         hideModal()
       }
-      if (profileOverlay.classList.contains("show")) {
-        hideProfilePopup()
+      if (profileModalOverlay.classList.contains("show")) {
+        hideProfileModal()
       }
     }
   })
 
-  // Navigation item click handlers
-  const navItems = document.querySelectorAll(".nav-item")
-  navItems.forEach((item, index) => {
-    const navText = item.querySelector(".nav-text")
-    if (navText) {
-      item.setAttribute("data-tooltip", navText.textContent)
-    }
-  })
+  // Modal functions
+  function showModal() {
+    modalOverlay.classList.add("show")
+    document.body.style.overflow = "hidden"
+  }
 
-  navItems.forEach((item) => {
-    const navLink = item.querySelector(".nav-link")
-    if (navLink && !navLink.id) {
-      // Exclude sign out button
-      navLink.addEventListener("click", function (e) {
-        // Remove active class from all items
-        document.querySelectorAll(".nav-item").forEach((nav) => {
-          nav.classList.remove("active")
-        })
+  function hideModal() {
+    modalOverlay.classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
 
-        // Add active class to clicked item
-        item.classList.add("active")
-
-        // Update page content based on navigation
-        const linkText = this.querySelector(".nav-text").textContent
-        updatePageContent(linkText)
+  // Sign out function
+  function signOut() {
+    fetch("/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          window.location.href = "/sign-in"
+        } else {
+          console.error("Logout failed:", data.message)
+          // Redirect anyway
+          window.location.href = "/sign-in"
+        }
       })
+      .catch((error) => {
+        console.error("Error during logout:", error)
+        // Redirect anyway
+        window.location.href = "/sign-in"
+      })
+  }
+
+  function updatePageContent(section) {
+    console.log("Navigating to:", section)
+
+    // Update page title in header
+    document.querySelector(".page-title").textContent = section
+
+    // Here you can implement different content for each section
+    switch (section) {
+      case "Dashboard":
+        // Show dashboard content (already visible)
+        break
+      case "Prescription":
+        // Load prescription management content
+        break
+      case "Patients":
+        // Load patients list content
+        break
+      case "Analytics":
+        // Load analytics content
+        break
+      case "Insights":
+        // Load insights content
+        break
+      case "Settings":
+        // Load settings content
+        break
     }
-  })
+  }
 
   // Search functionality
-  const searchInput = document.querySelector('input[placeholder="Search..."]')
+  const searchInput = document.querySelector(".search-input")
   if (searchInput) {
     searchInput.addEventListener("input", function () {
       const searchTerm = this.value.toLowerCase()
 
       if (searchTerm.length > 2) {
-        // Simulate search functionality
         console.log("Searching for:", searchTerm)
-        // You can implement actual search logic here
+        // Implement search functionality here
       }
     })
   }
 
   // Filter button functionality
-  const filterBtn = document.querySelector(".btn-outline-secondary")
+  const filterBtn = document.querySelector(".filter-btn")
   if (filterBtn) {
     filterBtn.addEventListener("click", () => {
-      // Toggle filter options
       console.log("Filter clicked")
-      // You can implement filter modal or dropdown here
+      // Implement filter functionality here
+    })
+  }
+
+  // Add Patient button functionality
+  const addPatientBtn = document.querySelector(".add-patient-btn")
+  if (addPatientBtn) {
+    addPatientBtn.addEventListener("click", () => {
+      console.log("Add Patient clicked")
+      // Implement add patient functionality here
     })
   }
 
@@ -243,113 +182,61 @@ document.addEventListener("DOMContentLoaded", () => {
   const prescriptionItems = document.querySelectorAll(".prescription-item")
   prescriptionItems.forEach((item) => {
     item.addEventListener("click", function () {
-      // Highlight selected item
+      // Remove selected class from all items
       prescriptionItems.forEach((p) => p.classList.remove("selected"))
+
+      // Add selected class to clicked item
       this.classList.add("selected")
 
-      // You can implement prescription details view here
-      const patientName = this.querySelector(".fw-medium").textContent
+      const patientName = this.querySelector(".patient-name").textContent
       console.log("Selected patient:", patientName)
+
+      // Implement patient details view here
     })
   })
 
-  // More options buttons
-  const moreButtons = document.querySelectorAll(".btn-link")
-  moreButtons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation()
-      // Show dropdown menu or modal
-      console.log("More options clicked")
-    })
-  })
-
-  // Update page content function
-  function updatePageContent(section) {
-    const mainContent = document.querySelector("main .row")
-
-    switch (section) {
-      case "Dashboard":
-        // Already showing dashboard content
-        break
-      case "Prescription":
-        // Update to show prescription management
-        console.log("Loading Prescription page...")
-        break
-      case "Patients":
-        // Update to show patients list
-        console.log("Loading Patients page...")
-        break
-      case "Analytics":
-        // Update to show detailed analytics
-        console.log("Loading Analytics page...")
-        break
-      case "Insights":
-        // Update to show insights
-        console.log("Loading Insights page...")
-        break
-      case "Settings":
-        // Update to show settings
-        console.log("Loading Settings page...")
-        break
-      default:
-        console.log("Unknown section:", section)
-    }
-  }
-
-  // Auto-refresh data every 30 seconds
-  setInterval(() => {
-    // Simulate data refresh
-    console.log("Refreshing dashboard data...")
-    // You can implement actual data fetching here
-  }, 30000)
-
-  // Add loading states for cards
-  const cards = document.querySelectorAll(".card")
-  cards.forEach((card) => {
-    card.addEventListener("mouseenter", function () {
-      this.style.transform = "translateY(-2px)"
-    })
-
-    card.addEventListener("mouseleave", function () {
-      this.style.transform = "translateY(0)"
-    })
-  })
-
-  // Simulate real-time updates
-  function simulateRealTimeUpdates() {
-    // Update patient count randomly
-    const totalPatientsEl = document.querySelector(".col-md-4:first-child .h2")
-    if (totalPatientsEl) {
-      const currentCount = Number.parseInt(totalPatientsEl.textContent)
-      const newCount = currentCount + Math.floor(Math.random() * 3) - 1 // -1 to +1
-      if (newCount > 0) {
-        totalPatientsEl.textContent = newCount
-      }
-    }
-  }
-
-  // Run real-time updates every 10 seconds
-  setInterval(simulateRealTimeUpdates, 10000)
-
-  // Handle window resize for responsive behavior
-  window.addEventListener("resize", () => {
-    if (window.innerWidth <= 768) {
-      // On mobile, ensure sidebar is hidden by default
-      if (!sidebar.classList.contains("show")) {
-        sidebar.style.display = "none"
-      }
-    } else {
-      // On desktop, show sidebar
-      sidebar.style.display = "block"
-    }
-  })
-
-  // Mobile sidebar toggle
+  // Mobile sidebar toggle - only for mobile devices
   if (window.innerWidth <= 768) {
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("show")
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener("click", (e) => {
+      if (window.innerWidth <= 768 && !sidebar.contains(e.target) && sidebar.classList.contains("open")) {
+        sidebar.classList.remove("open")
+      }
     })
   }
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+      sidebar.classList.remove("open")
+    }
+  })
+
+  // Simulate real-time data updates
+  function updateStats() {
+    const statValues = document.querySelectorAll(".stat-value")
+
+    statValues.forEach((stat) => {
+      const currentValue = Number.parseInt(stat.textContent)
+      const change = Math.floor(Math.random() * 10) - 5 // -5 to +5
+      const newValue = Math.max(0, currentValue + change)
+
+      if (change !== 0) {
+        stat.textContent = newValue
+
+        // Add animation
+        stat.style.transform = "scale(1.1)"
+        setTimeout(() => {
+          stat.style.transform = "scale(1)"
+        }, 200)
+      }
+    })
+  }
+
+  // Update stats every 30 seconds
+  setInterval(updateStats, 30000)
+
+  console.log("Dashboard loaded successfully!")
 })
 
 // Add CSS for selected prescription item
@@ -359,20 +246,19 @@ style.textContent = `
         box-shadow: 0 0 0 2px #dc2626;
         transform: scale(1.02);
     }
-
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .profile-section {
+    
+    .prescription-item {
         cursor: pointer;
-        padding: 8px;
-        border-radius: 8px;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
     }
-
-    .profile-section:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+    
+    .prescription-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-value {
+        transition: transform 0.2s ease;
     }
 `
 document.head.appendChild(style)
