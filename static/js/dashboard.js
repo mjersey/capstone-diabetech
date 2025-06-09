@@ -495,12 +495,14 @@ document.addEventListener("DOMContentLoaded", () => {
     switch (section) {
       case "Dashboard":
         // Show dashboard content (already visible)
+        window.location.href = "/dashboard"
         break
       case "Prescription":
         // Load prescription management content
         break
       case "Patients":
-        // Load patients list content
+        // Navigate to patients page
+        window.location.href = "/patients"
         break
       case "Analytics":
         // Load analytics content
