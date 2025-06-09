@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients - Diabetech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/patients.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo" id="headerLogo">
+                <img src="{{ url_for('static', filename='assets/diabetech-logo.png') }}" alt="Diabetech">
+                <span>diabetech</span>
+            </div>
+            <h1 class="page-title">Patients</h1>
+        </div>
+        
+        <div class="header-right">
+            <div class="search-container">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input type="text" placeholder="Search ..." class="search-input">
+            </div>
+            <button class="notification-btn">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div class="user-profile" id="userProfile">
+                <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="nav-text">Dashboard</span>
+                </div>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">description</span>
+                    <span class="nav-text">Prescription</span>
+                </div>
+                <div class="nav-item active">
+                    <span class="material-symbols-outlined">person</span>
+                    <span class="nav-text">Patients</span>
+                </div>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <span class="nav-text">Analytics</span>
+                </div>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">lightbulb</span>
+                    <span class="nav-text">Insights</span>
+                </div>
+                <div class="nav-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="nav-text">Settings</span>
+                </div>
+            </nav>
+            
+            <div class="sidebar-bottom">
+                <div class="nav-item" id="signOutBtn">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="nav-text">Sign Out</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Stats Cards -->
+            <div class="patients-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Patients</div>
+                    <div class="stat-value">6024</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>68.85%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card high-risk-card">
+                    <div class="stat-label">High Risk Patients</div>
+                    <div class="stat-value high-risk-value">3209</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>12.90%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card moderate-risk-card">
+                    <div class="stat-label">Moderate Risk Patients</div>
+                    <div class="stat-value moderate-risk-value">1561</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>23.21%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card low-risk-card">
+                    <div class="stat-label">Low Risk Patients</div>
+                    <div class="stat-value low-risk-value">783</div>
+                    <div class="stat-footer">
+                        <div class="stat-period">Since last week</div>
+                        <div class="stat-change positive">
+                            <span>54.32%</span>
+                            <span class="material-symbols-outlined">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="patients-actions">
+                <button class="upload-btn" id="uploadBtn">
+                    <span class="material-symbols-outlined">upload</span>
+                    Upload
+                </button>
+                <button class="add-patient-btn" id="addPatientBtn">
+                    <span class="material-symbols-outlined">add</span>
+                    Add Patient
+                </button>
+            </div>
+
+            <!-- Patients List Section -->
+            <div class="patients-list-section">
+                <div class="list-header">
+                    <h2>List</h2>
+                    <div class="list-controls">
+                        <div class="search-container-list">
+                            <input type="text" placeholder="Search By ID" class="search-input-list" id="searchPatientInput">
+                        </div>
+                        <button class="filter-btn" id="filterBtn">
+                            <span class="material-symbols-outlined">tune</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="patients-table-container">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Patient ID</th>
+                                <th>Age</th>
+                                <th>Sex</th>
+                                <th>Risk Level</th>
+                                <th>Check-Up Frequency</th>
+                                <th>Complications</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTableBody">
+                            <tr>
+                                <td>1</td>
+                                <td>P001</td>
+                                <td>45</td>
+                                <td>Male</td>
+                                <td><span class="risk-badge high-risk">High Risk</span></td>
+                                <td>Monthly</td>
+                                <td>Retinopathy & Neuropathy</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn view-btn" title="View Patient">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </button>
+                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>P002</td>
+                                <td>41</td>
+                                <td>Female</td>
+                                <td><span class="risk-badge moderate-risk">Moderate Risk</span></td>
+                                <td>Quarterly</td>
+                                <td>Neuropathy</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn view-btn" title="View Patient">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </button>
+                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>P003</td>
+                                <td>25</td>
+                                <td>Female</td>
+                                <td><span class="risk-badge low-risk">Low Risk</span></td>
+                                <td>Quarterly</td>
+                                <td>None</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn view-btn" title="View Patient">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </button>
+                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>P004</td>
+                                <td>56</td>
+                                <td>Male</td>
+                                <td><span class="risk-badge high-risk">High Risk</span></td>
+                                <td>Monthly</td>
+                                <td>Cardiovascular</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn view-btn" title="View Patient">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </button>
+                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sign Out Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-content">
+                <h3>Sign Out</h3>
+                <p>Are you sure you want to sign out?</p>
+                <div class="modal-actions">
+                    <button class="btn-cancel" id="modalCancel">Cancel</button>
+                    <button class="btn-confirm" id="modalConfirm">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModalOverlay">
+        <div class="modal profile-modal">
+            <div class="profile-success-notification" id="profileSuccessNotification">
+                <div class="check-icon">✓</div>
+                <span>Profile updated successfully!</span>
+            </div>
+            
+            <div class="modal-content">
+                <div class="profile-modal-header">
+                    <h3>Profile Information</h3>
+                    <button class="close-btn" id="profileCloseBtn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="profile-modal-body">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-container">
+                            <img src="/placeholder.svg?height=100&width=100" alt="Profile" class="profile-avatar-large">
+                            <div class="avatar-overlay">
+                                <span class="material-symbols-outlined">photo_camera</span>
+                            </div>
+                        </div>
+                        <div class="profile-basic-info">
+                            <h4 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h4>
+                            <p class="profile-email">{{ user.email }}</p>
+                            <p class="profile-join-date">Joined {{ user.created_at.strftime('%B %Y') if user.created_at else 'June 2025' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" value="{{ user.first_name }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" value="{{ user.last_name }}" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emailAddress">Email Address</label>
+                            <input type="email" id="emailAddress" name="emailAddress" value="{{ user.email }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number</label>
+                            <div class="phone-input">
+                                <select class="country-code" disabled>
+                                    <option value="+63">+ 63</option>
+                                </select>
+                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="912 3456 7890" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="password-input-container">
+                                <input type="password" id="password" name="password" value="••••••••••••••••••••••••" readonly>
+                                <button type="button" class="change-password-btn" id="changePasswordBtn">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn-edit-profile" id="editProfileBtn">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/patients.js') }}"></script>
+</body>
+</html>

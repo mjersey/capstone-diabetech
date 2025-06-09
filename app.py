@@ -854,6 +854,65 @@ def dashboard():
     
     return render_template('dashboard.html', user=user_data)
 
+# Add this route after the dashboard route and before the logout route
+
+@app.route('/patients')
+def patients():
+    if 'user_id' not in session:
+        return redirect('/sign-in')
+    
+    # Get user data from database for the most up-to-date info
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT first_name, last_name, email, role, created_at FROM users WHERE id = %s", (session['user_id'],))
+            user_data_db = cursor.fetchone()
+            
+            if user_data_db:
+                first_name, last_name, email, role, created_at = user_data_db
+                user_data = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': email,
+                    'role': role,
+                    'created_at': created_at
+                }
+            else:
+                # Fallback to session data
+                user_data = {
+                    'first_name': session.get('user_name', 'User').split()[0],
+                    'last_name': session.get('user_name', 'User').split()[-1],
+                    'email': session.get('user_email', ''),
+                    'role': session.get('user_role', 'User'),
+                    'created_at': None
+                }
+        except mysql.connector.Error as err:
+            print(f"Database error getting user data: {err}")
+            # Fallback to session data
+            user_data = {
+                'first_name': session.get('user_name', 'User').split()[0],
+                'last_name': session.get('user_name', 'User').split()[-1],
+                'email': session.get('user_email', ''),
+                'role': session.get('user_role', 'User'),
+                'created_at': None
+            }
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+    else:
+        # Fallback to session data
+        user_data = {
+            'first_name': session.get('user_name', 'User').split()[0],
+            'last_name': session.get('user_name', 'User').split()[-1],
+            'email': session.get('user_email', ''),
+            'role': session.get('user_role', 'User'),
+            'created_at': None
+        }
+    
+    return render_template('patients.html', user=user_data)
+
 @app.route('/api/logout', methods=['POST'])
 def logout():
     session.clear()
