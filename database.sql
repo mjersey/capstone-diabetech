@@ -8,7 +8,7 @@ USE diabetech;
 -- DROP TABLE IF EXISTS password_reset_tokens;
 -- DROP TABLE IF EXISTS users;
 
--- Create users table with essential fields
+-- Create users table 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX idx_is_verified (is_verified)
 );
 
--- Create password reset tokens table for better security
+-- Create password reset tokens table 
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
