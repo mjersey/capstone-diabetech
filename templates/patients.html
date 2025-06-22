@@ -29,7 +29,7 @@
                 <span class="material-symbols-outlined">notifications</span>
             </button>
             <div class="user-profile" id="userProfile">
-                <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+                <img src="/placeholder.svg?height=40&width=40" alt="" class="user-avatar">
             </div>
         </div>
     </header>
@@ -169,13 +169,13 @@
                             <tr>
                                 <td>1</td>
                                 <td>P001</td>
-                                <td>45</td>
+                                <td>37</td>
                                 <td>Male</td>
                                 <td><span class="risk-badge high-risk">High Risk</span></td>
                                 <td>Monthly</td>
-                                <td>Retinopathy & Neuropathy</td>
+                                <td>Retinopathy / Neuropathy</td>
                                 <td class="actions-cell">
-                                    <button class="action-btn view-btn" title="View Patient">
+                                    <button class="view-btn" data-patient-id="P001" data-patient-number="1" data-age="37" data-sex="Male" data-risk="High Risk" data-frequency="Monthly" data-complications="Retinopathy / Neuropathy" data-bmi="38.4" data-glucose="160" data-bp="145/90" data-retinopathy="High" data-neuropathy="High" data-cardiovascular="High">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
                                     <button class="action-btn delete-btn" title="Delete Patient">
@@ -192,7 +192,7 @@
                                 <td>Quarterly</td>
                                 <td>Neuropathy</td>
                                 <td class="actions-cell">
-                                    <button class="action-btn view-btn" title="View Patient">
+                                    <button class="view-btn" data-patient-id="P002" data-patient-number="2" data-age="41" data-sex="Female" data-risk="Moderate Risk" data-frequency="Quarterly" data-complications="Neuropathy" data-bmi="32.1" data-glucose="140" data-bp="130/85" data-retinopathy="Low" data-neuropathy="High" data-cardiovascular="Moderate">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
                                     <button class="action-btn delete-btn" title="Delete Patient">
@@ -209,7 +209,7 @@
                                 <td>Quarterly</td>
                                 <td>None</td>
                                 <td class="actions-cell">
-                                    <button class="action-btn view-btn" title="View Patient">
+                                    <button class="view-btn" data-patient-id="P003" data-patient-number="3" data-age="25" data-sex="Female" data-risk="Low Risk" data-frequency="Quarterly" data-complications="None" data-bmi="24.8" data-glucose="95" data-bp="110/70" data-retinopathy="Low" data-neuropathy="Low" data-cardiovascular="Low">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
                                     <button class="action-btn delete-btn" title="Delete Patient">
@@ -226,7 +226,7 @@
                                 <td>Monthly</td>
                                 <td>Cardiovascular</td>
                                 <td class="actions-cell">
-                                    <button class="action-btn view-btn" title="View Patient">
+                                    <button class="view-btn" data-patient-id="P004" data-patient-number="4" data-age="56" data-sex="Male" data-risk="High Risk" data-frequency="Monthly" data-complications="Cardiovascular" data-bmi="42.3" data-glucose="185" data-bp="160/95" data-retinopathy="Moderate" data-neuropathy="Moderate" data-cardiovascular="High">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
                                     <button class="action-btn delete-btn" title="Delete Patient">
@@ -329,7 +329,363 @@
         </div>
     </div>
 
+    <!-- Patient Details Modal -->
+    <div class="modal-overlay" id="patientDetailsModal">
+        <div class="modal patient-details-modal-content">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Patient Details</h2>
+                    <button class="close-btn" id="patientDetailsCloseBtn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Patient Header -->
+                <div class="patient-header">
+                    <div class="patient-number" id="patientNumber">#1</div>
+                    <div class="patient-info">
+                        <h3 id="patientId">P001</h3>
+                        <p><span>Complication:</span> <span id="patientComplications">Retinopathy / Neuropathy</span></p>
+                    </div>
+                    <div class="risk-badge-header high-risk" id="patientRiskBadge">High Risk</div>
+                </div>
+
+                <!-- Modal Tabs -->
+                <div class="modal-tabs">
+                    <button class="tab-button active" data-tab="patient-info">Patient Information</button>
+                    <button class="tab-button" data-tab="complication-risk">Complication Risk</button>
+                    <button class="tab-button" data-tab="prescription">Prescription</button>
+                </div>
+
+                <!-- Patient Information Tab -->
+                <div class="tab-content active" id="patient-info">
+                    <div class="health-section">
+                        <h4>Health</h4>
+                        <div class="health-metrics">
+                            <div class="health-metric">
+                                <div class="metric-icon">
+                                    <span class="material-symbols-outlined">accessibility</span>
+                                </div>
+                                <div class="metric-label">BMI</div>
+                                <div class="metric-value" id="patientBMI">38.4</div>
+                            </div>
+                            <div class="health-metric">
+                                <div class="metric-icon">
+                                    <span class="material-symbols-outlined">bloodtype</span>
+                                </div>
+                                <div class="metric-label">Glucose Level</div>
+                                <div class="metric-value" id="patientGlucose">160 mg/dL</div>
+                            </div>
+                            <div class="health-metric">
+                                <div class="metric-icon">
+                                    <span class="material-symbols-outlined">monitor_heart</span>
+                                </div>
+                                <div class="metric-label">Blood Pressure</div>
+                                <div class="metric-value" id="patientBP">145/90</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="general-section">
+                        <h4>General</h4>
+                        <div class="general-info">
+                            <div class="info-line">
+                                <span class="info-label">Age</span>
+                                <span class="info-value" id="patientAge">37 yrs old</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Sex</span>
+                                <span class="info-value" id="patientSex">Male</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Check-Up Frequency</span>
+                                <span class="info-value" id="patientFrequency">Monthly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complication Risk Tab -->
+                <div class="tab-content" id="complication-risk">
+                    <div class="risk-assessment">
+                        <div class="risk-item">
+                            <span class="info-label">Retinopathy Risk</span>
+                            <span class="risk-badge high-risk" id="retinopathyRisk">High</span>
+                        </div>
+                        <div class="risk-item">
+                            <span class="info-label">Neuropathy Risk</span>
+                            <span class="risk-badge high-risk" id="neuropathyRisk">High</span>
+                        </div>
+                        <div class="risk-item">
+                            <span class="info-label">Cardiovascular Risk</span>
+                            <span class="risk-badge moderate-risk" id="cardiovascularRisk">Moderate</span>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-warning">
+                        <span class="material-symbols-outlined warning-icon">warning</span>
+                        <span class="warning-text">Multiple risk factors detected including elevated glucose and blood pressure.</span>
+                    </div>
+                </div>
+
+                <!-- Prescription Tab -->
+                <div class="tab-content" id="prescription">
+                    <!-- Loading Overlay -->
+                    <div class="loading-overlay" id="prescriptionLoadingOverlay">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Generating prescription...</div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="prescription-empty" id="prescriptionEmpty">
+                        <p>Click here to generate prescription</p>
+                        <button class="generate-prescription-btn" id="generatePrescriptionBtn">Generate Prescription</button>
+                    </div>
+
+                    <!-- Generated Prescription (Edit Mode) -->
+                    <div class="prescription-generated" id="prescriptionGenerated" style="display: none;">
+                        <div class="prescription-section">
+                            <div class="prescription-header">
+                                <h4>Prescribed Medications</h4>
+                                <button class="print-btn">
+                                    <span class="material-symbols-outlined">print</span>
+                                    Print
+                                </button>
+                            </div>
+                            
+                            <div class="medications-table-container">
+                                <table class="medications-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Medications</th>
+                                            <th>Dosage</th>
+                                            <th>Frequency</th>
+                                            <th>Duration</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Metformin</td>
+                                            <td>500mg</td>
+                                            <td>2x a day</td>
+                                            <td>30 days</td>
+                                            <td>After meals</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lisinopril</td>
+                                            <td>10mg</td>
+                                            <td>1x a day</td>
+                                            <td>30 days</td>
+                                            <td>Monitor BP</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Insulin Glargine</td>
+                                            <td>10 units</td>
+                                            <td>Nightly</td>
+                                            <td>Ongoing</td>
+                                            <td>Refrigerate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="lifestyle-section">
+                            <h4>Lifestyle Recommendations</h4>
+                            <div class="lifestyle-recommendations">
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Exercise</span>
+                                    <span class="lifestyle-value">30 min/day walking</span>
+                                </div>
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Diet</span>
+                                    <span class="lifestyle-value">Low sugar/fiber foods</span>
+                                </div>
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Hydration</span>
+                                    <span class="lifestyle-value">Minimum 2 liters/day</span>
+                                </div>
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Stress</span>
+                                    <span class="lifestyle-value">Meditation or light yoga</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="notes-section">
+                            <h4>Doctor's Additional Notes</h4>
+                            <textarea 
+                                class="doctor-notes-input" 
+                                id="doctorNotesInput"
+                                placeholder="Enter additional notes, recommendations, or special instructions for the patient..."
+                                rows="4"
+                            ></textarea>
+                            
+                            <!-- Suggestion Box -->
+                            <div class="suggestion-box">
+                                <span class="material-symbols-outlined suggestion-icon">lightbulb</span>
+                                <p class="suggestion-text">Suggestion: Consider insulin dosage reassessment in 2 weeks based on fasting blood sugar patterns.</p>
+                            </div>
+                        </div>
+
+                        <!-- Edit Mode Action Buttons -->
+                        <div class="prescription-actions">
+                            <button class="btn-cancel" id="cancelPrescriptionBtn">Cancel</button>
+                            <button class="btn-save" id="savePrescriptionBtn">Save Prescription</button>
+                        </div>
+                    </div>
+
+                    <!-- Saved Prescription (View Mode) -->
+                    <div class="prescription-saved" id="prescriptionSaved" style="display: none;">
+                        <div class="prescription-section">
+                            <div class="prescription-header">
+                                <h4>Prescribed Medications</h4>
+                                <button class="print-btn">
+                                    <span class="material-symbols-outlined">print</span>
+                                    Print
+                                </button>
+                            </div>
+                            
+                            <div class="medications-table-container">
+                                <table class="medications-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Medications</th>
+                                            <th>Dosage</th>
+                                            <th>Frequency</th>
+                                            <th>Duration</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Metformin</td>
+                                            <td>500mg</td>
+                                            <td>2x a day</td>
+                                            <td>30 days</td>
+                                            <td>After meals</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lisinopril</td>
+                                            <td>10mg</td>
+                                            <td>1x a day</td>
+                                            <td>30 days</td>
+                                            <td>Monitor BP</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Insulin Glargine</td>
+                                            <td>10 units</td>
+                                            <td>Nightly</td>
+                                            <td>Ongoing</td>
+                                            <td>Refrigerate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="lifestyle-section">
+                            <h4>Lifestyle Recommendations</h4>
+                            <div class="lifestyle-recommendations">
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Exercise</span>
+                                    <span class="lifestyle-value">30 min/day walking</span>
+                                </div>
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Diet</span>
+                                    <span class="lifestyle-value">Low sugar/fiber foods</span>
+                                </div>
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Hydration</span>
+                                    <span class="lifestyle-value">Minimum 2 liters/day</span>
+                                </div>
+                                <div class="lifestyle-item">
+                                    <span class="lifestyle-label">Stress</span>
+                                    <span class="lifestyle-value">Meditation or light yoga</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="notes-section">
+                            <h4>Doctor's Additional Notes</h4>
+                            <div class="doctor-notes-display" id="doctorNotesDisplay">
+                                <div class="note-suggestion">
+                                    <span class="material-symbols-outlined note-icon">lightbulb</span>
+                                    <span class="note-text" id="savedNotesText">No additional notes provided.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Saved Mode Action Button -->
+                        <div class="prescription-saved-actions">
+                            <button class="btn-delete" id="deletePrescriptionBtn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/patients.js') }}"></script>
+
+    <!-- Add confirmation modals at the end of the body, before closing </body> tag -->
+
+    <!-- Save Confirmation Modal -->
+    <div class="confirmation-modal-overlay" id="saveConfirmationModal">
+        <div class="confirmation-modal">
+            <button class="close-btn" onclick="closeSaveConfirmationModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3>Are you sure you want to save prescription?</h3>
+            <div class="confirmation-modal-actions">
+                <button class="btn-modal-cancel" onclick="closeSaveConfirmationModal()">Cancel</button>
+                <button class="btn-modal-confirm" onclick="confirmSavePrescription()">Save Prescription</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="confirmation-modal-overlay" id="deleteConfirmationModal">
+        <div class="confirmation-modal">
+            <button class="close-btn" onclick="closeDeleteConfirmationModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3>Are you sure you want to delete this prescription?</h3>
+            <div class="confirmation-modal-actions">
+                <button class="btn-modal-cancel" onclick="closeDeleteConfirmationModal()">Cancel</button>
+                <button class="btn-modal-delete" onclick="confirmDeletePrescription()">Delete Prescription</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="confirmation-modal-overlay" id="successModal">
+        <div class="confirmation-modal">
+            <button class="close-btn" onclick="closeSuccessModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="success-indicator">
+                <div class="check-icon">✓</div>
+                <span id="successMessage">Saved!</span>
+            </div>
+            <h3 id="successTitle">Prescription saved successfully!</h3>
+        </div>
+    </div>
+
+    <!-- Prescription Success Modal -->
+    <div class="prescription-success-modal-overlay" id="prescriptionSuccessModal">
+        <div class="prescription-success-modal">
+            <button class="close-btn" onclick="closePrescriptionSuccessModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="prescription-success-badge">
+                <div class="check-icon">✓</div>
+                <span>Generated!</span>
+            </div>
+            <h3>Prescription generated successfully!</h3>
+        </div>
+    </div>
 </body>
 </html>

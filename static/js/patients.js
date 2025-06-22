@@ -28,22 +28,18 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "/dashboard"
         break
       case "Prescription":
-        // Add prescription route when available
         console.log("Prescription page not yet implemented")
         break
       case "Patients":
         // Already on patients page
         break
       case "Analytics":
-        // Add analytics route when available
         console.log("Analytics page not yet implemented")
         break
       case "Insights":
-        // Add insights route when available
         console.log("Insights page not yet implemented")
         break
       case "Settings":
-        // Add settings route when available
         console.log("Settings page not yet implemented")
         break
     }
@@ -61,14 +57,14 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       id: 1,
       patientId: "P001",
-      age: 45,
+      age: 37,
       sex: "Male",
       riskLevel: "High Risk",
       checkUpFrequency: "Monthly",
-      complications: "Retinopathy & Neuropathy",
-      bmi: 28.5,
-      glucoseLevel: 180,
-      bloodPressure: "140/90",
+      complications: "Retinopathy / Neuropathy",
+      bmi: 38.4,
+      glucoseLevel: 160,
+      bloodPressure: "145/90",
       retinopathyRisk: "High",
       neuropathyRisk: "High",
       cardiovascularRisk: "High",
@@ -81,10 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
       riskLevel: "Moderate Risk",
       checkUpFrequency: "Quarterly",
       complications: "Neuropathy",
-      bmi: 25.2,
-      glucoseLevel: 145,
+      bmi: 32.1,
+      glucoseLevel: 140,
       bloodPressure: "130/85",
-      retinopathyRisk: "Moderate",
+      retinopathyRisk: "Low",
       neuropathyRisk: "High",
       cardiovascularRisk: "Moderate",
     },
@@ -96,9 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
       riskLevel: "Low Risk",
       checkUpFrequency: "Quarterly",
       complications: "None",
-      bmi: 22.1,
-      glucoseLevel: 110,
-      bloodPressure: "120/80",
+      bmi: 24.8,
+      glucoseLevel: 95,
+      bloodPressure: "110/70",
       retinopathyRisk: "Low",
       neuropathyRisk: "Low",
       cardiovascularRisk: "Low",
@@ -111,10 +107,10 @@ document.addEventListener("DOMContentLoaded", () => {
       riskLevel: "High Risk",
       checkUpFrequency: "Monthly",
       complications: "Cardiovascular",
-      bmi: 30.1,
-      glucoseLevel: 195,
-      bloodPressure: "150/95",
-      retinopathyRisk: "High",
+      bmi: 42.3,
+      glucoseLevel: 185,
+      bloodPressure: "160/95",
+      retinopathyRisk: "Moderate",
       neuropathyRisk: "Moderate",
       cardiovascularRisk: "High",
     },
@@ -123,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Upload button functionality
   uploadBtn.addEventListener("click", () => {
     console.log("📤 Upload button clicked")
-    // Create file input for CSV upload
     const fileInput = document.createElement("input")
     fileInput.type = "file"
     fileInput.accept = ".csv,.xlsx,.xls"
@@ -164,20 +159,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle file upload
   function handleFileUpload(file) {
     console.log("📊 Processing file upload:", file.name)
+    // Remove: showNotification("Processing file upload...", "info")
 
-    // Show loading state
-    showNotification("Processing file upload...", "info")
-
-    // Simulate file processing
     setTimeout(() => {
-      showNotification("File uploaded successfully! Processing patient data...", "success")
-
-      // In real app, send file to backend for processing
-      // fetch('/api/upload-patients', { method: 'POST', body: formData })
-
-      // Simulate adding new patients
+      console.log("File uploaded successfully! Processing patient data...")
+      // Remove: showNotification("File uploaded successfully! Processing patient data...", "success")
       setTimeout(() => {
-        showNotification("Patient data imported successfully!", "success")
+        console.log("Patient data imported successfully!")
+        // Remove: showNotification("Patient data imported successfully!", "success")
         refreshPatientsTable()
       }, 2000)
     }, 1500)
@@ -211,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="modal-content">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
               <h3>Add New Patient</h3>
-              <button class="close-btn" onclick="hideAddPatientModal()">
+              <button class="close-btn" onclick="window.hideAddPatientModal()">
                 <span class="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -265,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
               
               <div class="modal-actions" style="display: flex; gap: 12px; justify-content: flex-end;">
-                <button type="button" class="btn-cancel" onclick="hideAddPatientModal()">Cancel</button>
+                <button type="button" class="btn-cancel" onclick="window.hideAddPatientModal()">Cancel</button>
                 <button type="submit" class="btn-confirm">Add Patient</button>
               </div>
             </form>
@@ -275,11 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
     `
 
     document.body.insertAdjacentHTML("beforeend", modalHtml)
-
     const modal = document.getElementById("addPatientModal")
     modal.style.display = "flex"
 
-    // Handle form submission
     const form = document.getElementById("addPatientForm")
     form.addEventListener("submit", (e) => {
       e.preventDefault()
@@ -314,16 +301,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     console.log("👤 Adding new patient:", newPatient)
-
-    // In real app, send to backend
-    // fetch('/api/add-patient', { method: 'POST', body: JSON.stringify(newPatient) })
-
-    // Add to local data and refresh table
     patientsData.push(newPatient)
     refreshPatientsTable()
-    hideAddPatientModal()
-    showNotification("Patient added successfully!", "success")
-    updateStats()
+    window.hideAddPatientModal()
+    // In handleAddPatient function, remove:
+    // showNotification("Patient added successfully!", "success")
   }
 
   // Show filter modal
@@ -334,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="modal-content">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
               <h3>Filter Patients</h3>
-              <button class="close-btn" onclick="hideFilterModal()">
+              <button class="close-btn" onclick="window.hideFilterModal()">
                 <span class="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -378,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             <div class="modal-actions" style="display: flex; gap: 12px; justify-content: flex-end;">
               <button type="button" class="btn-cancel" onclick="clearFilters()">Clear</button>
-              <button type="button" class="btn-confirm" onclick="applyFilters()">Apply Filters</button>
+              <button type="button" class="btn-confirm" onclick="window.applyFilters()">Apply Filters</button>
             </div>
           </div>
         </div>
@@ -386,7 +368,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `
 
     document.body.insertAdjacentHTML("beforeend", modalHtml)
-
     const modal = document.getElementById("filterModal")
     modal.style.display = "flex"
   }
@@ -402,25 +383,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Apply filters
   window.applyFilters = () => {
     console.log("🔧 Applying filters...")
-    // Implementation for filtering logic
-    hideFilterModal()
-    showNotification("Filters applied successfully!", "success")
+    window.hideFilterModal()
+    // In applyFilters function, remove:
+    // showNotification("Filters applied successfully!", "success")
   }
 
   // Clear filters
   window.clearFilters = () => {
     console.log("🧹 Clearing filters...")
     refreshPatientsTable()
-    hideFilterModal()
-    showNotification("Filters cleared!", "info")
+    window.hideFilterModal()
+    // In clearFilters function, remove:
+    // showNotification("Filters cleared!", "info")
   }
 
   // Refresh patients table
   function refreshPatientsTable() {
-    // Clear existing rows
     patientsTableBody.innerHTML = ""
-
-    // Add updated data
     patientsData.forEach((patient, index) => {
       const row = createPatientRow(patient, index + 1)
       patientsTableBody.appendChild(row)
@@ -430,7 +409,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create patient table row
   function createPatientRow(patient, rowNumber) {
     const row = document.createElement("tr")
-
     const riskClass = patient.riskLevel.toLowerCase().replace(" ", "-")
 
     row.innerHTML = `
@@ -442,25 +420,29 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>${patient.checkUpFrequency}</td>
       <td>${patient.complications}</td>
       <td class="actions-cell">
-        <button class="action-btn view-btn" title="View Patient" onclick="viewPatient('${patient.patientId}')">
+        <button class="view-btn" 
+                data-patient-id="${patient.patientId}" 
+                data-patient-number="${rowNumber}" 
+                data-age="${patient.age}" 
+                data-sex="${patient.sex}" 
+                data-risk="${patient.riskLevel}" 
+                data-frequency="${patient.checkUpFrequency}" 
+                data-complications="${patient.complications}" 
+                data-bmi="${patient.bmi}" 
+                data-glucose="${patient.glucoseLevel}" 
+                data-bp="${patient.bloodPressure}" 
+                data-retinopathy="${patient.retinopathyRisk}" 
+                data-neuropathy="${patient.neuropathyRisk}" 
+                data-cardiovascular="${patient.cardiovascularRisk}">
           <span class="material-symbols-outlined">visibility</span>
         </button>
-        <button class="action-btn delete-btn" title="Delete Patient" onclick="deletePatient('${patient.patientId}')">
+        <button class="action-btn delete-btn" title="Delete Patient" onclick="window.deletePatient('${patient.patientId}')">
           <span class="material-symbols-outlined">delete</span>
         </button>
       </td>
     `
 
     return row
-  }
-
-  // View patient details - NEW ENHANCED MODAL
-  window.viewPatient = (patientId) => {
-    console.log("👁️ Viewing patient:", patientId)
-    const patient = patientsData.find((p) => p.patientId === patientId)
-    if (patient) {
-      showPatientDetailsModal(patient)
-    }
   }
 
   // Delete patient
@@ -473,221 +455,9 @@ document.addEventListener("DOMContentLoaded", () => {
         patientsData.splice(index, 1)
         refreshPatientsTable()
         updateStats()
-        showNotification("Patient deleted successfully!", "success")
+        // In deletePatient function, remove:
+        // showNotification("Patient deleted successfully!", "success")
       }
-    }
-  }
-
-  // Show enhanced patient details modal with tabs
-  function showPatientDetailsModal(patient) {
-    const riskClass = patient.riskLevel.toLowerCase().replace(" ", "-")
-
-    const modalHtml = `
-      <div class="modal-overlay patient-details-modal" id="patientDetailsModal">
-        <div class="modal">
-          <div class="modal-content">
-            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-              <h3>Patient Details</h3>
-              <button class="close-btn" onclick="hidePatientDetailsModal()">
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            
-            <!-- Patient Header -->
-            <div class="patient-header">
-              <div class="patient-number">#${patient.id}</div>
-              <div class="patient-info">
-                <h3>${patient.patientId}</h3>
-                <p>Complications: ${patient.complications}</p>
-              </div>
-              <div class="risk-badge-header ${riskClass}">${patient.riskLevel}</div>
-            </div>
-            
-            <!-- Tabs -->
-            <div class="modal-tabs">
-              <button class="tab-button active" onclick="switchTab('patient-info')">Patient Information</button>
-              <button class="tab-button" onclick="switchTab('complication-risk')">Complication Risk</button>
-              <button class="tab-button" onclick="switchTab('prescription')">Prescription</button>
-            </div>
-            
-            <!-- Tab Content -->
-            <div class="tab-content active" id="patient-info-content">
-              <h4>Health</h4>
-              <div class="health-metrics">
-                <div class="health-metric">
-                  <div class="metric-icon">
-                    <span class="material-symbols-outlined">monitor_weight</span>
-                  </div>
-                  <div class="metric-label">BMI</div>
-                  <div class="metric-value">${patient.bmi}</div>
-                </div>
-                <div class="health-metric">
-                  <div class="metric-icon">
-                    <span class="material-symbols-outlined">glucose</span>
-                  </div>
-                  <div class="metric-label">Glucose Level</div>
-                  <div class="metric-value">${patient.glucoseLevel}</div>
-                </div>
-                <div class="health-metric">
-                  <div class="metric-icon">
-                    <span class="material-symbols-outlined">favorite</span>
-                  </div>
-                  <div class="metric-label">Blood Pressure</div>
-                  <div class="metric-value">${patient.bloodPressure}</div>
-                </div>
-              </div>
-              
-              <h4>General</h4>
-              <div class="general-info">
-                <div class="info-item">
-                  <span class="info-label">Sex</span>
-                  <span class="info-value">${patient.sex}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">Check-Up Frequency</span>
-                  <span class="info-value">${patient.checkUpFrequency}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="tab-content" id="complication-risk-content">
-              <div class="risk-assessment">
-                <div class="risk-item">
-                  <span class="info-label">Retinopathy Risk</span>
-                  <span class="risk-badge ${patient.retinopathyRisk.toLowerCase()}-risk">${patient.retinopathyRisk}</span>
-                </div>
-                <div class="risk-item">
-                  <span class="info-label">Neuropathy Risk</span>
-                  <span class="risk-badge ${patient.neuropathyRisk.toLowerCase()}-risk">${patient.neuropathyRisk}</span>
-                </div>
-                <div class="risk-item">
-                  <span class="info-label">Cardiovascular Risk</span>
-                  <span class="risk-badge ${patient.cardiovascularRisk.toLowerCase()}-risk">${patient.cardiovascularRisk}</span>
-                </div>
-              </div>
-              
-              ${
-                patient.riskLevel === "High Risk"
-                  ? `
-                <div class="risk-warning">
-                  <span class="warning-icon material-symbols-outlined">warning</span>
-                  <span class="warning-text">Multiple risk factors detected including elevated glucose and blood pressure.</span>
-                </div>
-              `
-                  : ""
-              }
-            </div>
-            
-            <div class="tab-content" id="prescription-content">
-              <div class="prescription-empty" id="prescriptionEmpty">
-                <p>Click here to generate prescription</p>
-                <button class="generate-prescription-btn" onclick="generatePrescription('${patient.patientId}')">Generate Prescription</button>
-              </div>
-              
-              <div class="prescription-content" id="prescriptionGenerated">
-                <h4>Prescribed Medications</h4>
-                <table class="prescription-table">
-                  <thead>
-                    <tr>
-                      <th>Medication</th>
-                      <th>Dosage</th>
-                      <th>Frequency</th>
-                      <th>Duration</th>
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Metformin</td>
-                      <td>500mg</td>
-                      <td>2x daily</td>
-                      <td>3 months</td>
-                      <td>Take with meals</td>
-                    </tr>
-                    <tr>
-                      <td>Lisinopril</td>
-                      <td>10mg</td>
-                      <td>1x daily</td>
-                      <td>3 months</td>
-                      <td>Monitor blood pressure</td>
-                    </tr>
-                    <tr>
-                      <td>Atorvastatin</td>
-                      <td>20mg</td>
-                      <td>1x daily</td>
-                      <td>3 months</td>
-                      <td>Take in evening</td>
-                    </tr>
-                  </tbody>
-                </table>
-                
-                <div class="lifestyle-recommendations">
-                  <h4>Lifestyle Recommendations</h4>
-                  <ul>
-                    <li>Exercise: Low-impact activities</li>
-                    <li>Diet: Minimize carbohydrates</li>
-                    <li>Hydration: Minimum 8 glasses</li>
-                    <li>Stress: Meditation or light music</li>
-                  </ul>
-                </div>
-                
-                <div class="doctor-notes">
-                  <h4>Doctor's Additional Notes</h4>
-                  <p>⚠️ Suggestion: Consider insulin dosage reassessment in 2 weeks based on testing blood sugar patterns.</p>
-                </div>
-                
-                <div class="prescription-actions">
-                  <button class="btn-cancel" onclick="hidePatientDetailsModal()">Cancel</button>
-                  <button class="btn-save">Save Prescription</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `
-
-    document.body.insertAdjacentHTML("beforeend", modalHtml)
-
-    const modal = document.getElementById("patientDetailsModal")
-    modal.style.display = "flex"
-  }
-
-  // Switch tabs in patient details modal
-  window.switchTab = (tabName) => {
-    // Remove active class from all tabs and content
-    document.querySelectorAll(".tab-button").forEach((btn) => btn.classList.remove("active"))
-    document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"))
-
-    // Add active class to clicked tab
-    event.target.classList.add("active")
-
-    // Show corresponding content
-    const contentMap = {
-      "patient-info": "patient-info-content",
-      "complication-risk": "complication-risk-content",
-      prescription: "prescription-content",
-    }
-
-    document.getElementById(contentMap[tabName]).classList.add("active")
-  }
-
-  // Generate prescription
-  window.generatePrescription = (patientId) => {
-    console.log("💊 Generating prescription for:", patientId)
-
-    // Hide empty state and show prescription content
-    document.getElementById("prescriptionEmpty").style.display = "none"
-    document.getElementById("prescriptionGenerated").classList.add("show")
-
-    showNotification("Prescription generated successfully!", "success")
-  }
-
-  // Hide patient details modal
-  window.hidePatientDetailsModal = () => {
-    const modal = document.getElementById("patientDetailsModal")
-    if (modal) {
-      modal.remove()
     }
   }
 
@@ -698,7 +468,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const moderateRiskCount = patientsData.filter((p) => p.riskLevel === "Moderate Risk").length
     const lowRiskCount = patientsData.filter((p) => p.riskLevel === "Low Risk").length
 
-    // Update stat cards (if elements exist)
     const statCards = document.querySelectorAll(".stat-value")
     if (statCards.length >= 4) {
       statCards[0].textContent = totalPatients
@@ -708,51 +477,424 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Show notification
-  function showNotification(message, type = "info") {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll(".notification")
-    existingNotifications.forEach((notif) => notif.remove())
+  // Show prescription success modal
+  function showPrescriptionSuccessModal() {
+    const modal = document.getElementById("prescriptionSuccessModal")
+    modal.classList.add("show")
+    document.body.style.overflow = "hidden"
 
-    const notification = document.createElement("div")
-    notification.className = "notification"
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: ${type === "success" ? "#10b981" : type === "error" ? "#ef4444" : "#3b82f6"};
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      z-index: 3000;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      max-width: 300px;
-    `
-    notification.textContent = message
-    document.body.appendChild(notification)
-
-    // Animate in
+    // Auto close after 3 seconds
     setTimeout(() => {
-      notification.style.transform = "translateX(0)"
-    }, 100)
-
-    // Remove after 4 seconds
-    setTimeout(() => {
-      notification.style.transform = "translateX(100%)"
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification)
-        }
-      }, 300)
-    }, 4000)
+      closePrescriptionSuccessModal()
+    }, 3000)
   }
 
-  // Initialize table with sample data
+  function closePrescriptionSuccessModal() {
+    const modal = document.getElementById("prescriptionSuccessModal")
+    modal.classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
+
+  // Add as global function
+  window.closePrescriptionSuccessModal = closePrescriptionSuccessModal
+
+  // ===== PATIENT DETAILS MODAL FUNCTIONALITY =====
+
+  // Patient Details Modal Functionality
+  function openPatientDetailsModal(button) {
+    console.log("Opening modal...") // Debug log
+
+    // Get data from button attributes
+    const patientId = button.getAttribute("data-patient-id")
+    const patientNumber = button.getAttribute("data-patient-number")
+    const age = button.getAttribute("data-age")
+    const sex = button.getAttribute("data-sex")
+    const riskLevel = button.getAttribute("data-risk")
+    const frequency = button.getAttribute("data-frequency")
+    const complications = button.getAttribute("data-complications")
+    const bmi = button.getAttribute("data-bmi")
+    const glucose = button.getAttribute("data-glucose")
+    const bp = button.getAttribute("data-bp")
+    const retinopathy = button.getAttribute("data-retinopathy")
+    const neuropathy = button.getAttribute("data-neuropathy")
+    const cardiovascular = button.getAttribute("data-cardiovascular")
+
+    // Update patient header information
+    document.getElementById("patientNumber").textContent = `#${patientNumber}`
+    document.getElementById("patientId").textContent = patientId
+    document.getElementById("patientComplications").textContent = complications
+
+    // Update risk badge
+    const riskBadge = document.getElementById("patientRiskBadge")
+    riskBadge.textContent = riskLevel
+    riskBadge.className = "risk-badge-header"
+
+    if (riskLevel === "High Risk") {
+      riskBadge.classList.add("high-risk")
+    } else if (riskLevel === "Moderate Risk") {
+      riskBadge.classList.add("moderate-risk")
+    } else if (riskLevel === "Low Risk") {
+      riskBadge.classList.add("low-risk")
+    }
+
+    // Update health metrics
+    document.getElementById("patientBMI").textContent = bmi
+    document.getElementById("patientGlucose").textContent = `${glucose} mg/dL`
+    document.getElementById("patientBP").textContent = bp
+
+    // Update general information
+    document.getElementById("patientAge").textContent = `${age} yrs old`
+    document.getElementById("patientSex").textContent = sex
+    document.getElementById("patientFrequency").textContent = frequency
+
+    // Update risk assessments
+    updateRiskBadge("retinopathyRisk", retinopathy)
+    updateRiskBadge("neuropathyRisk", neuropathy)
+    updateRiskBadge("cardiovascularRisk", cardiovascular)
+
+    // Reset prescription tab to empty state
+    document.getElementById("prescriptionEmpty").style.display = "block"
+    document.getElementById("prescriptionGenerated").style.display = "none"
+    document.getElementById("prescriptionSaved").style.display = "none"
+
+    // Clear doctor notes input
+    document.getElementById("doctorNotesInput").value = ""
+
+    // Reset to first tab
+    document.querySelectorAll(".tab-button").forEach((btn) => btn.classList.remove("active"))
+    document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"))
+    document.querySelector('[data-tab="patient-info"]').classList.add("active")
+    document.getElementById("patient-info").classList.add("active")
+
+    // Show the modal
+    const modal = document.getElementById("patientDetailsModal")
+    modal.classList.add("show")
+    document.body.style.overflow = "hidden"
+
+    console.log("Modal should be visible now") // Debug log
+  }
+
+  function updateRiskBadge(elementId, riskLevel) {
+    const element = document.getElementById(elementId)
+    element.textContent = riskLevel
+    element.className = "risk-badge"
+
+    if (riskLevel === "High") {
+      element.classList.add("high-risk")
+    } else if (riskLevel === "Moderate") {
+      element.classList.add("moderate-risk")
+    } else if (riskLevel === "Low") {
+      element.classList.add("low-risk")
+    }
+  }
+
+  function closePatientDetailsModal() {
+    document.getElementById("patientDetailsModal").classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
+
+  function generatePrescription() {
+    const generateBtn = document.getElementById("generatePrescriptionBtn")
+    const loadingOverlay = document.getElementById("prescriptionLoadingOverlay")
+
+    // Disable button and show loading
+    generateBtn.disabled = true
+    loadingOverlay.classList.add("show")
+
+    // Simulate prescription generation with loading delay
+    setTimeout(() => {
+      document.getElementById("prescriptionEmpty").style.display = "none"
+      document.getElementById("prescriptionGenerated").style.display = "block"
+      document.getElementById("prescriptionSaved").style.display = "none"
+
+      // Hide loading and re-enable button
+      loadingOverlay.classList.remove("show")
+      generateBtn.disabled = false
+
+      // Show prescription success modal instead of banner
+      showPrescriptionSuccessModal()
+    }, 2000) // 2 second loading delay
+  }
+
+  function savePrescription() {
+    // Show save confirmation modal instead of direct save
+    document.getElementById("saveConfirmationModal").classList.add("show")
+    document.body.style.overflow = "hidden"
+  }
+
+  function confirmSavePrescription() {
+    // Get doctor's notes
+    const doctorNotes = document.getElementById("doctorNotesInput").value.trim()
+
+    // Update saved notes display
+    const savedNotesText = document.getElementById("savedNotesText")
+    if (doctorNotes) {
+      savedNotesText.textContent = doctorNotes
+    } else {
+      savedNotesText.textContent = "No additional notes provided."
+    }
+
+    // Hide the generated state and show saved state
+    document.getElementById("prescriptionGenerated").style.display = "none"
+    document.getElementById("prescriptionSaved").style.display = "block"
+
+    // Close confirmation modal
+    closeSaveConfirmationModal()
+
+    // Show success modal
+    showSuccessModal("Saved!", "Prescription saved successfully!")
+  }
+
+  function deletePrescription() {
+    // Show delete confirmation modal instead of browser confirm
+    document.getElementById("deleteConfirmationModal").classList.add("show")
+    document.body.style.overflow = "hidden"
+  }
+
+  function confirmDeletePrescription() {
+    document.getElementById("prescriptionSaved").style.display = "none"
+    document.getElementById("prescriptionEmpty").style.display = "block"
+
+    // Clear doctor notes
+    document.getElementById("doctorNotesInput").value = ""
+
+    // Close confirmation modal
+    closeDeleteConfirmationModal()
+
+    // Show success modal
+    showSuccessModal("Deleted!", "Prescription deleted successfully!")
+  }
+
+  // Modal control functions
+  function closeSaveConfirmationModal() {
+    document.getElementById("saveConfirmationModal").classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
+
+  function closeDeleteConfirmationModal() {
+    document.getElementById("deleteConfirmationModal").classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
+
+  function showSuccessModal(message, title) {
+    document.getElementById("successMessage").textContent = message
+    document.getElementById("successTitle").textContent = title
+    document.getElementById("successModal").classList.add("show")
+    document.body.style.overflow = "hidden"
+
+    // Auto close after 3 seconds
+    setTimeout(() => {
+      closeSuccessModal()
+    }, 3000)
+  }
+
+  function closeSuccessModal() {
+    document.getElementById("successModal").classList.remove("show")
+    document.body.style.overflow = "auto"
+  }
+
+  // Add these as global functions
+  window.closeSaveConfirmationModal = closeSaveConfirmationModal
+  window.closeDeleteConfirmationModal = closeDeleteConfirmationModal
+  window.confirmSavePrescription = confirmSavePrescription
+  window.confirmDeletePrescription = confirmDeletePrescription
+  window.closeSuccessModal = closeSuccessModal
+
+  // Initialize patient details modal functionality
+  function initializePatientDetailsModal() {
+    console.log("DOM loaded, initializing patient modal...") // Debug log
+
+    // Add click event listeners to all view buttons
+    const viewButtons = document.querySelectorAll(".view-btn")
+    viewButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        console.log("View button clicked") // Debug log
+        openPatientDetailsModal(this)
+      })
+    })
+
+    // Tab functionality
+    const tabButtons = document.querySelectorAll(".tab-button")
+    const tabContents = document.querySelectorAll(".tab-content")
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const targetTab = button.getAttribute("data-tab")
+
+        // Remove active class from all tabs and contents
+        tabButtons.forEach((btn) => btn.classList.remove("active"))
+        tabContents.forEach((content) => content.classList.remove("active"))
+
+        // Add active class to clicked tab and corresponding content
+        button.classList.add("active")
+        document.getElementById(targetTab).classList.add("active")
+      })
+    })
+
+    // Generate prescription button
+    const generateBtn = document.getElementById("generatePrescriptionBtn")
+    if (generateBtn) {
+      generateBtn.addEventListener("click", generatePrescription)
+    }
+
+    // Cancel prescription button
+    const cancelBtn = document.getElementById("cancelPrescriptionBtn")
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", () => {
+        console.log("Cancel prescription button clicked")
+        // Handle cancel prescription logic here
+      })
+    }
+
+    // Save prescription button
+    const saveBtn = document.getElementById("savePrescriptionBtn")
+    if (saveBtn) {
+      saveBtn.addEventListener("click", savePrescription)
+    }
+
+    // Close modal when clicking close button
+    const closeBtn = document.getElementById("patientDetailsCloseBtn")
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closePatientDetailsModal)
+    }
+
+    // Close modal when clicking outside
+    const modal = document.getElementById("patientDetailsModal")
+    if (modal) {
+      modal.addEventListener("click", function (e) {
+        if (e.target === this) {
+          closePatientDetailsModal()
+        }
+      })
+    }
+
+    // Close modal with Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && document.getElementById("patientDetailsModal").classList.contains("show")) {
+        closePatientDetailsModal()
+      }
+    })
+
+    // Add event listener for delete button
+    const deleteBtn = document.getElementById("deletePrescriptionBtn")
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", deletePrescription)
+    }
+
+    // Print button functionality
+    const printButtons = document.querySelectorAll(".print-btn")
+    printButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        console.log("🖨️ Print button clicked")
+        printPrescription()
+      })
+    })
+
+    console.log("Patient modal initialized successfully") // Debug log
+  }
+
+  // Print prescription function
+  function printPrescription() {
+    // Create a new window for printing
+    const printWindow = window.open("", "_blank", "width=800,height=600")
+
+    // Get prescription content
+    const patientId = document.getElementById("patientId").textContent
+    const patientComplications = document.getElementById("patientComplications").textContent
+    const patientAge = document.getElementById("patientAge").textContent
+    const patientSex = document.getElementById("patientSex").textContent
+
+    // Get medications table
+    const medicationsTable = document.querySelector(".medications-table").outerHTML
+
+    // Get lifestyle recommendations
+    const lifestyleItems = document.querySelectorAll(".lifestyle-item")
+    let lifestyleHTML = ""
+    lifestyleItems.forEach((item) => {
+      const label = item.querySelector(".lifestyle-label").textContent
+      const value = item.querySelector(".lifestyle-value").textContent
+      lifestyleHTML += `<p><strong>${label}:</strong> ${value}</p>`
+    })
+
+    // Get doctor's notes
+    const doctorNotes = document.getElementById("savedNotesText")
+      ? document.getElementById("savedNotesText").textContent
+      : document.getElementById("doctorNotesInput").value || "No additional notes provided."
+
+    // Create print content
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Prescription - ${patientId}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+          .patient-info { margin-bottom: 20px; }
+          .section { margin-bottom: 25px; }
+          .section h3 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #f5f5f5; }
+          .notes { background-color: #f9f9f9; padding: 15px; border-radius: 5px; }
+          @media print { body { margin: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>PRESCRIPTION</h1>
+          <h2>Diabetech Medical Center</h2>
+        </div>
+        
+        <div class="patient-info">
+          <h3>Patient Information</h3>
+          <p><strong>Patient ID:</strong> ${patientId}</p>
+          <p><strong>Age:</strong> ${patientAge}</p>
+          <p><strong>Sex:</strong> ${patientSex}</p>
+          <p><strong>Complications:</strong> ${patientComplications}</p>
+          <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        </div>
+        
+        <div class="section">
+          <h3>Prescribed Medications</h3>
+          ${medicationsTable}
+        </div>
+        
+        <div class="section">
+          <h3>Lifestyle Recommendations</h3>
+          ${lifestyleHTML}
+        </div>
+        
+        <div class="section">
+          <h3>Doctor's Additional Notes</h3>
+          <div class="notes">
+            ${doctorNotes}
+          </div>
+        </div>
+        
+        <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #666;">
+          Generated on ${new Date().toLocaleString()} | Diabetech Medical System
+        </div>
+      </body>
+      </html>
+    `
+
+    // Write content to print window
+    printWindow.document.write(printContent)
+    printWindow.document.close()
+
+    // Wait for content to load then print
+    printWindow.onload = () => {
+      printWindow.print()
+      printWindow.close()
+    }
+
+    console.log("✅ Prescription sent to printer")
+  }
+
+  // Initialize table with sample data and modal functionality
   refreshPatientsTable()
+  initializePatientDetailsModal()
 
   console.log("✅ Patients page functionality initialized")
 })

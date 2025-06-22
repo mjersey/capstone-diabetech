@@ -36,7 +36,7 @@
   background: #f8fafc;
   color: #64748b;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 30px;
   padding: 12px 20px;
   cursor: pointer;
   font-size: 14px;
@@ -57,7 +57,7 @@
   background: #dc2626;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   padding: 12px 20px;
   cursor: pointer;
   font-size: 14px;
@@ -276,6 +276,15 @@
 
 .view-btn {
   color: #3b82f6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .view-btn:hover {
@@ -296,7 +305,7 @@
   font-size: 18px;
 }
 
-/* Modal Overlay */
+/* Modal Overlay - IMPORTANT: Make sure this shows properly */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -307,27 +316,27 @@
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: 20px;
 }
 
 .modal-overlay.show {
-  display: flex;
+  display: flex !important;
 }
 
 /* Patient Details Modal */
-.patient-details-modal .modal {
+.patient-details-modal-content {
   background: white;
   border-radius: 16px;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   max-height: 90vh;
   overflow: hidden;
   position: relative;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.modal-content {
+.patient-details-modal-content .modal-content {
   padding: 32px;
   overflow-y: auto;
   max-height: calc(90vh - 64px);
@@ -377,16 +386,16 @@
 }
 
 .patient-number {
-  width: 60px;
-  height: 60px;
-  background: #dc2626;
-  color: white;
+  width: 80px;
+  height: 80px;
+  background: #fee2e2;
+  color: #dc2626;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 24px;
   flex-shrink: 0;
 }
 
@@ -396,7 +405,7 @@
 
 .patient-info h3 {
   margin: 0 0 8px 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: #1e293b;
 }
@@ -413,7 +422,7 @@
 }
 
 .risk-badge-header {
-  padding: 8px 20px;
+  padding: 12px 24px;
   border-radius: 24px;
   font-size: 14px;
   font-weight: 600;
@@ -437,45 +446,49 @@
   color: #16a34a;
 }
 
-/* Modal Tabs */
+/* Modal Tabs - Updated Design */
 .modal-tabs {
   display: flex;
-  border-bottom: 2px solid #f1f5f9;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
   margin-bottom: 32px;
-  gap: 8px;
+  gap: 4px;
 }
 
 .tab-button {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 16px 24px;
+  padding: 12px 24px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 500;
   color: #64748b;
-  border-bottom: 3px solid transparent;
+  border-radius: 8px;
   transition: all 0.2s;
-  border-radius: 8px 8px 0 0;
+  flex: 1;
+  text-align: center;
 }
 
 .tab-button.active {
-  color: #dc2626;
-  border-bottom-color: #dc2626;
-  background: #fef2f2;
+  color: #1e293b;
+  background: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  font-weight: 600;
 }
 
 .tab-button:hover:not(.active) {
   color: #374151;
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.5);
 }
 
-/* Tab Content */
+/* Tab Content - IMPORTANT: Proper isolation */
 .tab-content {
-  display: none;
+  display: none !important;
 }
 
 .tab-content.active {
-  display: block;
+  display: block !important;
 }
 
 /* Health Metrics */
@@ -538,7 +551,7 @@
   color: #1e293b;
 }
 
-/* General Info */
+/* General Info - Updated to use lines instead of boxes */
 .general-section h4 {
   font-size: 20px;
   font-weight: 600;
@@ -547,19 +560,21 @@
 }
 
 .general-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-.info-item {
+.info-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.info-line:last-child {
+  border-bottom: none;
 }
 
 .info-label {
@@ -649,19 +664,22 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.prescription-content {
-  display: none;
+/* Generated Prescription Styles */
+.prescription-generated {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.prescription-content.show {
-  display: block;
+.prescription-section {
+  background: white;
 }
 
 .prescription-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .prescription-header h4 {
@@ -692,91 +710,124 @@
   color: #475569;
 }
 
-.prescription-table {
+/* Medications Table */
+.medications-table-container {
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.medications-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 32px;
   font-size: 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  overflow: hidden;
 }
 
-.prescription-table th,
-.prescription-table td {
+.medications-table thead {
+  background: #f1f5f9;
+}
+
+.medications-table th {
   padding: 16px 12px;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.prescription-table th {
-  background: #f8fafc;
   font-weight: 600;
   color: #374151;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
 }
 
-.prescription-table tbody tr:last-child td {
+.medications-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #64748b;
+  background: white;
+}
+
+.medications-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.lifestyle-recommendations {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
-  border: 1px solid #e2e8f0;
-}
-
-.lifestyle-recommendations h4 {
-  margin: 0 0 16px 0;
-  color: #1e293b;
-  font-size: 18px;
+/* Lifestyle Section */
+.lifestyle-section h4 {
+  font-size: 20px;
   font-weight: 600;
+  color: #1e293b;
+  margin: 32px 0 20px 0;
 }
 
-.lifestyle-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+.lifestyle-recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .lifestyle-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  padding: 16px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.lifestyle-item:last-child {
+  border-bottom: none;
 }
 
 .lifestyle-label {
   font-weight: 500;
-  color: #374151;
+  color: #64748b;
+  font-size: 16px;
 }
 
 .lifestyle-value {
   font-weight: 600;
   color: #1e293b;
-  font-size: 14px;
+  font-size: 16px;
 }
 
-.doctor-notes {
+/* Notes Section */
+.notes-section h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+}
+
+.doctor-notes-input {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  min-height: 120px;
+  font-size: 15px;
+  color: #374151;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: all 0.2s;
+}
+
+.doctor-notes-input:focus {
+  outline: none;
+  border-color: #dc2626;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.doctor-notes-input::placeholder {
+  color: #94a3b8;
+}
+
+.doctor-notes-display {
   background: #fffbeb;
   border: 1px solid #fbbf24;
   border-radius: 12px;
   padding: 20px;
-  margin-bottom: 32px;
 }
 
-.doctor-notes h4 {
-  margin: 0 0 12px 0;
-  color: #92400e;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.doctor-notes-content {
+.note-suggestion {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -789,19 +840,47 @@
   margin-top: 2px;
 }
 
-.doctor-notes p {
-  margin: 0;
+.note-text {
   color: #92400e;
   font-size: 15px;
   line-height: 1.5;
+  margin: 0;
 }
 
+/* Suggestion Box */
+.suggestion-box {
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.suggestion-icon {
+  color: #f59e0b;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.suggestion-text {
+  color: #92400e;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Prescription Action Buttons */
 .prescription-actions {
   display: flex;
   gap: 16px;
   justify-content: flex-end;
   padding-top: 24px;
   border-top: 1px solid #e2e8f0;
+  margin-top: 32px;
 }
 
 .btn-cancel {
@@ -838,9 +917,239 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+/* Saved Prescription State */
+.prescription-saved {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.prescription-saved-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 32px;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Confirmation Modal */
+.confirmation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.confirmation-modal-overlay.show {
+  display: flex !important;
+}
+
+.confirmation-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.confirmation-modal .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.confirmation-modal .close-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.success-indicator {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.success-indicator .check-icon {
+  width: 20px;
+  height: 20px;
+  background: #16a34a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.confirmation-modal h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 32px 0;
+  line-height: 1.3;
+}
+
+.confirmation-modal-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-modal-cancel {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px 32px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.btn-modal-cancel:hover {
+  background: #e5e7eb;
+}
+
+.btn-modal-confirm {
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 32px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.btn-modal-confirm:hover {
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-modal-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 32px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.btn-modal-delete:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading Effect */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  z-index: 1000;
+}
+
+.loading-overlay.show {
+  display: flex !important;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #dc2626;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-left: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.generate-prescription-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generate-prescription-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-  .modal-content {
+  .patient-details-modal-content .modal-content {
     padding: 20px;
   }
 
@@ -871,7 +1180,106 @@
     flex-direction: column;
   }
 
-  .lifestyle-grid {
-    grid-template-columns: 1fr;
+  .medications-table-container {
+    overflow-x: auto;
   }
+}
+
+/* Success Modal for Prescription Generated */
+.prescription-success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
+  padding: 20px;
+}
+
+.prescription-success-modal-overlay.show {
+  display: flex !important;
+}
+
+.prescription-success-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.prescription-success-modal .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.prescription-success-modal .close-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.prescription-success-badge {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.prescription-success-badge .check-icon {
+  width: 20px;
+  height: 20px;
+  background: #16a34a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.prescription-success-modal h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Remove the old success notification banner styles */
+.success-notification-banner {
+  display: none !important;
 }
