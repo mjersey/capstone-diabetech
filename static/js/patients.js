@@ -1,50 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🏥 Patients page loaded successfully!")
 
-  // Navigation functionality for sidebar
-  const navItems = document.querySelectorAll(".nav-item:not(#signOutBtn)")
-
-  navItems.forEach((item) => {
-    item.addEventListener("click", function () {
-      // Remove active class from all items
-      navItems.forEach((nav) => nav.classList.remove("active"))
-
-      // Add active class to clicked item
-      this.classList.add("active")
-
-      // Get the navigation text
-      const navText = this.querySelector(".nav-text").textContent
-
-      // Navigate to different pages
-      navigateToPage(navText)
-    })
-  })
-
-  function navigateToPage(section) {
-    console.log("Navigating to:", section)
-
-    switch (section) {
-      case "Dashboard":
-        window.location.href = "/dashboard"
-        break
-      case "Prescription":
-        console.log("Prescription page not yet implemented")
-        break
-      case "Patients":
-        // Already on patients page
-        break
-      case "Analytics":
-        console.log("Analytics page not yet implemented")
-        break
-      case "Insights":
-        console.log("Insights page not yet implemented")
-        break
-      case "Settings":
-        console.log("Settings page not yet implemented")
-        break
-    }
-  }
-
   // Elements
   const uploadBtn = document.getElementById("uploadBtn")
   const addPatientBtn = document.getElementById("addPatientBtn")
@@ -159,14 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle file upload
   function handleFileUpload(file) {
     console.log("📊 Processing file upload:", file.name)
-    // Remove: showNotification("Processing file upload...", "info")
 
     setTimeout(() => {
       console.log("File uploaded successfully! Processing patient data...")
-      // Remove: showNotification("File uploaded successfully! Processing patient data...", "success")
       setTimeout(() => {
         console.log("Patient data imported successfully!")
-        // Remove: showNotification("Patient data imported successfully!", "success")
         refreshPatientsTable()
       }, 2000)
     }, 1500)
@@ -304,8 +257,6 @@ document.addEventListener("DOMContentLoaded", () => {
     patientsData.push(newPatient)
     refreshPatientsTable()
     window.hideAddPatientModal()
-    // In handleAddPatient function, remove:
-    // showNotification("Patient added successfully!", "success")
   }
 
   // Show filter modal
@@ -384,8 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.applyFilters = () => {
     console.log("🔧 Applying filters...")
     window.hideFilterModal()
-    // In applyFilters function, remove:
-    // showNotification("Filters applied successfully!", "success")
   }
 
   // Clear filters
@@ -393,8 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🧹 Clearing filters...")
     refreshPatientsTable()
     window.hideFilterModal()
-    // In clearFilters function, remove:
-    // showNotification("Filters cleared!", "info")
   }
 
   // Refresh patients table
@@ -455,8 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
         patientsData.splice(index, 1)
         refreshPatientsTable()
         updateStats()
-        // In deletePatient function, remove:
-        // showNotification("Patient deleted successfully!", "success")
       }
     }
   }

@@ -160,6 +160,39 @@ body {
   color: #64748b;
   font-weight: 500;
   position: relative;
+  text-decoration: none !important;
+  border: none;
+}
+
+/* Ensure anchor tags specifically don't have underlines */
+a.nav-item {
+  text-decoration: none !important;
+  color: #64748b;
+}
+
+a.nav-item:hover {
+  text-decoration: none !important;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+a.nav-item:visited {
+  text-decoration: none !important;
+  color: #64748b;
+}
+
+a.nav-item:active {
+  text-decoration: none !important;
+}
+
+a.nav-item:focus {
+  text-decoration: none !important;
+}
+
+a.nav-item.active {
+  background-color: #7c1d21;
+  color: white;
+  text-decoration: none !important;
 }
 
 .nav-item:hover {
@@ -700,9 +733,9 @@ body {
 
 /* Profile Modal */
 .profile-modal {
-  max-width: 900px; 
+  max-width: 900px;
   width: 90%;
-  max-height: 85vh; 
+  max-height: 85vh;
   overflow-y: auto;
 }
 
@@ -808,7 +841,7 @@ body {
 
 .profile-email {
   font-size: 13px;
-  color: #64748b; 
+  color: #64748b;
 }
 
 .profile-join-date {

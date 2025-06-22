@@ -1,16 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Elements
-  const sidebar = document.getElementById("sidebar")
   const signOutBtn = document.getElementById("signOutBtn")
   const modalOverlay = document.getElementById("modalOverlay")
   const modalCancel = document.getElementById("modalCancel")
   const modalConfirm = document.getElementById("modalConfirm")
-  const navItems = document.querySelectorAll(".nav-item:not(#signOutBtn)")
 
   // Profile modal elements
   const userProfile = document.getElementById("userProfile")
   const profileModalOverlay = document.getElementById("profileModalOverlay")
   const profileCloseBtn = document.getElementById("profileCloseBtn")
+
+  // Sidebar element
+  const sidebar = document.getElementById("sidebar")
 
   // Profile modal functionality
   userProfile.addEventListener("click", () => {
@@ -254,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         if (data.success) {
           hidePasswordChangeModal()
-          handlePasswordChangeSuccess()
+          window.handlePasswordChangeSuccess()
         } else {
           errorDiv.textContent = data.message || "Invalid OTP. Please try again."
           errorDiv.style.display = "block"
@@ -402,23 +403,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 4000)
   }
 
-  // Navigation
-  navItems.forEach((item) => {
-    item.addEventListener("click", function () {
-      // Remove active class from all items
-      navItems.forEach((nav) => nav.classList.remove("active"))
-
-      // Add active class to clicked item
-      this.classList.add("active")
-
-      // Get the navigation text
-      const navText = this.querySelector(".nav-text").textContent
-
-      // Update page content based on navigation
-      updatePageContent(navText)
-    })
-  })
-
   // Sign out functionality
   signOutBtn.addEventListener("click", () => {
     showModal()
@@ -483,37 +467,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect anyway
         window.location.href = "/sign-in"
       })
-  }
-
-  function updatePageContent(section) {
-    console.log("Navigating to:", section)
-
-    // Update page title in header
-    document.querySelector(".page-title").textContent = section
-
-    // Here you can implement different content for each section
-    switch (section) {
-      case "Dashboard":
-        // Show dashboard content (already visible)
-        window.location.href = "/dashboard"
-        break
-      case "Prescription":
-        // Load prescription management content
-        break
-      case "Patients":
-        // Navigate to patients page
-        window.location.href = "/patients"
-        break
-      case "Analytics":
-        // Load analytics content
-        break
-      case "Insights":
-        // Load insights content
-        break
-      case "Settings":
-        // Load settings content
-        break
-    }
   }
 
   // Search functionality
