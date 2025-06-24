@@ -1036,6 +1036,230 @@ def patients():
   
   return render_template('patients.html', user=user_data)
 
+# Add this route to your existing Flask app.py file
+
+@app.route('/api/add-patient', methods=['POST'])
+def add_patient():
+    try:
+        print("=== ADD PATIENT REQUEST ===")
+        
+        # Check if user is logged in
+        if 'user_id' not in session:
+            return jsonify({'success': False, 'message': 'User not authenticated'}), 401
+        
+        data = request.get_json()
+        user_id = session['user_id']
+        
+        print(f"👤 Adding patient for user ID: {user_id}")
+        print(f"📋 Patient data: {data}")
+        
+        # Validate required fields
+        if not data.get('patientId'):
+            return jsonify({'success': False, 'message': 'Patient ID is required'}), 400
+        
+        basic_info = data.get('basicInfo', {})
+        if not basic_info.get('sex') or not basic_info.get('age'):
+            return jsonify({'success': False, 'message': 'Sex and age are required'}), 400
+        
+        # Connect to database
+        connection = get_db_connection()
+        if not connection:
+            return jsonify({'success': False, 'message': 'Database connection error'}), 500
+        
+        try:
+            cursor = connection.cursor()
+            
+            # Check if patient ID already exists
+            cursor.execute("SELECT id FROM patients WHERE patient_id = %s", (data['patientId'],))
+            existing_patient = cursor.fetchone()
+            
+            if existing_patient:
+                return jsonify({'success': False, 'message': 'Patient ID already exists'}), 400
+            
+            # Calculate risk level if not provided
+            risk_level = data.get('riskLevel')
+            if not risk_level:
+                risk_level = calculate_risk_level(data)
+            
+            # Prepare blood pressure string
+            bp_data = data.get('health', {}).get('bloodPressure', {})
+            blood_pressure = None
+            if bp_data.get('systolic') and bp_data.get('diastolic'):
+                blood_pressure = f"{bp_data['systolic']}/{bp_data['diastolic']}"
+            
+            # Prepare complications string
+            notes_data = data.get('notes', {})
+            complications = []
+            if notes_data.get('complications'):
+                complications.append(notes_data['complications'])
+            if not complications:
+                complications.append('None')
+            complications_str = ' / '.join(complications)
+            
+            # Insert patient into database
+            insert_query = """
+                INSERT INTO patients (
+                    patient_id, doctor_id, age, sex, smoking_status, date_of_birth,
+                    bmi, glucose_level, blood_pressure, physical_activity, 
+                    alcohol_consumption, stress_level, diet_type, sleep_duration,
+                    risk_level, checkup_frequency, complications, medical_history, 
+                    notes, created_at, updated_at
+                ) VALUES (
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                )
+            """
+            
+            now = datetime.now()
+            
+            cursor.execute(insert_query, (
+                data['patientId'],
+                user_id,
+                basic_info.get('age'),
+                basic_info.get('sex'),
+                basic_info.get('smokingStatus'),
+                basic_info.get('dateOfBirth') if basic_info.get('dateOfBirth') else None,
+                data.get('health', {}).get('bmi'),
+                data.get('health', {}).get('glucoseLevel'),
+                blood_pressure,
+                data.get('lifestyle', {}).get('physicalActivity'),
+                data.get('lifestyle', {}).get('alcoholConsumption'),
+                data.get('lifestyle', {}).get('stressLevel'),
+                data.get('lifestyle', {}).get('dietType'),
+                data.get('lifestyle', {}).get('sleepDuration'),
+                risk_level,
+                data.get('checkupFrequency'),
+                complications_str,
+                notes_data.get('medicalHistory'),
+                notes_data.get('notes'),
+                now,
+                now
+            ))
+            
+            patient_db_id = cursor.lastrowid
+            connection.commit()
+            
+            print(f"✅ Patient {data['patientId']} added successfully with DB ID: {patient_db_id}")
+            
+            # Return the created patient data
+            return jsonify({
+                'success': True,
+                'message': 'Patient added successfully!',
+                'patient': {
+                    'id': patient_db_id,
+                    'patientId': data['patientId'],
+                    'age': basic_info.get('age'),
+                    'sex': basic_info.get('sex'),
+                    'riskLevel': risk_level,
+                    'checkupFrequency': data.get('checkupFrequency'),
+                    'complications': complications_str,
+                    'bmi': data.get('health', {}).get('bmi'),
+                    'glucoseLevel': data.get('health', {}).get('glucoseLevel'),
+                    'bloodPressure': blood_pressure
+                }
+            })
+            
+        except mysql.connector.Error as err:
+            print(f"❌ Database error during patient creation: {err}")
+            connection.rollback()
+            return jsonify({'success': False, 'message': 'Failed to add patient'}), 500
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+                
+    except Exception as e:
+        print(f"❌ Add patient error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': 'Internal server error'}), 500
+
+def calculate_risk_level(patient_data):
+    """Calculate risk level based on patient data"""
+    risk_score = 0
+    
+    # Age factor
+    age = patient_data.get('basicInfo', {}).get('age', 0)
+    if age > 65:
+        risk_score += 3
+    elif age > 45:
+        risk_score += 2
+    elif age > 30:
+        risk_score += 1
+    
+    # Health factors
+    health = patient_data.get('health', {})
+    
+    # BMI
+    bmi = health.get('bmi')
+    if bmi:
+        if bmi > 35:
+            risk_score += 3
+        elif bmi > 30:
+            risk_score += 2
+        elif bmi > 25:
+            risk_score += 1
+    
+    # Glucose level
+    glucose = health.get('glucoseLevel')
+    if glucose:
+        if glucose > 180:
+            risk_score += 3
+        elif glucose > 140:
+            risk_score += 2
+        elif glucose > 100:
+            risk_score += 1
+    
+    # Blood pressure
+    bp = health.get('bloodPressure', {})
+    systolic = bp.get('systolic')
+    if systolic:
+        if systolic > 160:
+            risk_score += 3
+        elif systolic > 140:
+            risk_score += 2
+        elif systolic > 120:
+            risk_score += 1
+    
+    # Lifestyle factors
+    lifestyle = patient_data.get('lifestyle', {})
+    
+    # Smoking
+    smoking = patient_data.get('basicInfo', {}).get('smokingStatus')
+    if smoking == 'Smoker':
+        risk_score += 3
+    elif smoking == 'Former':
+        risk_score += 1
+    
+    # Physical activity
+    activity = lifestyle.get('physicalActivity')
+    if activity == 'Sedentary':
+        risk_score += 2
+    elif activity == 'Moderate':
+        risk_score += 1
+    
+    # Stress level
+    stress = lifestyle.get('stressLevel')
+    if stress == 'High':
+        risk_score += 2
+    elif stress == 'Moderate':
+        risk_score += 1
+    
+    # Alcohol consumption
+    alcohol = lifestyle.get('alcoholConsumption')
+    if alcohol == 'Heavy':
+        risk_score += 2
+    elif alcohol == 'Regularly':
+        risk_score += 1
+    
+    # Determine risk level
+    if risk_score >= 8:
+        return 'High Risk'
+    elif risk_score >= 4:
+        return 'Moderate Risk'
+    else:
+        return 'Low Risk'
+
 # NEW: Settings Page Route
 @app.route('/settings')
 def settings():

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/email-modal.css') }}">
+</head>
+<body>
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <!-- OTP Resent Notification -->
+            <div class="otp-resent-notification" id="otpNotification">
+                <div class="check-icon">✓</div>
+                <span>OTP sent successfully!</span>
+            </div>
+            
+            <div class="modal-header">
+                <h2>Email Confirmation</h2>
+                <p>Enter the OTP sent to <span id="userEmail">youremail@gmail.com</span><br>to confirm your identity.</p>
+            </div>
+            
+            <div class="otp-container">
+                <input type="text" class="otp-input" maxlength="1" id="otp1">
+                <input type="text" class="otp-input" maxlength="1" id="otp2">
+                <input type="text" class="otp-input" maxlength="1" id="otp3">
+                <input type="text" class="otp-input" maxlength="1" id="otp4">
+            </div>
+            
+            <div class="error-message" id="otpError"></div>
+            
+            <div class="timer" id="timer">5:00</div>
+            
+            <button class="confirm-btn" id="confirmBtn">Confirm</button>
+            
+            <button class="resend-btn" id="resendBtn">Resend</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/email-modal.js') }}"></script>
+</body>
+</html>

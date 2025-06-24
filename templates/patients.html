@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/patients.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modals/add-patient-modal.css') }}">
 </head>
 <body>
     <!-- Header -->
@@ -627,8 +628,11 @@
         </div>
     </div>
 
+    {% include 'modals/add-patient-modal.html' %}
+
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/patients.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modals/add-patient-modal.js') }}"></script>
 
     <!-- Add confirmation modals at the end of the body, before closing </body> tag -->
 
