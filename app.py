@@ -1036,7 +1036,7 @@ def patients():
   
   return render_template('patients.html', user=user_data)
 
-# Add this route to your existing Flask app.py file
+# Add Patient Route
 
 @app.route('/api/add-patient', methods=['POST'])
 def add_patient():
@@ -1076,62 +1076,92 @@ def add_patient():
             if existing_patient:
                 return jsonify({'success': False, 'message': 'Patient ID already exists'}), 400
             
-            # Calculate risk level if not provided
-            risk_level = data.get('riskLevel')
-            if not risk_level:
-                risk_level = calculate_risk_level(data)
+            # Calculate risk level
+            risk_level = calculate_risk_level(data)
             
-            # Prepare blood pressure string
-            bp_data = data.get('health', {}).get('bloodPressure', {})
-            blood_pressure = None
-            if bp_data.get('systolic') and bp_data.get('diastolic'):
-                blood_pressure = f"{bp_data['systolic']}/{bp_data['diastolic']}"
+            # Prepare data from different sections
+            health_data = data.get('health', {})
+            notes_data = data.get('notes', {})
+            lifestyle_data = data.get('lifestyle', {})
             
             # Prepare complications string
-            notes_data = data.get('notes', {})
             complications = []
-            if notes_data.get('complications'):
-                complications.append(notes_data['complications'])
+            if health_data.get('knownConditions'):
+                complications.append(health_data['knownConditions'])
             if not complications:
                 complications.append('None')
             complications_str = ' / '.join(complications)
             
-            # Insert patient into database
+            # Insert patient into database with all new fields
             insert_query = """
                 INSERT INTO patients (
                     patient_id, doctor_id, age, sex, smoking_status, date_of_birth,
-                    bmi, glucose_level, blood_pressure, physical_activity, 
-                    alcohol_consumption, stress_level, diet_type, sleep_duration,
-                    risk_level, checkup_frequency, complications, medical_history, 
-                    notes, created_at, updated_at
+                    diabetes_type, family_history, known_conditions, current_medications, allergies,
+                    height, weight, bmi, blood_pressure, fasting_glucose, glucose_level, blood_sugar_level, 
+                    hba1c, cholesterol_level, waist_circumference,
+                    physical_activity, alcohol_consumption, stress_level, diet_type, sleep_duration,
+                    risk_level, monitoring_frequency, checkup_frequency, initial_diagnosis, 
+                    last_checkup_date, next_followup_date, complications, medical_history, 
+                    remarks_notes, notes, created_at, updated_at
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s
                 )
             """
             
             now = datetime.now()
             
             cursor.execute(insert_query, (
+                # Basic patient info
                 data['patientId'],
                 user_id,
                 basic_info.get('age'),
                 basic_info.get('sex'),
                 basic_info.get('smokingStatus'),
                 basic_info.get('dateOfBirth') if basic_info.get('dateOfBirth') else None,
-                data.get('health', {}).get('bmi'),
-                data.get('health', {}).get('glucoseLevel'),
-                blood_pressure,
-                data.get('lifestyle', {}).get('physicalActivity'),
-                data.get('lifestyle', {}).get('alcoholConsumption'),
-                data.get('lifestyle', {}).get('stressLevel'),
-                data.get('lifestyle', {}).get('dietType'),
-                data.get('lifestyle', {}).get('sleepDuration'),
+                
+                # Medical history
+                health_data.get('diabetesType'),
+                health_data.get('familyHistory'),
+                health_data.get('knownConditions'),
+                health_data.get('currentMedications'),
+                health_data.get('allergies'),
+                
+                # Clinical measurements
+                health_data.get('height'),
+                health_data.get('weight'),
+                health_data.get('bmi'),
+                health_data.get('bloodPressure'),
+                health_data.get('fastingGlucose'),
+                health_data.get('fastingGlucose'),  # glucose_level for backward compatibility
+                health_data.get('bloodSugarLevel'),
+                health_data.get('hba1c'),
+                health_data.get('cholesterolLevel'),
+                health_data.get('waistCircumference'),
+                
+                # Lifestyle factors
+                lifestyle_data.get('physicalActivity'),
+                lifestyle_data.get('alcoholConsumption'),
+                lifestyle_data.get('stressLevel'),
+                lifestyle_data.get('dietType'),
+                lifestyle_data.get('sleepDuration'),
+                
+                # Risk and monitoring
                 risk_level,
-                data.get('checkupFrequency'),
+                notes_data.get('monitoringFrequency'),
+                notes_data.get('monitoringFrequency'),  # checkup_frequency for backward compatibility
+                notes_data.get('initialDiagnosis'),
+                notes_data.get('lastCheckupDate') if notes_data.get('lastCheckupDate') else None,
+                notes_data.get('nextFollowUp') if notes_data.get('nextFollowUp') else None,
+                
+                # Notes and documentation
                 complications_str,
-                notes_data.get('medicalHistory'),
-                notes_data.get('notes'),
+                health_data.get('knownConditions'),  # medical_history for backward compatibility
+                notes_data.get('remarksNotes'),
+                notes_data.get('remarksNotes'),  # notes for backward compatibility
+                
+                # Timestamps
                 now,
                 now
             ))
@@ -1144,25 +1174,25 @@ def add_patient():
             # Return the created patient data
             return jsonify({
                 'success': True,
-                'message': 'Patient added successfully!',
+                'message': 'Patient record saved successfully!',
                 'patient': {
                     'id': patient_db_id,
                     'patientId': data['patientId'],
                     'age': basic_info.get('age'),
                     'sex': basic_info.get('sex'),
                     'riskLevel': risk_level,
-                    'checkupFrequency': data.get('checkupFrequency'),
+                    'checkupFrequency': notes_data.get('monitoringFrequency', 'Not Set'),
                     'complications': complications_str,
-                    'bmi': data.get('health', {}).get('bmi'),
-                    'glucoseLevel': data.get('health', {}).get('glucoseLevel'),
-                    'bloodPressure': blood_pressure
+                    'bmi': health_data.get('bmi'),
+                    'fastingGlucose': health_data.get('fastingGlucose'),
+                    'bloodPressure': health_data.get('bloodPressure')
                 }
             })
             
         except mysql.connector.Error as err:
             print(f"❌ Database error during patient creation: {err}")
             connection.rollback()
-            return jsonify({'success': False, 'message': 'Failed to add patient'}), 500
+            return jsonify({'success': False, 'message': 'Failed to add patient record'}), 500
         finally:
             if connection.is_connected():
                 cursor.close()
@@ -1174,92 +1204,136 @@ def add_patient():
         traceback.print_exc()
         return jsonify({'success': False, 'message': 'Internal server error'}), 500
 
+# Enhanced risk calculation function
 def calculate_risk_level(patient_data):
-    """Calculate risk level based on patient data"""
+    """Enhanced risk calculation based on comprehensive patient data"""
     risk_score = 0
     
-    # Age factor
+    # Age factor (0-20 points)
     age = patient_data.get('basicInfo', {}).get('age', 0)
     if age > 65:
-        risk_score += 3
+        risk_score += 20
     elif age > 45:
-        risk_score += 2
+        risk_score += 15
     elif age > 30:
-        risk_score += 1
+        risk_score += 5
     
     # Health factors
     health = patient_data.get('health', {})
     
-    # BMI
+    # BMI (0-20 points)
     bmi = health.get('bmi')
     if bmi:
         if bmi > 35:
-            risk_score += 3
+            risk_score += 20
         elif bmi > 30:
-            risk_score += 2
+            risk_score += 15
         elif bmi > 25:
-            risk_score += 1
+            risk_score += 10
     
-    # Glucose level
-    glucose = health.get('glucoseLevel')
-    if glucose:
-        if glucose > 180:
-            risk_score += 3
-        elif glucose > 140:
-            risk_score += 2
-        elif glucose > 100:
-            risk_score += 1
+    # Glucose levels (0-25 points)
+    fasting_glucose = health.get('fastingGlucose')
+    if fasting_glucose:
+        if fasting_glucose > 180:
+            risk_score += 25
+        elif fasting_glucose > 140:
+            risk_score += 20
+        elif fasting_glucose > 100:
+            risk_score += 10
     
-    # Blood pressure
-    bp = health.get('bloodPressure', {})
-    systolic = bp.get('systolic')
-    if systolic:
-        if systolic > 160:
-            risk_score += 3
-        elif systolic > 140:
-            risk_score += 2
-        elif systolic > 120:
-            risk_score += 1
+    blood_sugar = health.get('bloodSugarLevel')
+    if blood_sugar:
+        if blood_sugar > 200:
+            risk_score += 20
+        elif blood_sugar > 160:
+            risk_score += 15
+        elif blood_sugar > 120:
+            risk_score += 10
+    
+    # HbA1c (0-25 points)
+    hba1c = health.get('hba1c')
+    if hba1c:
+        if hba1c > 9:
+            risk_score += 25
+        elif hba1c > 7:
+            risk_score += 20
+        elif hba1c > 6.5:
+            risk_score += 10
+    
+    # Blood pressure (0-15 points)
+    bp = health.get('bloodPressure')
+    if bp and '/' in bp:
+        try:
+            systolic = int(bp.split('/')[0])
+            if systolic > 160:
+                risk_score += 15
+            elif systolic > 140:
+                risk_score += 10
+            elif systolic > 120:
+                risk_score += 5
+        except:
+            pass
     
     # Lifestyle factors
     lifestyle = patient_data.get('lifestyle', {})
+    basic_info = patient_data.get('basicInfo', {})
     
-    # Smoking
-    smoking = patient_data.get('basicInfo', {}).get('smokingStatus')
+    # Smoking (0-20 points)
+    smoking = basic_info.get('smokingStatus')
     if smoking == 'Smoker':
-        risk_score += 3
+        risk_score += 20
     elif smoking == 'Former':
-        risk_score += 1
+        risk_score += 10
     
-    # Physical activity
+    # Physical activity (0-15 points)
     activity = lifestyle.get('physicalActivity')
     if activity == 'Sedentary':
-        risk_score += 2
+        risk_score += 15
     elif activity == 'Moderate':
-        risk_score += 1
+        risk_score += 8
     
-    # Stress level
+    # Stress level (0-10 points)
     stress = lifestyle.get('stressLevel')
     if stress == 'High':
-        risk_score += 2
+        risk_score += 10
     elif stress == 'Moderate':
-        risk_score += 1
+        risk_score += 5
     
-    # Alcohol consumption
+    # Alcohol consumption (0-15 points)
     alcohol = lifestyle.get('alcoholConsumption')
     if alcohol == 'Heavy':
-        risk_score += 2
+        risk_score += 15
     elif alcohol == 'Regularly':
-        risk_score += 1
+        risk_score += 8
     
-    # Determine risk level
-    if risk_score >= 8:
+    # Sleep duration (0-10 points)
+    sleep = lifestyle.get('sleepDuration')
+    if sleep:
+        if sleep < 6:
+            risk_score += 10
+        elif sleep > 9:
+            risk_score += 5
+    
+    # Family history (0-10 points)
+    family_history = health.get('familyHistory')
+    if family_history == 'Yes':
+        risk_score += 10
+    
+    # Known conditions (0-15 points)
+    known_conditions = health.get('knownConditions', '').lower()
+    if any(condition in known_conditions for condition in ['hypertension', 'cardiovascular', 'kidney', 'retinopathy', 'neuropathy']):
+        risk_score += 15
+    
+    # Determine risk level based on total score
+    print(f"🔍 Calculated risk score: {risk_score}")
+    
+    if risk_score >= 70:
         return 'High Risk'
-    elif risk_score >= 4:
+    elif risk_score >= 35:
         return 'Moderate Risk'
     else:
         return 'Low Risk'
-
+    
 # NEW: Settings Page Route
 @app.route('/settings')
 def settings():
