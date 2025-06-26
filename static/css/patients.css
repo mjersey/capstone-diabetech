@@ -972,7 +972,7 @@
 .confirmation-modal {
   background: white;
   border-radius: 16px;
-  padding: 40px;
+  padding: 60px;
   max-width: 480px;
   width: 100%;
   text-align: center;
@@ -1207,13 +1207,15 @@
 .prescription-success-modal {
   background: white;
   border-radius: 16px;
-  padding: 40px;
-  max-width: 450px;
-  width: 100%;
+  padding: 32px;
+  min-width: 400px;
+  max-width: 480px;
+  width: 90%;
   text-align: center;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   position: relative;
   animation: modalSlideIn 0.3s ease-out;
+  margin: 20px;
 }
 
 @keyframes modalSlideIn {
@@ -1238,6 +1240,7 @@
   border-radius: 8px;
   color: #64748b;
   transition: all 0.2s;
+  z-index: 1;
 }
 
 .prescription-success-modal .close-btn:hover {
@@ -1272,14 +1275,59 @@
 }
 
 .prescription-success-modal h3 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #1e293b;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.4;
+  padding: 0 10px;
+  word-wrap: break-word;
 }
 
-/* Remove the old success notification banner styles */
-.success-notification-banner {
-  display: none !important;
+/* Responsive Design for Modals */
+@media (max-width: 768px) {
+  .confirmation-modal,
+  .prescription-success-modal {
+    min-width: 300px;
+    max-width: 95vw;
+    padding: 24px;
+    margin: 10px;
+  }
+
+  .confirmation-modal h3,
+  .prescription-success-modal h3 {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+
+  .confirmation-modal-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-modal-cancel,
+  .btn-modal-confirm,
+  .btn-modal-delete {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirmation-modal,
+  .prescription-success-modal {
+    min-width: 280px;
+    padding: 20px;
+  }
+
+  .confirmation-modal h3,
+  .prescription-success-modal h3 {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .prescription-success-badge {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
 }

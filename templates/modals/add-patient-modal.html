@@ -1,416 +1,541 @@
 <!-- Add Patient Modal -->
 <div class="modal-overlay" id="addPatientModal">
-  <div class="modal add-patient-modal">
-      <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header">
-              <button class="close-btn" id="closeAddPatientModal">
-                  <span class="material-symbols-outlined">close</span>
-              </button>
-          </div>
+    <div class="modal add-patient-modal">
+        <div class="modal-content">
+            <!-- Modal Header with Title -->
+            <div class="modal-header">
+                <h1 class="modal-title">Add Patient</h1>
+                <button class="close-btn" id="closeAddPatientModal">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+  
+            <!-- Patient Header -->
+            <div class="patient-header">
+                <div class="patient-id-circle">
+                    <span class="hash-symbol">#</span>
+                </div>
+                <div class="patient-info">
+                    <h2 class="patient-id">P000</h2>
+                    <p class="patient-label">Patient ID</p>
+                </div>
+            </div>
+  
+            <!-- Modal Tabs -->
+            <div class="modal-tabs">
+                <button class="tab-button active" data-tab="basic-info">Basic Info</button>
+                <button class="tab-button" data-tab="health">Health</button>
+                <button class="tab-button disabled" data-tab="insights">Insights</button>
+                <button class="tab-button disabled" data-tab="notes">Notes</button>
+            </div>
+  
+            <!-- Form -->
+            <form id="addPatientForm">
+                <!-- Basic Info Tab -->
+                <div class="tab-content active" id="basic-info">
+                    <!-- General Section -->
+                    <div class="form-section compact">
+                        <h3 class="section-title">General</h3>
+                        
+                        <!-- Sex -->
+                        <div class="form-group">
+                            <label class="form-label">Sex *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="sex" value="Male" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Male</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="sex" value="Female" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Female</span>
+                                </label>
+                            </div>
+                            <div class="error-message" id="sex-error"></div>
+                        </div>
+  
+                        <!-- Date of Birth -->
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth *</label>
+                            <input type="date" name="dateOfBirth" class="form-input" placeholder="DD/MM/YYYY" required>
+                            <div class="error-message" id="dateOfBirth-error"></div>
+                        </div>
+  
+                        <!-- Age -->
+                        <div class="form-group">
+                            <label class="form-label">Age *</label>
+                            <input type="number" name="age" class="form-input age-input" min="1" max="120" required>
+                            <div class="error-message" id="age-error"></div>
+                        </div>
+  
+                        <!-- Smoking Status -->
+                        <div class="form-group">
+                            <label class="form-label">Smoking Status *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="smokingStatus" value="Smoker" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Smoker</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="smokingStatus" value="Non-Smoker" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Non-Smoker</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="smokingStatus" value="Former" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Former</span>
+                                </label>
+                            </div>
+                            <div class="error-message" id="smokingStatus-error"></div>
+                        </div>
+                    </div>
+  
+                    <!-- Lifestyle Section -->
+                    <div class="form-section compact">
+                        <h3 class="section-title">Lifestyle</h3>
+                        
+                        <!-- Physical Activity -->
+                        <div class="form-group">
+                            <label class="form-label">Physical Activity *</label>
+                            <select name="physicalActivity" class="form-select" required>
+                                <option value="">Select Activity Level</option>
+                                <option value="Active">Active</option>
+                                <option value="Moderate">Moderate</option>
+                                <option value="Sedentary">Sedentary</option>
+                            </select>
+                            <div class="error-message" id="physicalActivity-error"></div>
+                        </div>
+  
+                        <!-- Alcohol Consumption -->
+                        <div class="form-group">
+                            <label class="form-label">Alcohol Consumption *</label>
+                            <select name="alcoholConsumption" class="form-select" required>
+                                <option value="">Select Consumption Level</option>
+                                <option value="Never">Never</option>
+                                <option value="Occasionally">Occasionally</option>
+                                <option value="Regularly">Regularly</option>
+                                <option value="Heavy">Heavy</option>
+                            </select>
+                            <div class="error-message" id="alcoholConsumption-error"></div>
+                        </div>
+  
+                        <!-- Stress Level -->
+                        <div class="form-group">
+                            <label class="form-label">Stress Level *</label>
+                            <select name="stressLevel" class="form-select" required>
+                                <option value="">Select Stress Level</option>
+                                <option value="Low">Low</option>
+                                <option value="Moderate">Moderate</option>
+                                <option value="High">High</option>
+                            </select>
+                            <div class="error-message" id="stressLevel-error"></div>
+                        </div>
+  
+                        <!-- Diet Type -->
+                        <div class="form-group">
+                            <label class="form-label">Diet Type *</label>
+                            <select name="dietType" class="form-select" required>
+                                <option value="">Select Diet Type</option>
+                                <option value="Balanced">Balanced</option>
+                                <option value="Vegetarian">Vegetarian</option>
+                                <option value="Vegan">Vegan</option>
+                                <option value="Keto">Keto</option>
+                                <option value="Mediterranean">Mediterranean</option>
+                            </select>
+                            <div class="error-message" id="dietType-error"></div>
+                        </div>
+  
+                        <!-- Sleep Duration -->
+                        <div class="form-group">
+                            <label class="form-label">Sleep Duration *</label>
+                            <div class="sleep-input-group">
+                                <input type="number" name="sleepDuration" class="form-input sleep-input" min="1" max="24" step="1" placeholder="" required>
+                                <span class="sleep-unit">hrs/night</span>
+                            </div>
+                            <div class="error-message" id="sleepDuration-error"></div>
+                        </div>
+                    </div>
+  
+                    <!-- Basic Info Tab Actions -->
+                    <div class="tab-navigation-buttons">
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary" id="clearBasicInfo">
+                                <span class="material-symbols-outlined">refresh</span>
+                                Clear
+                            </button>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn-primary" id="nextToHealth">
+                                Next
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+  
+                <!-- Health Tab -->
+                <div class="tab-content" id="health">
+                    <!-- Medical History Section -->
+                    <div class="form-section compact">
+                        <h3 class="section-title">Medical History</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Diabetes Type *</label>
+                            <select name="diabetesType" class="form-select" required>
+                                <option value="">Select Type</option>
+                                <option value="Type 1">Type 1</option>
+                                <option value="Type 2" selected>Type 2</option>
+                                <option value="Gestational">Gestational</option>
+                                <option value="Pre-diabetes">Pre-diabetes</option>
+                            </select>
+                            <div class="error-message" id="diabetesType-error"></div>
+                        </div>
+  
+                        <div class="form-group">
+                            <label class="form-label">Family History of DM? *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="familyHistory" value="Yes" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Yes</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="familyHistory" value="No" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">No</span>
+                                </label>
+                            </div>
+                            <div class="error-message" id="familyHistory-error"></div>
+                        </div>
+  
+                        <div class="form-group">
+                            <label class="form-label">Known Conditions</label>
+                            <textarea name="knownConditions" class="form-textarea" rows="2" placeholder="List any known medical conditions"></textarea>
+                        </div>
+  
+                        <div class="form-group">
+                            <label class="form-label">Current Medications</label>
+                            <textarea name="currentMedications" class="form-textarea" rows="2" placeholder="List current medications and dosages"></textarea>
+                        </div>
+  
+                        <div class="form-group">
+                            <label class="form-label">Allergies</label>
+                            <textarea name="allergies" class="form-textarea" rows="2" placeholder="List any known allergies"></textarea>
+                        </div>
+                    </div>
+  
+                    <!-- Clinical Data Section -->
+                    <div class="form-section compact">
+                        <h3 class="section-title">Clinical Data</h3>
+                        
+                        <div class="clinical-grid compact">
+                            <div class="form-group">
+                                <label class="form-label">Height *</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="height" class="form-input" step="0.1" min="50" max="250" placeholder="170" required>
+                                    <span class="input-unit">cm</span>
+                                </div>
+                                <div class="error-message" id="height-error"></div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">Weight *</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="weight" class="form-input" step="0.1" min="20" max="300" placeholder="70" required>
+                                    <span class="input-unit">kg</span>
+                                </div>
+                                <div class="error-message" id="weight-error"></div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">BMI</label>
+                                <input type="number" name="bmi" class="form-input" step="0.1" min="10" max="50" readonly placeholder="24.2">
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">Blood Pressure *</label>
+                                <div class="input-with-unit">
+                                    <input type="text" name="bloodPressure" class="form-input" placeholder="120/80" required>
+                                    <span class="input-unit">mmHg</span>
+                                </div>
+                                <div class="error-message" id="bloodPressure-error"></div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">Fasting Glucose *</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="fastingGlucose" class="form-input" min="50" max="500" placeholder="100" required>
+                                    <span class="input-unit">mg/dL</span>
+                                </div>
+                                <div class="error-message" id="fastingGlucose-error"></div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">Blood Sugar Level *</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="bloodSugarLevel" class="form-input" min="50" max="500" placeholder="120" required>
+                                    <span class="input-unit">mg/dL</span>
+                                </div>
+                                <div class="error-message" id="bloodSugarLevel-error"></div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">HbA1c Level *</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="hba1c" class="form-input" step="0.1" min="3" max="20" placeholder="6.5" required>
+                                    <span class="input-unit">%</span>
+                                </div>
+                                <div class="error-message" id="hba1c-error"></div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">Cholesterol Level</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="cholesterolLevel" class="form-input" min="100" max="400" placeholder="200">
+                                    <span class="input-unit">mg/dL</span>
+                                </div>
+                            </div>
+  
+                            <div class="form-group">
+                                <label class="form-label">Waist Circumference</label>
+                                <div class="input-with-unit">
+                                    <input type="number" name="waistCircumference" class="form-input" step="0.1" min="50" max="200" placeholder="85">
+                                    <span class="input-unit">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <!-- Health Tab Actions -->
+                    <div class="tab-navigation-buttons">
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary" id="backToBasic">
+                                <span class="material-symbols-outlined">arrow_back</span>
+                                Back
+                            </button>
+                            <button type="button" class="btn-secondary" id="clearHealth">
+                                <span class="material-symbols-outlined">refresh</span>
+                                Clear
+                            </button>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn-primary" id="saveHealthData">
+                                <span class="material-symbols-outlined">save</span>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+  
+                <!-- Updated Insights Tab with Complications -->
+                <div class="tab-content" id="insights">
+                    <!-- Empty State -->
+                    <div class="insights-empty-state" id="insightsEmptyState">
+                        <div class="empty-icon">
+                            <span class="material-symbols-outlined">psychology</span>
+                        </div>
+                        <div class="insights-empty-content">
+                            <p class="insights-prompt">No patient data available</p>
+                            <p class="insights-sub-prompt">Complete the Health tab to generate insights</p>
+                        </div>
+                    </div>
 
-          <!-- Patient Header -->
-          <div class="patient-header">
-              <div class="patient-id-circle">
-                  <span class="hash-symbol">#</span>
-              </div>
-              <div class="patient-info">
-                  <h2 class="patient-id">P000</h2>
-                  <p class="patient-label">Patient ID</p>
-              </div>
-          </div>
+                    <!-- Generated State -->
+                    <div class="insights-generated-state" id="insightsGeneratedState" style="display: none;">
+                        <div class="insights-container">
+                            <!-- Risk Score -->
+                            <div class="insight-row">
+                                <div class="insight-icon-label">
+                                    <div class="insight-icon risk-icon">
+                                        <span class="material-symbols-outlined">error</span>
+                                    </div>
+                                    <span class="insight-label">Risk Score:</span>
+                                </div>
+                                <div class="insight-value-container">
+                                    <span class="insight-value risk-value" id="riskScoreValue">7%</span>
+                                </div>
+                            </div>
 
-          <!-- Modal Tabs -->
-          <div class="modal-tabs">
-              <button class="tab-button active" data-tab="basic-info">Basic Info</button>
-              <button class="tab-button" data-tab="health">Health</button>
-              <button class="tab-button" data-tab="insights">Insights</button>
-              <button class="tab-button" data-tab="notes">Notes</button>
-          </div>
+                            <!-- Complication Risk -->
+                            <div class="insight-row">
+                                <div class="insight-icon-label">
+                                    <div class="insight-icon warning-icon">
+                                        <span class="material-symbols-outlined">warning</span>
+                                    </div>
+                                    <span class="insight-label">Complication Risk:</span>
+                                </div>
+                                <div class="insight-value-container">
+                                    <span class="insight-value complication-value" id="complicationRiskValue">Low</span>
+                                </div>
+                            </div>
 
-          <!-- Form -->
-          <form id="addPatientForm">
-              <!-- Basic Info Tab -->
-              <div class="tab-content active" id="basic-info">
-                  <!-- General Section -->
-                  <div class="form-section">
-                      <h3 class="section-title">General</h3>
-                      
-                      <!-- Sex -->
-                      <div class="form-group">
-                          <label class="form-label">Sex *</label>
-                          <div class="radio-group">
-                              <label class="radio-option">
-                                  <input type="radio" name="sex" value="Male" required>
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">Male</span>
-                              </label>
-                              <label class="radio-option">
-                                  <input type="radio" name="sex" value="Female" required>
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">Female</span>
-                              </label>
-                          </div>
-                      </div>
+                            <!-- Complications -->
+                            <div class="insight-row">
+                                <div class="insight-icon-label">
+                                    <div class="insight-icon complications-icon">
+                                        <span class="material-symbols-outlined">medical_services</span>
+                                    </div>
+                                    <span class="insight-label">Complications:</span>
+                                </div>
+                                <div class="insight-value-container">
+                                    <span class="insight-value complications-value" id="complicationsValue">None detected</span>
+                                </div>
+                            </div>
 
-                      <!-- Date of Birth -->
-                      <div class="form-group">
-                          <label class="form-label">Date of Birth *</label>
-                          <input type="date" name="dateOfBirth" class="form-input" placeholder="DD/MM/YYYY" required>
-                      </div>
+                            <!-- Monitoring Needed -->
+                            <div class="insight-row">
+                                <div class="insight-icon-label">
+                                    <div class="insight-icon monitoring-icon">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </div>
+                                    <span class="insight-label">Monitoring Needed:</span>
+                                </div>
+                                <div class="insight-value-container">
+                                    <span class="insight-value monitoring-value" id="monitoringValue">Auto-generated</span>
+                                </div>
+                            </div>
 
-                      <!-- Age -->
-                      <div class="form-group">
-                          <label class="form-label">Age *</label>
-                          <input type="number" name="age" class="form-input age-input" min="1" max="120" required>
-                      </div>
+                            <!-- AI Suggestions -->
+                            <div class="insight-row ai-suggestions-row">
+                                <div class="insight-icon-label">
+                                    <div class="insight-icon ai-icon">
+                                        <span class="material-symbols-outlined">psychology</span>
+                                    </div>
+                                    <span class="insight-label">AI Suggestions:</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-suggestion-box">
+                                <div class="suggestion-content">
+                                    <span class="suggestion-label">Suggestion:</span>
+                                    <span class="suggestion-text" id="suggestionText">Consider insulin dosage reassessment in 2 weeks based on fasting blood sugar patterns.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes Tab -->
+                <div class="tab-content" id="notes">
+                    <!-- Empty State -->
+                    <div class="notes-empty-state" id="notesEmptyState">
+                        <div class="empty-icon">
+                            <span class="material-symbols-outlined">edit_note</span>
+                        </div>
+                        <div class="notes-empty-content">
+                            <p class="notes-prompt">No patient data available</p>
+                            <p class="notes-sub-prompt">Complete the Health tab to add notes</p>
+                        </div>
+                    </div>
+  
+                    <!-- Notes Content -->
+                    <div class="notes-content" id="notesContent" style="display: none;">
+                        <div class="form-section">
+                            <!-- Monitoring Section -->
+                            <div class="form-group">
+                                <label class="form-label">Monitoring Needed:</label>
+                                <div class="radio-group horizontal">
+                                    <label class="radio-option">
+                                        <input type="radio" name="monitoringFrequency" value="Monthly">
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Monthly</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="monitoringFrequency" value="Quarterly">
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Quarterly</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="monitoringFrequency" value="Custom">
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Custom</span>
+                                    </label>
+                                </div>
+                            </div>
+  
+                            <!-- Initial Diagnosis -->
+                            <div class="form-group">
+                                <label class="form-label">Initial Diagnosis:</label>
+                                <input type="text" name="initialDiagnosis" class="form-input" placeholder="Enter initial diagnosis">
+                            </div>
+  
+                            <!-- Dates -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Last Check-Up Date:</label>
+                                    <input type="date" name="lastCheckupDate" class="form-input" placeholder="DD/MM/YYYY">
+                                    <div class="error-message" id="lastCheckupDate-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Next Follow-Up:</label>
+                                    <input type="date" name="nextFollowUp" class="form-input" placeholder="DD/MM/YYYY">
+                                    <div class="error-message" id="nextFollowUp-error"></div>
+                                </div>
+                            </div>
 
-                      <!-- Smoking Status -->
-                      <div class="form-group">
-                          <label class="form-label">Smoking Status *</label>
-                          <div class="radio-group">
-                              <label class="radio-option">
-                                  <input type="radio" name="smokingStatus" value="Smoker" required>
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">Smoker</span>
-                              </label>
-                              <label class="radio-option">
-                                  <input type="radio" name="smokingStatus" value="Non-Smoker" required>
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">Non-Smoker</span>
-                              </label>
-                              <label class="radio-option">
-                                  <input type="radio" name="smokingStatus" value="Former" required>
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">Former</span>
-                              </label>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Lifestyle Section -->
-                  <div class="form-section">
-                      <h3 class="section-title">Lifestyle</h3>
-                      
-                      <!-- Physical Activity -->
-                      <div class="form-group">
-                          <label class="form-label">Physical Activity *</label>
-                          <select name="physicalActivity" class="form-select" required>
-                              <option value="">Select Activity Level</option>
-                              <option value="Active">Active</option>
-                              <option value="Moderate">Moderate</option>
-                              <option value="Sedentary">Sedentary</option>
-                          </select>
-                      </div>
-
-                      <!-- Alcohol Consumption -->
-                      <div class="form-group">
-                          <label class="form-label">Alcohol Consumption *</label>
-                          <select name="alcoholConsumption" class="form-select" required>
-                              <option value="">Select Consumption Level</option>
-                              <option value="Never">Never</option>
-                              <option value="Occasionally">Occasionally</option>
-                              <option value="Regularly">Regularly</option>
-                              <option value="Heavy">Heavy</option>
-                          </select>
-                      </div>
-
-                      <!-- Stress Level -->
-                      <div class="form-group">
-                          <label class="form-label">Stress Level *</label>
-                          <select name="stressLevel" class="form-select" required>
-                              <option value="">Select Stress Level</option>
-                              <option value="Low">Low</option>
-                              <option value="Moderate">Moderate</option>
-                              <option value="High">High</option>
-                          </select>
-                      </div>
-
-                      <!-- Diet Type -->
-                      <div class="form-group">
-                          <label class="form-label">Diet Type *</label>
-                          <select name="dietType" class="form-select" required>
-                              <option value="">Select Diet Type</option>
-                              <option value="Balanced">Balanced</option>
-                              <option value="Vegetarian">Vegetarian</option>
-                              <option value="Vegan">Vegan</option>
-                              <option value="Keto">Keto</option>
-                              <option value="Mediterranean">Mediterranean</option>
-                          </select>
-                      </div>
-
-                      <!-- Sleep Duration -->
-                      <div class="form-group">
-                          <label class="form-label">Sleep Duration *</label>
-                          <div class="sleep-input-group">
-                              <input type="number" name="sleepDuration" class="form-input sleep-input" min="1" max="24" step="1" placeholder="" required>
-                              <span class="sleep-unit">hrs/night</span>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <!-- Health Tab -->
-              <div class="tab-content" id="health">
-                  <!-- Medical History Section -->
-                  <div class="form-section">
-                      <h3 class="section-title">Medical History</h3>
-                      
-                      <div class="form-group">
-                          <label class="form-label">Diabetes Type:</label>
-                          <select name="diabetesType" class="form-select">
-                              <option value="">Select Type</option>
-                              <option value="Type 1">Type 1</option>
-                              <option value="Type 2" selected>Type 2</option>
-                              <option value="Gestational">Gestational</option>
-                              <option value="Pre-diabetes">Pre-diabetes</option>
-                          </select>
-                      </div>
-
-                      <div class="form-group">
-                          <label class="form-label">Family History of DM?</label>
-                          <div class="radio-group">
-                              <label class="radio-option">
-                                  <input type="radio" name="familyHistory" value="Yes">
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">Yes</span>
-                              </label>
-                              <label class="radio-option">
-                                  <input type="radio" name="familyHistory" value="No">
-                                  <span class="radio-custom"></span>
-                                  <span class="radio-text">No</span>
-                              </label>
-                          </div>
-                      </div>
-
-                      <div class="form-group">
-                          <label class="form-label">Known Conditions:</label>
-                          <textarea name="knownConditions" class="form-textarea" rows="2" placeholder="List any known medical conditions"></textarea>
-                      </div>
-
-                      <div class="form-group">
-                          <label class="form-label">Current Medications:</label>
-                          <textarea name="currentMedications" class="form-textarea" rows="2" placeholder="List current medications and dosages"></textarea>
-                      </div>
-
-                      <div class="form-group">
-                          <label class="form-label">Allergies:</label>
-                          <textarea name="allergies" class="form-textarea" rows="2" placeholder="List any known allergies"></textarea>
-                      </div>
-
-                  <!-- Clinical Data Section -->
-                  <div class="form-section">
-                      <h3 class="section-title">Clinical Data</h3>
-                      
-                      <div class="clinical-grid">
-                          <div class="form-group">
-                              <label class="form-label">Height:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="height" class="form-input" step="0.1" min="50" max="250" placeholder="170">
-                                  <span class="input-unit">cm</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">Weight:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="weight" class="form-input" step="0.1" min="20" max="300" placeholder="70">
-                                  <span class="input-unit">kg</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">BMI:</label>
-                              <input type="number" name="bmi" class="form-input" step="0.1" min="10" max="50" readonly placeholder="24.2">
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">Blood Pressure:</label>
-                              <div class="input-with-unit">
-                                  <input type="text" name="bloodPressure" class="form-input" placeholder="120/80">
-                                  <span class="input-unit">mmHg</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">Fasting Glucose:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="fastingGlucose" class="form-input" min="50" max="500" placeholder="100">
-                                  <span class="input-unit">mg/dL</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">Blood Sugar Level:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="bloodSugarLevel" class="form-input" min="50" max="500" placeholder="120">
-                                  <span class="input-unit">mg/dL</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">HbA1c Level:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="hba1c" class="form-input" step="0.1" min="3" max="20" placeholder="6.5">
-                                  <span class="input-unit">%</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">Cholesterol Level:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="cholesterolLevel" class="form-input" min="100" max="400" placeholder="200">
-                                  <span class="input-unit">mg/dL</span>
-                              </div>
-                          </div>
-
-                          <div class="form-group">
-                              <label class="form-label">Waist Circumference:</label>
-                              <div class="input-with-unit">
-                                  <input type="number" name="waistCircumference" class="form-input" step="0.1" min="50" max="200" placeholder="85">
-                                  <span class="input-unit">cm</span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-          <!-- Insights Tab -->
-          <div class="tab-content" id="insights">
-              <!-- Empty State -->
-              <div class="insights-empty-state" id="insightsEmptyState">
-                  <div class="insights-empty-content">
-                      <p class="insights-prompt">Click here to generate insights</p>
-                      <button type="button" class="btn-generate-insights" id="generateInsightsBtn" disabled>
-                          Generate Insights
-                      </button>
-                  </div>
-              </div>
-
-              <!-- Generated State -->
-              <div class="insights-generated-state" id="insightsGeneratedState" style="display: none;">
-                  <div class="insights-grid">
-                      <div class="insight-item">
-                          <div class="insight-icon risk-icon">
-                              <span class="material-symbols-outlined">error</span>
-                          </div>
-                          <div class="insight-content">
-                              <span class="insight-label">Risk Score:</span>
-                              <span class="insight-value risk-value" id="riskScoreValue">7%</span>
-                          </div>
-                      </div>
-
-                      <div class="insight-item">
-                          <div class="insight-icon warning-icon">
-                              <span class="material-symbols-outlined">warning</span>
-                          </div>
-                          <div class="insight-content">
-                              <span class="insight-label">Complication Risk:</span>
-                              <span class="insight-value complication-value" id="complicationRiskValue">Low</span>
-                          </div>
-                      </div>
-
-                      <div class="insight-item">
-                          <div class="insight-icon monitoring-icon">
-                              <span class="material-symbols-outlined">visibility</span>
-                          </div>
-                          <div class="insight-content">
-                              <span class="insight-label">Monitoring Needed:</span>
-                              <span class="insight-value monitoring-value" id="monitoringValue">Auto-generated</span>
-                          </div>
-                      </div>
-
-                      <div class="insight-item ai-suggestions">
-                          <div class="insight-icon ai-icon">
-                              <span class="material-symbols-outlined">psychology</span>
-                          </div>
-                          <div class="insight-content">
-                              <span class="insight-label">AI Suggestions:</span>
-                          </div>
-                      </div>
-                  </div>
-
-                  <div class="ai-suggestion-box" id="aiSuggestionBox">
-                      <div class="suggestion-content">
-                          <span class="suggestion-label">Suggestion:</span>
-                          <span class="suggestion-text" id="suggestionText">Consider insulin dosage reassessment in 2 weeks based on fasting blood sugar patterns.</span>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          
-          <!-- Notes Tab -->
-          <div class="tab-content" id="notes">
-              <div class="form-section">
-                  <!-- Monitoring Section -->
-                  <div class="form-group">
-                      <label class="form-label">Monitoring Needed:</label>
-                      <div class="radio-group horizontal">
-                          <label class="radio-option">
-                              <input type="radio" name="monitoringFrequency" value="Monthly">
-                              <span class="radio-custom"></span>
-                              <span class="radio-text">Monthly</span>
-                          </label>
-                          <label class="radio-option">
-                              <input type="radio" name="monitoringFrequency" value="Quarterly">
-                              <span class="radio-custom"></span>
-                              <span class="radio-text">Quarterly</span>
-                          </label>
-                          <label class="radio-option">
-                              <input type="radio" name="monitoringFrequency" value="Custom">
-                              <span class="radio-custom"></span>
-                              <span class="radio-text">Custom</span>
-                          </label>
-                      </div>
-                  </div>
-
-                  <!-- Initial Diagnosis -->
-                  <div class="form-group">
-                      <label class="form-label">Initial Diagnosis:</label>
-                      <input type="text" name="initialDiagnosis" class="form-input" placeholder="Enter initial diagnosis">
-                  </div>
-
-                  <!-- Check-up Dates Row -->
-                  <div class="form-row">
-                      <div class="form-group">
-                          <label class="form-label">Last Check-Up Date:</label>
-                          <input type="date" name="lastCheckupDate" class="form-input" placeholder="DD/MM/YYYY">
-                      </div>
-                      <div class="form-group">
-                          <label class="form-label">Next Follow-Up:</label>
-                          <input type="date" name="nextFollowUp" class="form-input" placeholder="DD/MM/YYYY">
-                      </div>
-                  </div>
-
-                  <!-- Remarks/Notes Section -->
-                  <div class="form-group">
-                      <label class="form-label">
-                          <span class="material-symbols-outlined">edit_note</span>
-                          Remarks/Notes:
-                      </label>
-                      <textarea name="remarksNotes" class="form-textarea large" rows="6" placeholder="Enter any additional remarks, observations, or notes about the patient..."></textarea>
-                  </div>
-              </div>
-
-              <!-- Final Form Actions -->
-              <div class="form-actions">
-                  <button type="button" id="cancelBtn" class="btn-secondary">
-                      <span class="material-symbols-outlined">close</span>
-                      Cancel
-                  </button>
-                  <button type="submit" id="savePatientBtn" class="btn-primary">
-                      <span class="material-symbols-outlined">save</span>
-                      Save Patient Record
-                  </button>
-              </div>
-          </div>
-
-              <!-- Form Actions -->
-              <div class="form-actions">
-                  <button type="button" class="btn-clear" id="clearForm">Clear</button>
-                  <button type="submit" class="btn-save">Save</button>
-              </div>
-          </form>
-      </div>
-  </div>
+  
+                            <!-- Remarks/Notes Section -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="material-symbols-outlined">edit_note</span>
+                                    Remarks/Notes:
+                                </label>
+                                <textarea name="remarksNotes" class="form-textarea large" rows="6" placeholder="Enter any additional remarks, observations, or notes about the patient..."></textarea>
+                            </div>
+                        </div>
+  
+                        <!-- Notes Tab Actions -->
+                        <div class="tab-navigation-buttons">
+                            <div class="button-group">
+                                <button type="button" class="btn-secondary" id="backToInsights">
+                                    <span class="material-symbols-outlined">arrow_back</span>
+                                    Back
+                                </button>
+                                <button type="button" class="btn-secondary" id="clearNotes">
+                                    <span class="material-symbols-outlined">refresh</span>
+                                    Clear
+                                </button>
+                            </div>
+                            <div class="button-group">
+                                <button type="submit" id="savePatientBtn" class="btn-primary">
+                                    <span class="material-symbols-outlined">save</span>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirmationModal">
+    <div class="modal confirmations-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeConfirmationModal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <!-- Success Badge  -->
+            <div class="success-badge" id="successBadge" style="display: none;">
+                <div class="check-icon">✓</div>
+                <span>Saved!</span>
+            </div>
+            
+            <div class="confirmation-body">
+                <h2 class="confirmations-title" id="confirmationTitle">Are you sure you want to save this record?</h2>
+            </div>
+            
+            <div class="confirmations-actions">
+                <button class="btn-cancel" id="confirmationCancel">Cancel</button>
+                <button class="btn-confirm" id="confirmationConfirm">Save Patient Record</button>
+            </div>
+        </div>
+    </div>
+</div>
+
