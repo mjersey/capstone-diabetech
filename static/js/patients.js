@@ -2,6 +2,14 @@
 class PatientTableManager {
   constructor() {
     this.storageKey = "diabetech_patients"
+    this.selectedPatients = new Set()
+    this.currentFilters = {
+      riskLevels: [],
+      sexes: [],
+      minAge: null,
+      maxAge: null,
+      complications: [],
+    }
     this.init()
   }
 
@@ -9,7 +17,7 @@ class PatientTableManager {
     this.initializePatientTable()
     this.loadSavedPatients()
     this.updateStats()
-    this.initializeConfirmationModals()
+    this.initializeBulkSelection()
     console.log("🏥 Patient Table Manager initialized")
   }
 
@@ -20,17 +28,6 @@ class PatientTableManager {
     this.initializeSearch()
     this.initializeFilters()
     this.initializePatientDetailsModal()
-  }
-
-  // Initialize confirmation modals
-  initializeConfirmationModals() {
-    // Make functions globally available
-    window.closeSaveConfirmationModal = () => this.closeSaveConfirmationModal()
-    window.confirmSavePrescription = () => this.confirmSavePrescription()
-    window.closeDeleteConfirmationModal = () => this.closeDeleteConfirmationModal()
-    window.confirmDeletePrescription = () => this.confirmDeletePrescription()
-    window.closeSuccessModal = () => this.closeSuccessModal()
-    window.closePrescriptionSuccessModal = () => this.closePrescriptionSuccessModal()
   }
 
   // Initialize search functionality
@@ -61,6 +58,66 @@ class PatientTableManager {
     }
   }
 
+  // Initialize bulk selection functionality
+  initializeBulkSelection() {
+    // Add bulk delete button to actions
+    const actionsContainer = document.querySelector(".patients-actions")
+    if (actionsContainer) {
+      const bulkDeleteBtn = document.createElement("button")
+      bulkDeleteBtn.className = "bulk-delete-btn"
+      bulkDeleteBtn.id = "bulkDeleteBtn"
+      bulkDeleteBtn.innerHTML = `
+        <span class="material-symbols-outlined">delete</span>
+        Delete Selected (<span id="selectedCount">0</span>)
+      `
+      bulkDeleteBtn.addEventListener("click", () => this.bulkDeletePatients())
+      actionsContainer.appendChild(bulkDeleteBtn)
+    }
+
+    // Add bulk selection header
+    const listSection = document.querySelector(".patients-list-section")
+    if (listSection) {
+      const bulkHeader = document.createElement("div")
+      bulkHeader.className = "bulk-selection-header"
+      bulkHeader.id = "bulkSelectionHeader"
+      bulkHeader.innerHTML = `
+        <div class="bulk-selection-info">
+          <span id="bulkSelectionCount">0</span> patients selected
+        </div>
+        <div class="bulk-actions">
+          <button class="bulk-action-btn bulk-select-all" id="bulkSelectAll">Select All</button>
+          <button class="bulk-action-btn bulk-clear-selection" id="bulkClearSelection">Clear Selection</button>
+        </div>
+      `
+
+      const listHeader = listSection.querySelector(".list-header")
+      listHeader.insertAdjacentElement("afterend", bulkHeader)
+
+      // Add event listeners
+      document.getElementById("bulkSelectAll").addEventListener("click", () => this.selectAllPatients())
+      document.getElementById("bulkClearSelection").addEventListener("click", () => this.clearSelection())
+    }
+
+    // Add checkbox column to table header
+    const tableHeader = document.querySelector(".patients-table thead tr")
+    if (tableHeader) {
+      const checkboxHeader = document.createElement("th")
+      checkboxHeader.innerHTML = `
+        <input type="checkbox" class="bulk-checkbox" id="selectAllCheckbox">
+      `
+      tableHeader.insertBefore(checkboxHeader, tableHeader.firstChild)
+
+      // Add event listener for select all checkbox
+      document.getElementById("selectAllCheckbox").addEventListener("change", (e) => {
+        if (e.target.checked) {
+          this.selectAllPatients()
+        } else {
+          this.clearSelection()
+        }
+      })
+    }
+  }
+
   // Filter patients based on search term
   filterPatients(searchTerm) {
     const tableBody = document.getElementById("patientsTableBody")
@@ -68,10 +125,10 @@ class PatientTableManager {
 
     const rows = tableBody.querySelectorAll("tr")
     rows.forEach((row) => {
-      const patientId = row.cells[1].textContent.toLowerCase()
-      const age = row.cells[2].textContent.toLowerCase()
-      const sex = row.cells[3].textContent.toLowerCase()
-      const complications = row.cells[6].textContent.toLowerCase()
+      const patientId = row.cells[2].textContent.toLowerCase() // Adjusted for checkbox column
+      const age = row.cells[3].textContent.toLowerCase()
+      const sex = row.cells[4].textContent.toLowerCase()
+      const complications = row.cells[7].textContent.toLowerCase()
 
       const matches =
         patientId.includes(searchTerm) ||
@@ -108,59 +165,85 @@ class PatientTableManager {
     document.body.removeChild(fileInput)
   }
 
-  // Show filter modal
+  // Show enhanced filter modal
   showFilterModal() {
     const modalHtml = `
     <div class="modal-overlay filter-modal" id="filterModal">
-      <div class="modal" style="max-width: 400px; background: white; border-radius: 16px; padding: 24px;">
+      <div class="modal" style="max-width: 500px; background: white; border-radius: 16px; padding: 0; overflow: hidden;">
         <div class="modal-content">
-          <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="margin: 0; font-size: 18px; font-weight: 600;">Filter Patients</h3>
-            <button class="close-btn" onclick="window.patientTableManager.hideFilterModal()" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 8px;">
+          <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+            <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #1e293b;">Filter Patients</h3>
+            <button class="close-btn" onclick="window.patientTableManager.hideFilterModal()" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 8px; color: #64748b;">
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
           
-          <div class="filter-options">
-            <div class="form-group" style="margin-bottom: 16px;">
-              <label style="font-weight: 500; margin-bottom: 8px; display: block;">Risk Level</label>
-              <div style="margin-top: 8px;">
-                <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                  <input type="checkbox" value="High Risk" style="margin-right: 8px;"> High Risk
+          <div class="filter-options" style="padding: 24px;">
+            <!-- Risk Level Filter -->
+            <div class="filter-section" style="margin-bottom: 24px;">
+              <label style="font-weight: 600; margin-bottom: 12px; display: block; color: #374151;">Risk Level</label>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;">
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="High Risk" style="margin-right: 8px;"> 
+                  <span style="font-size: 12px; font-weight: 600; color: #dc2626;">High Risk</span>
                 </label>
-                <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                  <input type="checkbox" value="Moderate Risk" style="margin-right: 8px;"> Moderate Risk
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="Moderate Risk" style="margin-right: 8px;"> 
+                  <span style="font-size: 12px; font-weight: 600; color: #d97706;">Moderate Risk</span>
                 </label>
-                <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                  <input type="checkbox" value="Low Risk" style="margin-right: 8px;"> Low Risk
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="Low Risk" style="margin-right: 8px;"> 
+                  <span style="font-size: 12px; font-weight: 600; color: #059669;">Low Risk</span>
                 </label>
               </div>
             </div>
             
-            <div class="form-group" style="margin-bottom: 16px;">
-              <label style="font-weight: 500; margin-bottom: 8px; display: block;">Sex</label>
-              <div style="margin-top: 8px;">
-                <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+            <!-- Sex Filter -->
+            <div class="filter-section" style="margin-bottom: 24px;">
+              <label style="font-weight: 600; margin-bottom: 12px; display: block; color: #374151;">Sex</label>
+              <div style="display: flex; gap: 12px;">
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 16px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
                   <input type="checkbox" value="Male" style="margin-right: 8px;"> Male
                 </label>
-                <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 16px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
                   <input type="checkbox" value="Female" style="margin-right: 8px;"> Female
                 </label>
               </div>
             </div>
             
-            <div class="form-group" style="margin-bottom: 20px;">
-              <label style="font-weight: 500; margin-bottom: 8px; display: block;">Age Range</label>
-              <div style="display: flex; gap: 8px; margin-top: 8px;">
-                <input type="number" placeholder="Min" id="minAge" style="flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
-                <input type="number" placeholder="Max" id="maxAge" style="flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+            <!-- Age Range Filter -->
+            <div class="filter-section" style="margin-bottom: 24px;">
+              <label style="font-weight: 600; margin-bottom: 12px; display: block; color: #374151;">Age Range</label>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <input type="number" placeholder="Min Age" id="minAge" style="flex: 1; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+                <span style="color: #64748b; font-weight: 500;">to</span>
+                <input type="number" placeholder="Max Age" id="maxAge" style="flex: 1; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+              </div>
+            </div>
+
+            <!-- Complications Filter -->
+            <div class="filter-section" style="margin-bottom: 24px;">
+              <label style="font-weight: 600; margin-bottom: 12px; display: block; color: #374151;">Complications</label>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="Retinopathy" style="margin-right: 8px;"> Retinopathy
+                </label>
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="Neuropathy" style="margin-right: 8px;"> Neuropathy
+                </label>
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="Cardiovascular" style="margin-right: 8px;"> Cardiovascular
+                </label>
+                <label class="filter-checkbox-option" style="display: flex; align-items: center; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                  <input type="checkbox" value="None" style="margin-right: 8px;"> None
+                </label>
               </div>
             </div>
           </div>
           
-          <div class="modal-actions" style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button type="button" class="btn-secondary" onclick="window.patientTableManager.clearFilters()">Clear</button>
-            <button type="button" class="btn-primary" onclick="window.patientTableManager.applyFilters()">Apply Filters</button>
+          <div class="modal-actions" style="display: flex; gap: 12px; justify-content: flex-end; padding: 24px; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+            <button type="button" class="btn-secondary" onclick="window.patientTableManager.clearAllFilters()" style="padding: 10px 20px; background: #f3f4f6; color: #374151; border: 2px solid #d1d5db; border-radius: 8px; font-weight: 600; cursor: pointer;">Clear All</button>
+            <button type="button" class="btn-primary" onclick="window.patientTableManager.applyFilters()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Apply Filters</button>
           </div>
         </div>
       </div>
@@ -179,6 +262,77 @@ class PatientTableManager {
     modal.style.alignItems = "center"
     modal.style.justifyContent = "center"
     modal.style.zIndex = "1000"
+    modal.style.backdropFilter = "blur(4px)"
+
+    // Add hover effects to filter options
+    const filterOptions = modal.querySelectorAll(".filter-checkbox-option")
+    filterOptions.forEach((option) => {
+      option.addEventListener("mouseenter", () => {
+        option.style.borderColor = "#3b82f6"
+        option.style.background = "#eff6ff"
+      })
+      option.addEventListener("mouseleave", () => {
+        if (!option.querySelector("input").checked) {
+          option.style.borderColor = "#e2e8f0"
+          option.style.background = "transparent"
+        }
+      })
+
+      const checkbox = option.querySelector("input")
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          option.style.borderColor = "#3b82f6"
+          option.style.background = "#eff6ff"
+        } else {
+          option.style.borderColor = "#e2e8f0"
+          option.style.background = "transparent"
+        }
+      })
+    })
+
+    // Restore previous filter selections
+    this.restoreFilterSelections(modal)
+  }
+
+  // Restore previous filter selections
+  restoreFilterSelections(modal) {
+    // Restore risk level selections
+    this.currentFilters.riskLevels.forEach((risk) => {
+      const checkbox = modal.querySelector(`input[value="${risk}"]`)
+      if (checkbox) {
+        checkbox.checked = true
+        checkbox.closest(".filter-checkbox-option").style.borderColor = "#3b82f6"
+        checkbox.closest(".filter-checkbox-option").style.background = "#eff6ff"
+      }
+    })
+
+    // Restore sex selections
+    this.currentFilters.sexes.forEach((sex) => {
+      const checkbox = modal.querySelector(`input[value="${sex}"]`)
+      if (checkbox) {
+        checkbox.checked = true
+        checkbox.closest(".filter-checkbox-option").style.borderColor = "#3b82f6"
+        checkbox.closest(".filter-checkbox-option").style.background = "#eff6ff"
+      }
+    })
+
+    // Restore age range
+    if (this.currentFilters.minAge) {
+      modal.querySelector("#minAge").value = this.currentFilters.minAge
+    }
+    if (this.currentFilters.maxAge) {
+      modal.querySelector("#maxAge").value = this.currentFilters.maxAge
+    }
+
+    // Restore complications selections
+    this.currentFilters.complications.forEach((complication) => {
+      const checkbox = modal.querySelector(`input[value="${complication}"]`)
+      if (checkbox) {
+        checkbox.checked = true
+        checkbox.closest(".filter-checkbox-option").style.borderColor = "#3b82f6"
+        checkbox.closest(".filter-checkbox-option").style.background = "#eff6ff"
+      }
+    })
   }
 
   // Hide filter modal
@@ -189,58 +343,114 @@ class PatientTableManager {
     }
   }
 
-  // Apply filters
+  // Apply filters with enhanced functionality
   applyFilters() {
     const modal = document.getElementById("filterModal")
     if (!modal) return
 
+    // Collect filter selections
     const riskCheckboxes = modal.querySelectorAll('input[value*="Risk"]:checked')
     const sexCheckboxes = modal.querySelectorAll('input[value="Male"]:checked, input[value="Female"]:checked')
+    const complicationCheckboxes = modal.querySelectorAll(
+      'input[value="Retinopathy"]:checked, input[value="Neuropathy"]:checked, input[value="Cardiovascular"]:checked, input[value="None"]:checked',
+    )
     const minAge = modal.querySelector("#minAge").value
     const maxAge = modal.querySelector("#maxAge").value
 
-    const selectedRisks = Array.from(riskCheckboxes).map((cb) => cb.value)
-    const selectedSexes = Array.from(sexCheckboxes).map((cb) => cb.value)
+    // Update current filters
+    this.currentFilters.riskLevels = Array.from(riskCheckboxes).map((cb) => cb.value)
+    this.currentFilters.sexes = Array.from(sexCheckboxes).map((cb) => cb.value)
+    this.currentFilters.complications = Array.from(complicationCheckboxes).map((cb) => cb.value)
+    this.currentFilters.minAge = minAge ? Number.parseInt(minAge) : null
+    this.currentFilters.maxAge = maxAge ? Number.parseInt(maxAge) : null
 
+    // Apply filters to table
     const tableBody = document.getElementById("patientsTableBody")
     if (!tableBody) return
 
     const rows = tableBody.querySelectorAll("tr")
+    let visibleCount = 0
+
     rows.forEach((row) => {
       const riskBadge = row.querySelector(".risk-badge")
       const riskLevel = riskBadge ? riskBadge.textContent : ""
-      const sex = row.cells[3].textContent
-      const age = Number.parseInt(row.cells[2].textContent)
+      const sex = row.cells[4].textContent // Adjusted for checkbox column
+      const age = Number.parseInt(row.cells[3].textContent)
+      const complications = row.cells[7].textContent.toLowerCase()
 
       let showRow = true
 
       // Filter by risk level
-      if (selectedRisks.length > 0 && !selectedRisks.includes(riskLevel)) {
+      if (this.currentFilters.riskLevels.length > 0 && !this.currentFilters.riskLevels.includes(riskLevel)) {
         showRow = false
       }
 
       // Filter by sex
-      if (selectedSexes.length > 0 && !selectedSexes.includes(sex)) {
+      if (this.currentFilters.sexes.length > 0 && !this.currentFilters.sexes.includes(sex)) {
         showRow = false
       }
 
       // Filter by age range
-      if (minAge && age < Number.parseInt(minAge)) {
+      if (this.currentFilters.minAge && age < this.currentFilters.minAge) {
         showRow = false
       }
-      if (maxAge && age > Number.parseInt(maxAge)) {
+      if (this.currentFilters.maxAge && age > this.currentFilters.maxAge) {
         showRow = false
+      }
+
+      // Filter by complications
+      if (this.currentFilters.complications.length > 0) {
+        const hasMatchingComplication = this.currentFilters.complications.some((comp) => {
+          if (comp === "None") {
+            return complications === "none" || complications === ""
+          }
+          return complications.includes(comp.toLowerCase())
+        })
+        if (!hasMatchingComplication) {
+          showRow = false
+        }
       }
 
       row.style.display = showRow ? "" : "none"
+      if (showRow) visibleCount++
     })
 
+    // Update filter button to show active state
+    const filterBtn = document.getElementById("filterBtn")
+    const hasActiveFilters =
+      this.currentFilters.riskLevels.length > 0 ||
+      this.currentFilters.sexes.length > 0 ||
+      this.currentFilters.complications.length > 0 ||
+      this.currentFilters.minAge ||
+      this.currentFilters.maxAge
+
+    if (filterBtn) {
+      if (hasActiveFilters) {
+        filterBtn.classList.add("active")
+        filterBtn.innerHTML = `
+          <span class="material-symbols-outlined">tune</span>
+          Filtered (${visibleCount})
+        `
+      } else {
+        filterBtn.classList.remove("active")
+        filterBtn.innerHTML = `<span class="material-symbols-outlined">tune</span>`
+      }
+    }
+
     this.hideFilterModal()
-    console.log("🔧 Filters applied")
+    console.log(`🔧 Filters applied - ${visibleCount} patients visible`)
   }
 
-  // Clear filters
-  clearFilters() {
+  // Clear all filters
+  clearAllFilters() {
+    this.currentFilters = {
+      riskLevels: [],
+      sexes: [],
+      minAge: null,
+      maxAge: null,
+      complications: [],
+    }
+
     const tableBody = document.getElementById("patientsTableBody")
     if (tableBody) {
       const rows = tableBody.querySelectorAll("tr")
@@ -248,8 +458,177 @@ class PatientTableManager {
         row.style.display = ""
       })
     }
+
+    // Reset filter button
+    const filterBtn = document.getElementById("filterBtn")
+    if (filterBtn) {
+      filterBtn.classList.remove("active")
+      filterBtn.innerHTML = `<span class="material-symbols-outlined">tune</span>`
+    }
+
     this.hideFilterModal()
-    console.log("🧹 Filters cleared")
+    console.log("🧹 All filters cleared")
+  }
+
+  // Clear filters (legacy method)
+  clearFilters() {
+    this.clearAllFilters()
+  }
+
+  // ===== BULK SELECTION FUNCTIONS =====
+
+  // Select all visible patients
+  selectAllPatients() {
+    const tableBody = document.getElementById("patientsTableBody")
+    if (!tableBody) return
+
+    const visibleRows = Array.from(tableBody.querySelectorAll("tr")).filter((row) => row.style.display !== "none")
+
+    visibleRows.forEach((row) => {
+      const checkbox = row.querySelector(".bulk-checkbox")
+      const patientId = row.cells[2].textContent // Adjusted for checkbox column
+
+      if (checkbox && patientId) {
+        checkbox.checked = true
+        row.classList.add("selected")
+        this.selectedPatients.add(patientId)
+      }
+    })
+
+    this.updateBulkSelectionUI()
+    console.log(`✅ Selected ${visibleRows.length} patients`)
+  }
+
+  // Clear all selections
+  clearSelection() {
+    this.selectedPatients.clear()
+
+    const checkboxes = document.querySelectorAll(".bulk-checkbox")
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = false
+    })
+
+    const rows = document.querySelectorAll(".patients-table tbody tr")
+    rows.forEach((row) => {
+      row.classList.remove("selected")
+    })
+
+    this.updateBulkSelectionUI()
+    console.log("🧹 Selection cleared")
+  }
+
+  // Toggle patient selection
+  togglePatientSelection(patientId, checkbox, row) {
+    if (checkbox.checked) {
+      this.selectedPatients.add(patientId)
+      row.classList.add("selected")
+    } else {
+      this.selectedPatients.delete(patientId)
+      row.classList.remove("selected")
+    }
+
+    this.updateBulkSelectionUI()
+  }
+
+  // Update bulk selection UI
+  updateBulkSelectionUI() {
+    const selectedCount = this.selectedPatients.size
+    const bulkDeleteBtn = document.getElementById("bulkDeleteBtn")
+    const bulkSelectionHeader = document.getElementById("bulkSelectionHeader")
+    const bulkSelectionCount = document.getElementById("bulkSelectionCount")
+    const selectedCountSpan = document.getElementById("selectedCount")
+    const selectAllCheckbox = document.getElementById("selectAllCheckbox")
+
+    // Update counts
+    if (bulkSelectionCount) bulkSelectionCount.textContent = selectedCount
+    if (selectedCountSpan) selectedCountSpan.textContent = selectedCount
+
+    // Show/hide bulk actions
+    if (selectedCount > 0) {
+      if (bulkDeleteBtn) bulkDeleteBtn.classList.add("show")
+      if (bulkSelectionHeader) bulkSelectionHeader.classList.add("show")
+    } else {
+      if (bulkDeleteBtn) bulkDeleteBtn.classList.remove("show")
+      if (bulkSelectionHeader) bulkSelectionHeader.classList.remove("show")
+    }
+
+    // Update select all checkbox state
+    if (selectAllCheckbox) {
+      const tableBody = document.getElementById("patientsTableBody")
+      const visibleRows = Array.from(tableBody.querySelectorAll("tr")).filter((row) => row.style.display !== "none")
+      const visiblePatientIds = visibleRows.map((row) => row.cells[2].textContent)
+      const allVisibleSelected =
+        visiblePatientIds.length > 0 && visiblePatientIds.every((id) => this.selectedPatients.has(id))
+
+      selectAllCheckbox.checked = allVisibleSelected
+      selectAllCheckbox.indeterminate = selectedCount > 0 && !allVisibleSelected
+    }
+  }
+
+  // Bulk delete patients
+  bulkDeletePatients() {
+    if (this.selectedPatients.size === 0) return
+
+    const selectedCount = this.selectedPatients.size
+    const confirmMessage = `Are you sure you want to delete ${selectedCount} selected patient${selectedCount > 1 ? "s" : ""}?`
+
+    if (confirm(confirmMessage)) {
+      const selectedIds = Array.from(this.selectedPatients)
+
+      // Remove from table with animation
+      selectedIds.forEach((patientId) => {
+        const tableBody = document.getElementById("patientsTableBody")
+        const rows = Array.from(tableBody.children)
+        const rowToDelete = rows.find((row) => row.cells[2].textContent === patientId)
+
+        if (rowToDelete) {
+          rowToDelete.style.transition = "all 0.3s ease"
+          rowToDelete.style.opacity = "0"
+          rowToDelete.style.transform = "translateX(-20px)"
+
+          setTimeout(() => {
+            rowToDelete.remove()
+
+            // Update row numbers after deletion
+            const remainingRows = Array.from(tableBody.children)
+            remainingRows.forEach((row, index) => {
+              row.cells[1].textContent = index + 1 // Adjusted for checkbox column
+            })
+          }, 300)
+        }
+      })
+
+      // Remove from localStorage
+      this.bulkDeleteFromStorage(selectedIds)
+
+      // Clear selection
+      this.clearSelection()
+
+      // Update stats
+      setTimeout(() => {
+        this.updateStats()
+        if (window.enhancedAddPatientModal) {
+          window.enhancedAddPatientModal.updatePatientIdCounter()
+        }
+      }, 400)
+
+      console.log(`✅ Bulk deleted ${selectedCount} patients`)
+    }
+  }
+
+  // Bulk delete from storage
+  bulkDeleteFromStorage(patientIds) {
+    try {
+      const savedPatients = localStorage.getItem(this.storageKey)
+      if (savedPatients) {
+        let patients = JSON.parse(savedPatients)
+        patients = patients.filter((patient) => !patientIds.includes(patient.patientId))
+        localStorage.setItem(this.storageKey, JSON.stringify(patients))
+        console.log(`🗑️ Bulk deleted ${patientIds.length} patients from localStorage`)
+      }
+    } catch (error) {
+      console.error("Error bulk deleting patients from storage:", error)
+    }
   }
 
   // Load saved patients from localStorage
@@ -273,6 +652,7 @@ class PatientTableManager {
 
         // Attach view button listeners to newly loaded patients
         this.attachViewButtonListeners()
+        this.attachBulkCheckboxListeners()
       }
     } catch (error) {
       console.error("Error loading saved patients:", error)
@@ -294,6 +674,9 @@ class PatientTableManager {
 
     const newRow = document.createElement("tr")
     newRow.innerHTML = `
+            <td style="text-align: center;">
+                <input type="checkbox" class="bulk-checkbox" data-patient-id="${patientData.patientId}">
+            </td>
             <td>${rowNumber}</td>
             <td>${patientData.patientId}</td>
             <td>${patientData.basicInfo.age}</td>
@@ -312,6 +695,18 @@ class PatientTableManager {
         `
 
     tableBody.appendChild(newRow)
+  }
+
+  // Attach bulk checkbox listeners
+  attachBulkCheckboxListeners() {
+    const checkboxes = document.querySelectorAll(".bulk-checkbox[data-patient-id]")
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => {
+        const patientId = e.target.getAttribute("data-patient-id")
+        const row = e.target.closest("tr")
+        this.togglePatientSelection(patientId, e.target, row)
+      })
+    })
   }
 
   // Calculate risk level
@@ -456,24 +851,6 @@ class PatientTableManager {
       })
     })
 
-    // Generate prescription button
-    const generateBtn = document.getElementById("generatePrescriptionBtn")
-    if (generateBtn) {
-      generateBtn.addEventListener("click", () => this.generatePrescription())
-    }
-
-    // Save prescription button
-    const saveBtn = document.getElementById("savePrescriptionBtn")
-    if (saveBtn) {
-      saveBtn.addEventListener("click", () => this.savePrescription())
-    }
-
-    // Delete prescription button
-    const deleteBtn = document.getElementById("deletePrescriptionBtn")
-    if (deleteBtn) {
-      deleteBtn.addEventListener("click", () => this.deletePrescription())
-    }
-
     // Close modal buttons
     const closeBtn = document.getElementById("patientDetailsCloseBtn")
     if (closeBtn) {
@@ -489,12 +866,6 @@ class PatientTableManager {
         }
       })
     }
-
-    // Print button functionality
-    const printButtons = document.querySelectorAll(".print-btn")
-    printButtons.forEach((button) => {
-      button.addEventListener("click", () => this.printPrescription())
-    })
 
     // Add click event listeners to view buttons (will be called after table refresh)
     this.attachViewButtonListeners()
@@ -540,8 +911,8 @@ class PatientTableManager {
     // Get row number from table
     const tableBody = document.getElementById("patientsTableBody")
     const rows = Array.from(tableBody.children)
-    const patientRow = rows.find((row) => row.cells[1].textContent === patientId)
-    const patientNumber = patientRow ? patientRow.cells[0].textContent : "1"
+    const patientRow = rows.find((row) => row.cells[2].textContent === patientId) // Adjusted for checkbox column
+    const patientNumber = patientRow ? patientRow.cells[1].textContent : "1"
 
     // Calculate additional data
     const riskLevel = this.calculateRiskLevel(patientData)
@@ -573,42 +944,18 @@ class PatientTableManager {
       }
     }
 
-    // Update health metrics
-    const bmi = patientData.health?.bmi || "N/A"
-    const glucose = patientData.health?.fastingGlucose || "N/A"
-    const bp = patientData.health?.bloodPressure || "N/A"
-
-    const patientBMI = document.getElementById("patientBMI")
-    const patientGlucose = document.getElementById("patientGlucose")
-    const patientBP = document.getElementById("patientBP")
-
-    if (patientBMI) patientBMI.textContent = bmi
-    if (patientGlucose) patientGlucose.textContent = `${glucose} mg/dL`
-    if (patientBP) patientBP.textContent = bp
-
-    // Update general information
-    const patientAge = document.getElementById("patientAge")
-    const patientSex = document.getElementById("patientSex")
-    const patientFrequency = document.getElementById("patientFrequency")
-
-    if (patientAge) patientAge.textContent = `${patientData.basicInfo?.age || "N/A"} yrs old`
-    if (patientSex) patientSex.textContent = patientData.basicInfo?.sex || "N/A"
-    if (patientFrequency) patientFrequency.textContent = patientData.notes?.monitoringFrequency || "Not Set"
-
-    // Load saved prescription if exists
-    this.loadSavedPrescription(patientId)
-
-    // Update risk assessments (simplified for now)
-    this.updateRiskBadge("retinopathyRisk", complications.includes("Retinopathy") ? "High" : "Low")
-    this.updateRiskBadge("neuropathyRisk", complications.includes("Neuropathy") ? "High" : "Low")
-    this.updateRiskBadge("cardiovascularRisk", complications.includes("Cardiovascular Risk") ? "High" : "Low")
+    // Populate all tabs with patient data
+    this.populateBasicInfoTab(patientData)
+    this.populateHealthDataTab(patientData)
+    this.populateInsightsTab(patientData, complications, riskLevel)
+    this.populateNotesTab(patientData)
 
     // Reset to first tab
     document.querySelectorAll(".tab-button").forEach((btn) => btn.classList.remove("active"))
     document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"))
 
-    const firstTab = document.querySelector('[data-tab="patient-info"]')
-    const firstContent = document.getElementById("patient-info")
+    const firstTab = document.querySelector('[data-tab="basic-info-tab"]')
+    const firstContent = document.getElementById("basic-info-tab")
 
     if (firstTab) firstTab.classList.add("active")
     if (firstContent) firstContent.classList.add("active")
@@ -621,76 +968,219 @@ class PatientTableManager {
     }
   }
 
-  // Load saved prescription for patient
-  loadSavedPrescription(patientId) {
-    try {
-      const savedPrescriptions = localStorage.getItem("diabetech_prescriptions")
-      if (savedPrescriptions) {
-        const prescriptions = JSON.parse(savedPrescriptions)
-        const patientPrescription = prescriptions.find((p) => p.patientId === patientId)
+  // Populate Basic Info Tab
+  populateBasicInfoTab(patientData) {
+    // Basic information
+    const basicPatientId = document.getElementById("basicPatientId")
+    const basicAge = document.getElementById("basicAge")
+    const basicSex = document.getElementById("basicSex")
+    const basicDOB = document.getElementById("basicDOB")
+    const basicSmoking = document.getElementById("basicSmoking")
 
-        if (patientPrescription) {
-          // Show saved prescription state
-          const prescriptionEmpty = document.getElementById("prescriptionEmpty")
-          const prescriptionGenerated = document.getElementById("prescriptionGenerated")
-          const prescriptionSaved = document.getElementById("prescriptionSaved")
+    if (basicPatientId) basicPatientId.textContent = patientData.patientId || "N/A"
+    if (basicAge) basicAge.textContent = `${patientData.basicInfo?.age || "N/A"} years old`
+    if (basicSex) basicSex.textContent = patientData.basicInfo?.sex || "N/A"
 
-          if (prescriptionEmpty) prescriptionEmpty.style.display = "none"
-          if (prescriptionGenerated) prescriptionGenerated.style.display = "none"
-          if (prescriptionSaved) prescriptionSaved.style.display = "block"
+    // Format date of birth
+    if (basicDOB && patientData.basicInfo?.dateOfBirth) {
+      const date = new Date(patientData.basicInfo.dateOfBirth)
+      basicDOB.textContent = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    } else if (basicDOB) {
+      basicDOB.textContent = "N/A"
+    }
 
-          // Load saved doctor notes
-          const savedNotesText = document.getElementById("savedNotesText")
-          if (savedNotesText) {
-            savedNotesText.textContent = patientPrescription.doctorNotes || "No additional notes provided."
-          }
+    if (basicSmoking) basicSmoking.textContent = patientData.basicInfo?.smokingStatus || "N/A"
 
-          // Load medications into table if available
-          if (patientPrescription.medications && patientPrescription.medications.length > 0) {
-            this.loadMedicationsIntoTable(patientPrescription.medications)
-          }
+    // Lifestyle information
+    const basicActivity = document.getElementById("basicActivity")
+    const basicAlcohol = document.getElementById("basicAlcohol")
+    const basicStress = document.getElementById("basicStress")
+    const basicDiet = document.getElementById("basicDiet")
+    const basicSleep = document.getElementById("basicSleep")
 
-          console.log(`💊 Loaded saved prescription for patient ${patientId}`)
-        } else {
-          // No saved prescription, show empty state
-          const prescriptionEmpty = document.getElementById("prescriptionEmpty")
-          const prescriptionGenerated = document.getElementById("prescriptionGenerated")
-          const prescriptionSaved = document.getElementById("prescriptionSaved")
-
-          if (prescriptionEmpty) prescriptionEmpty.style.display = "block"
-          if (prescriptionGenerated) prescriptionGenerated.style.display = "none"
-          if (prescriptionSaved) prescriptionSaved.style.display = "none"
-
-          // Clear doctor notes input
-          const doctorNotesInput = document.getElementById("doctorNotesInput")
-          if (doctorNotesInput) doctorNotesInput.value = ""
-        }
-      }
-    } catch (error) {
-      console.error("Error loading saved prescription:", error)
+    if (basicActivity) basicActivity.textContent = patientData.lifestyle?.physicalActivity || "N/A"
+    if (basicAlcohol) basicAlcohol.textContent = patientData.lifestyle?.alcoholConsumption || "N/A"
+    if (basicStress) basicStress.textContent = patientData.lifestyle?.stressLevel || "N/A"
+    if (basicDiet) basicDiet.textContent = patientData.lifestyle?.dietType || "N/A"
+    if (basicSleep) {
+      const sleepDuration = patientData.lifestyle?.sleepDuration
+      basicSleep.textContent = sleepDuration ? `${sleepDuration} hrs/night` : "N/A"
     }
   }
 
-  // Load medications into the medications table
-  loadMedicationsIntoTable(medications) {
-    const medicationsTableBody = document.querySelector(".medications-table tbody")
-    if (!medicationsTableBody) return
+  // Populate Health Data Tab
+  populateHealthDataTab(patientData) {
+    // Health metrics
+    const healthBMI = document.getElementById("healthBMI")
+    const healthGlucose = document.getElementById("healthGlucose")
+    const healthBP = document.getElementById("healthBP")
 
-    // Clear existing rows
-    medicationsTableBody.innerHTML = ""
+    if (healthBMI) healthBMI.textContent = patientData.health?.bmi || "N/A"
+    if (healthGlucose) {
+      const glucose = patientData.health?.fastingGlucose
+      healthGlucose.textContent = glucose ? `${glucose} mg/dL` : "N/A"
+    }
+    if (healthBP) healthBP.textContent = patientData.health?.bloodPressure || "N/A"
 
-    // Add medication rows
-    medications.forEach((med) => {
-      const row = document.createElement("tr")
-      row.innerHTML = `
-      <td>${med.medication}</td>
-      <td>${med.dosage}</td>
-      <td>${med.frequency}</td>
-      <td>${med.duration}</td>
-      <td>${med.notes || ""}</td>
-    `
-      medicationsTableBody.appendChild(row)
-    })
+    // Medical history
+    const healthDiabetesType = document.getElementById("healthDiabetesType")
+    const healthFamilyHistory = document.getElementById("healthFamilyHistory")
+    const healthConditions = document.getElementById("healthConditions")
+    const healthMedications = document.getElementById("healthMedications")
+    const healthAllergies = document.getElementById("healthAllergies")
+
+    if (healthDiabetesType) healthDiabetesType.textContent = patientData.health?.diabetesType || "N/A"
+    if (healthFamilyHistory) healthFamilyHistory.textContent = patientData.health?.familyHistory || "N/A"
+    if (healthConditions) healthConditions.textContent = patientData.health?.knownConditions || "None"
+    if (healthMedications) healthMedications.textContent = patientData.health?.currentMedications || "None"
+    if (healthAllergies) healthAllergies.textContent = patientData.health?.allergies || "None"
+
+    // Clinical data
+    const healthHeight = document.getElementById("healthHeight")
+    const healthWeight = document.getElementById("healthWeight")
+    const healthHbA1c = document.getElementById("healthHbA1c")
+    const healthBloodSugar = document.getElementById("healthBloodSugar")
+    const healthCholesterol = document.getElementById("healthCholesterol")
+
+    if (healthHeight) {
+      const height = patientData.health?.height
+      healthHeight.textContent = height ? `${height} cm` : "N/A"
+    }
+    if (healthWeight) {
+      const weight = patientData.health?.weight
+      healthWeight.textContent = weight ? `${weight} kg` : "N/A"
+    }
+    if (healthHbA1c) {
+      const hba1c = patientData.health?.hba1c
+      healthHbA1c.textContent = hba1c ? `${hba1c}%` : "N/A"
+    }
+    if (healthBloodSugar) {
+      const bloodSugar = patientData.health?.bloodSugarLevel
+      healthBloodSugar.textContent = bloodSugar ? `${bloodSugar} mg/dL` : "N/A"
+    }
+    if (healthCholesterol) {
+      const cholesterol = patientData.health?.cholesterolLevel
+      healthCholesterol.textContent = cholesterol ? `${cholesterol} mg/dL` : "N/A"
+    }
+  }
+
+  // Populate Insights Tab
+  populateInsightsTab(patientData, complications, riskLevel) {
+    // Overall risk and individual risks
+    const insightsOverallRisk = document.getElementById("insightsOverallRisk")
+    const insightsRetinopathy = document.getElementById("insightsRetinopathy")
+    const insightsNeuropathy = document.getElementById("insightsNeuropathy")
+    const insightsCardiovascular = document.getElementById("insightsCardiovascular")
+
+    if (insightsOverallRisk) {
+      insightsOverallRisk.textContent = riskLevel
+      insightsOverallRisk.className = "risk-badge"
+      if (riskLevel === "High Risk") {
+        insightsOverallRisk.classList.add("high-risk")
+      } else if (riskLevel === "Moderate Risk") {
+        insightsOverallRisk.classList.add("moderate-risk")
+      } else {
+        insightsOverallRisk.classList.add("low-risk")
+      }
+    }
+
+    // Individual risk assessments
+    const retinopathyRisk = complications.includes("Retinopathy") ? "High" : "Low"
+    const neuropathyRisk = complications.includes("Neuropathy") ? "High" : "Low"
+    const cardiovascularRisk = complications.includes("Cardiovascular Risk") ? "High" : "Low"
+
+    this.updateRiskBadge("insightsRetinopathy", retinopathyRisk)
+    this.updateRiskBadge("insightsNeuropathy", neuropathyRisk)
+    this.updateRiskBadge("insightsCardiovascular", cardiovascularRisk)
+
+    // AI recommendations
+    const insightsRiskScore = document.getElementById("insightsRiskScore")
+    const insightsMonitoring = document.getElementById("insightsMonitoring")
+    const insightsComplications = document.getElementById("insightsComplications")
+    const insightsSuggestion = document.getElementById("insightsSuggestion")
+
+    // Calculate risk score
+    let riskScore = 0
+    const age = patientData.basicInfo?.age || 0
+    const hba1c = patientData.health?.hba1c || 0
+    const fastingGlucose = patientData.health?.fastingGlucose || 0
+
+    if (age > 65) riskScore += 20
+    else if (age > 45) riskScore += 10
+    if (fastingGlucose > 126) riskScore += 30
+    else if (fastingGlucose > 100) riskScore += 15
+    if (hba1c > 7) riskScore += 25
+    else if (hba1c > 6.5) riskScore += 15
+
+    if (insightsRiskScore) insightsRiskScore.textContent = `${Math.min(riskScore, 100)}%`
+    if (insightsMonitoring) {
+      const monitoring = riskScore > 50 ? "Weekly" : riskScore > 25 ? "Monthly" : "Quarterly"
+      insightsMonitoring.textContent = monitoring
+    }
+    if (insightsComplications) {
+      const complicationsText =
+        complications.length > 0 && complications[0] !== "None detected" ? complications.join(", ") : "None detected"
+      insightsComplications.textContent = complicationsText
+    }
+    if (insightsSuggestion) {
+      let suggestion = "Continue current management plan with regular monitoring."
+      if (complications.includes("Retinopathy")) {
+        suggestion = "Recommend ophthalmologic examination and HbA1c optimization."
+      } else if (complications.includes("Neuropathy")) {
+        suggestion = "Consider neurological assessment and foot care education."
+      } else if (complications.includes("Cardiovascular Risk")) {
+        suggestion = "Recommend cardiovascular screening and lifestyle modifications."
+      } else if (fastingGlucose > 126) {
+        suggestion = "Consider insulin dosage reassessment in 2 weeks based on fasting blood sugar patterns."
+      } else if (hba1c > 7) {
+        suggestion = "Recommend dietary consultation and increased monitoring frequency."
+      }
+      insightsSuggestion.textContent = suggestion
+    }
+  }
+
+  // Populate Notes Tab
+  populateNotesTab(patientData) {
+    const notesMonitoring = document.getElementById("notesMonitoring")
+    const notesDiagnosis = document.getElementById("notesDiagnosis")
+    const notesLastCheckup = document.getElementById("notesLastCheckup")
+    const notesNextFollowup = document.getElementById("notesNextFollowup")
+    const notesRemarks = document.getElementById("notesRemarks")
+
+    if (notesMonitoring) notesMonitoring.textContent = patientData.notes?.monitoringFrequency || "Not Set"
+    if (notesDiagnosis) notesDiagnosis.textContent = patientData.notes?.initialDiagnosis || "N/A"
+
+    // Format dates
+    if (notesLastCheckup && patientData.notes?.lastCheckupDate) {
+      const date = new Date(patientData.notes.lastCheckupDate)
+      notesLastCheckup.textContent = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    } else if (notesLastCheckup) {
+      notesLastCheckup.textContent = "N/A"
+    }
+
+    if (notesNextFollowup && patientData.notes?.nextFollowUp) {
+      const date = new Date(patientData.notes.nextFollowUp)
+      notesNextFollowup.textContent = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    } else if (notesNextFollowup) {
+      notesNextFollowup.textContent = "N/A"
+    }
+
+    if (notesRemarks) {
+      const remarks = patientData.notes?.remarksNotes
+      notesRemarks.textContent = remarks || "No additional notes provided."
+    }
   }
 
   // Update risk badge helper
@@ -719,343 +1209,6 @@ class PatientTableManager {
     }
   }
 
-  // Generate prescription
-  generatePrescription() {
-    const generateBtn = document.getElementById("generatePrescriptionBtn")
-    const loadingOverlay = document.getElementById("prescriptionLoadingOverlay")
-    const prescriptionEmpty = document.getElementById("prescriptionEmpty")
-    const prescriptionGenerated = document.getElementById("prescriptionGenerated")
-
-    if (generateBtn) generateBtn.disabled = true
-    if (loadingOverlay) loadingOverlay.classList.add("show")
-
-    // Simulate prescription generation with loading delay
-    setTimeout(() => {
-      if (prescriptionEmpty) prescriptionEmpty.style.display = "none"
-      if (prescriptionGenerated) prescriptionGenerated.style.display = "block"
-
-      // Hide loading and re-enable button
-      if (loadingOverlay) loadingOverlay.classList.remove("show")
-      if (generateBtn) generateBtn.disabled = false
-
-      // Show prescription generated success modal
-      this.showPrescriptionGeneratedModal()
-    }, 2000)
-  }
-
-  // Show prescription generated success modal
-  showPrescriptionGeneratedModal() {
-    const modal = document.getElementById("prescriptionSuccessModal")
-    if (modal) {
-      modal.classList.add("show")
-      document.body.style.overflow = "hidden"
-
-      // Auto close after 3 seconds
-      setTimeout(() => {
-        this.closePrescriptionSuccessModal()
-      }, 3000)
-    }
-  }
-
-  // Close prescription success modal
-  closePrescriptionSuccessModal() {
-    const modal = document.getElementById("prescriptionSuccessModal")
-    if (modal) {
-      modal.classList.remove("show")
-      document.body.style.overflow = "auto"
-    }
-  }
-
-  // Save prescription
-  savePrescription() {
-    const modal = document.getElementById("saveConfirmationModal")
-    if (modal) {
-      modal.classList.add("show")
-      document.body.style.overflow = "hidden"
-    }
-  }
-
-  // Close save confirmation modal
-  closeSaveConfirmationModal() {
-    const modal = document.getElementById("saveConfirmationModal")
-    if (modal) {
-      modal.classList.remove("show")
-      document.body.style.overflow = "auto"
-    }
-  }
-
-  // Confirm prescription save
-  confirmSavePrescription() {
-    this.closeSaveConfirmationModal()
-    this.executePrescriptionSave()
-  }
-
-  // Execute prescription save
-  executePrescriptionSave() {
-    const saveBtn = document.getElementById("savePrescriptionBtn")
-    const prescriptionGenerated = document.getElementById("prescriptionGenerated")
-    const prescriptionSaved = document.getElementById("prescriptionSaved")
-    const doctorNotesInput = document.getElementById("doctorNotesInput")
-
-    if (saveBtn) saveBtn.disabled = true
-
-    // Simulate saving process
-    setTimeout(() => {
-      // Hide generated state, show saved state
-      if (prescriptionGenerated) prescriptionGenerated.style.display = "none"
-      if (prescriptionSaved) prescriptionSaved.style.display = "block"
-
-      // Save doctor's notes to the saved state
-      const doctorNotes = doctorNotesInput ? doctorNotesInput.value : ""
-      const savedNotesText = document.getElementById("savedNotesText")
-      if (savedNotesText) {
-        savedNotesText.textContent = doctorNotes || "No additional notes provided."
-      }
-
-      // Save prescription data to localStorage
-      this.savePrescriptionToStorage()
-
-      // Re-enable button
-      if (saveBtn) saveBtn.disabled = false
-
-      // Show success modal
-      this.showSuccessModal("Saved!", "Prescription saved successfully!")
-    }, 1000)
-  }
-
-  // Save prescription to localStorage
-  savePrescriptionToStorage() {
-    try {
-      const patientId = document.getElementById("patientId")?.textContent
-      if (!patientId) return
-
-      const prescriptionData = {
-        patientId: patientId,
-        medications: this.getCurrentMedications(),
-        doctorNotes: document.getElementById("doctorNotesInput")?.value || "",
-        savedAt: new Date().toISOString(),
-        prescriptionId: `RX${Date.now()}`,
-      }
-
-      // Get existing prescriptions
-      let savedPrescriptions = []
-      const existingData = localStorage.getItem("diabetech_prescriptions")
-      if (existingData) {
-        savedPrescriptions = JSON.parse(existingData)
-      }
-
-      // Remove any existing prescription for this patient
-      savedPrescriptions = savedPrescriptions.filter((p) => p.patientId !== patientId)
-
-      // Add new prescription
-      savedPrescriptions.push(prescriptionData)
-
-      localStorage.setItem("diabetech_prescriptions", JSON.stringify(savedPrescriptions))
-      console.log(`💊 Prescription saved for patient ${patientId}`)
-    } catch (error) {
-      console.error("Error saving prescription:", error)
-    }
-  }
-
-  // Get current medications from the table
-  getCurrentMedications() {
-    const medicationsTable = document.querySelector(".medications-table tbody")
-    const medications = []
-
-    if (medicationsTable) {
-      const rows = medicationsTable.querySelectorAll("tr")
-      rows.forEach((row) => {
-        const cells = row.querySelectorAll("td")
-        if (cells.length >= 5) {
-          medications.push({
-            medication: cells[0].textContent.trim(),
-            dosage: cells[1].textContent.trim(),
-            frequency: cells[2].textContent.trim(),
-            duration: cells[3].textContent.trim(),
-            notes: cells[4].textContent.trim(),
-          })
-        }
-      })
-    }
-
-    return medications
-  }
-
-  // Delete prescription
-  deletePrescription() {
-    const modal = document.getElementById("deleteConfirmationModal")
-    if (modal) {
-      modal.classList.add("show")
-      document.body.style.overflow = "hidden"
-    }
-  }
-
-  // Close delete confirmation modal
-  closeDeleteConfirmationModal() {
-    const modal = document.getElementById("deleteConfirmationModal")
-    if (modal) {
-      modal.classList.remove("show")
-      document.body.style.overflow = "auto"
-    }
-  }
-
-  // Confirm prescription delete
-  confirmDeletePrescription() {
-    this.closeDeleteConfirmationModal()
-    this.executePrescriptionDelete()
-  }
-
-  // Execute prescription delete
-  executePrescriptionDelete() {
-    const patientId = document.getElementById("patientId")?.textContent
-    if (!patientId) return
-
-    try {
-      // Remove from localStorage
-      const savedPrescriptions = localStorage.getItem("diabetech_prescriptions")
-      if (savedPrescriptions) {
-        let prescriptions = JSON.parse(savedPrescriptions)
-        prescriptions = prescriptions.filter((p) => p.patientId !== patientId)
-        localStorage.setItem("diabetech_prescriptions", JSON.stringify(prescriptions))
-      }
-
-      // Reset to empty state
-      const prescriptionEmpty = document.getElementById("prescriptionEmpty")
-      const prescriptionGenerated = document.getElementById("prescriptionGenerated")
-      const prescriptionSaved = document.getElementById("prescriptionSaved")
-
-      if (prescriptionEmpty) prescriptionEmpty.style.display = "block"
-      if (prescriptionGenerated) prescriptionGenerated.style.display = "none"
-      if (prescriptionSaved) prescriptionSaved.style.display = "none"
-
-      // Clear doctor notes input
-      const doctorNotesInput = document.getElementById("doctorNotesInput")
-      if (doctorNotesInput) doctorNotesInput.value = ""
-
-      console.log(`🗑️ Prescription deleted for patient ${patientId}`)
-
-      // Show success modal
-      this.showSuccessModal("Deleted!", "Prescription deleted successfully!")
-    } catch (error) {
-      console.error("Error deleting prescription:", error)
-    }
-  }
-
-  // Show success modal
-  showSuccessModal(title, message) {
-    const modal = document.getElementById("successModal")
-    const successTitle = document.getElementById("successTitle")
-    const successMessage = document.getElementById("successMessage")
-
-    if (successTitle) successTitle.textContent = message
-    if (successMessage) successMessage.textContent = title
-    if (modal) {
-      modal.classList.add("show")
-      document.body.style.overflow = "hidden"
-
-      // Auto close after 3 seconds
-      setTimeout(() => {
-        this.closeSuccessModal()
-      }, 3000)
-    }
-  }
-
-  // Close success modal
-  closeSuccessModal() {
-    const modal = document.getElementById("successModal")
-    if (modal) {
-      modal.classList.remove("show")
-      document.body.style.overflow = "auto"
-    }
-  }
-
-  // Print prescription
-  printPrescription() {
-    // Create a new window for printing
-    const printWindow = window.open("", "_blank", "width=800,height=600")
-
-    // Get prescription content
-    const patientId = document.getElementById("patientId")?.textContent || "N/A"
-    const patientComplications = document.getElementById("patientComplications")?.textContent || "None"
-    const patientAge = document.getElementById("patientAge")?.textContent || "N/A"
-    const patientSex = document.getElementById("patientSex")?.textContent || "N/A"
-
-    // Get medications table
-    const medicationsTable =
-      document.querySelector(".medications-table")?.outerHTML || "<p>No medications prescribed</p>"
-
-    // Get doctor's notes
-    const doctorNotes =
-      document.getElementById("savedNotesText")?.textContent ||
-      document.getElementById("doctorNotesInput")?.value ||
-      "No additional notes provided."
-
-    // Create print content
-    const printContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Prescription - ${patientId}</title>
-      <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
-        .patient-info { margin-bottom: 20px; }
-        .section { margin-bottom: 25px; }
-        .section h3 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f5f5f5; }
-        .notes { background-color: #f9f9f9; padding: 15px; border-radius: 5px; }
-        @media print { body { margin: 0; } }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <h1>PRESCRIPTION</h1>
-        <h2>Diabetech Medical Center</h2>
-      </div>
-      
-      <div class="patient-info">
-        <h3>Patient Information</h3>
-        <p><strong>Patient ID:</strong> ${patientId}</p>
-        <p><strong>Age:</strong> ${patientAge}</p>
-        <p><strong>Sex:</strong> ${patientSex}</p>
-        <p><strong>Complications:</strong> ${patientComplications}</p>
-        <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-      </div>
-      
-      <div class="section">
-        <h3>Prescribed Medications</h3>
-        ${medicationsTable}
-      </div>
-      
-      <div class="section">
-        <h3>Doctor's Additional Notes</h3>
-        <div class="notes">
-          ${doctorNotes}
-        </div>
-      </div>
-      
-      <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #666;">
-        Generated on ${new Date().toLocaleString()} | Diabetech Medical System
-      </div>
-    </body>
-    </html>
-  `
-
-    // Write content to print window
-    printWindow.document.write(printContent)
-    printWindow.document.close()
-
-    // Wait for content to load then print
-    printWindow.onload = () => {
-      printWindow.print()
-      printWindow.close()
-    }
-
-    console.log("✅ Prescription sent to printer")
-  }
-
   // Refresh patients table (called from add patient modal)
   refreshPatientsTable() {
     this.loadSavedPatients()
@@ -1081,6 +1234,9 @@ class PatientTableManager {
 
     const newRow = document.createElement("tr")
     newRow.innerHTML = `
+          <td style="text-align: center;">
+              <input type="checkbox" class="bulk-checkbox" data-patient-id="${patientData.patientId}">
+          </td>
           <td>${rowCount}</td>
           <td>${patientData.patientId}</td>
           <td>${patientData.basicInfo.age}</td>
@@ -1114,9 +1270,28 @@ class PatientTableManager {
 
     // Attach view button listeners to the new row
     this.attachViewButtonListeners()
+    this.attachBulkCheckboxListeners()
 
     // Update statistics
     this.updateStats()
+  }
+
+  // Delete patient from storage
+  deletePatientFromStorage(patientId) {
+    try {
+      const savedPatients = localStorage.getItem(this.storageKey)
+      if (savedPatients) {
+        let patients = JSON.parse(savedPatients)
+        patients = patients.filter((patient) => patient.patientId !== patientId)
+        localStorage.setItem(this.storageKey, JSON.stringify(patients))
+        console.log(`🗑️ Patient ${patientId} deleted from localStorage`)
+
+        // Update stats after deletion
+        this.updateStats()
+      }
+    } catch (error) {
+      console.error("Error deleting patient from storage:", error)
+    }
   }
 }
 
@@ -1130,7 +1305,7 @@ window.deletePatient = (patientId) => {
     if (tableBody) {
       const rows = Array.from(tableBody.children)
       const rowToDelete = rows.find((row) => {
-        const patientIdCell = row.cells[1]
+        const patientIdCell = row.cells[2] // Adjusted for checkbox column
         return patientIdCell && patientIdCell.textContent === patientId
       })
 
@@ -1146,7 +1321,7 @@ window.deletePatient = (patientId) => {
           // Update row numbers sequentially (1, 2, 3, 4...)
           const remainingRows = Array.from(tableBody.children)
           remainingRows.forEach((row, index) => {
-            row.cells[0].textContent = index + 1
+            row.cells[1].textContent = index + 1 // Adjusted for checkbox column
           })
 
           // Update patient ID counter for next new patient
@@ -1162,31 +1337,18 @@ window.deletePatient = (patientId) => {
       window.patientTableManager.deletePatientFromStorage(patientId)
     }
 
-    console.log("✅ Patient deleted successfully")
-  }
-}
-
-// Delete patient from storage
-PatientTableManager.prototype.deletePatientFromStorage = function (patientId) {
-  try {
-    const savedPatients = localStorage.getItem(this.storageKey)
-    if (savedPatients) {
-      let patients = JSON.parse(savedPatients)
-      patients = patients.filter((patient) => patient.patientId !== patientId)
-      localStorage.setItem(this.storageKey, JSON.stringify(patients))
-      console.log(`🗑️ Patient ${patientId} deleted from localStorage`)
-
-      // Update stats after deletion
-      this.updateStats()
+    // Remove from selected patients if it was selected
+    if (window.patientTableManager && window.patientTableManager.selectedPatients.has(patientId)) {
+      window.patientTableManager.selectedPatients.delete(patientId)
+      window.patientTableManager.updateBulkSelectionUI()
     }
-  } catch (error) {
-    console.error("Error deleting patient from storage:", error)
+
+    console.log("✅ Patient deleted successfully")
   }
 }
 
 // Initialize the patient table manager when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   window.patientTableManager = new PatientTableManager()
-
   console.log("✅ Patient Table Manager initialized")
 })

@@ -9,7 +9,7 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-  
+
             <!-- Patient Header -->
             <div class="patient-header">
                 <div class="patient-id-circle">
@@ -20,7 +20,7 @@
                     <p class="patient-label">Patient ID</p>
                 </div>
             </div>
-  
+
             <!-- Modal Tabs -->
             <div class="modal-tabs">
                 <button class="tab-button active" data-tab="basic-info">Basic Info</button>
@@ -28,7 +28,7 @@
                 <button class="tab-button disabled" data-tab="insights">Insights</button>
                 <button class="tab-button disabled" data-tab="notes">Notes</button>
             </div>
-  
+
             <!-- Form -->
             <form id="addPatientForm">
                 <!-- Basic Info Tab -->
@@ -54,21 +54,21 @@
                             </div>
                             <div class="error-message" id="sex-error"></div>
                         </div>
-  
+
                         <!-- Date of Birth -->
                         <div class="form-group">
                             <label class="form-label">Date of Birth *</label>
                             <input type="date" name="dateOfBirth" class="form-input" placeholder="DD/MM/YYYY" required>
                             <div class="error-message" id="dateOfBirth-error"></div>
                         </div>
-  
+
                         <!-- Age -->
                         <div class="form-group">
                             <label class="form-label">Age *</label>
                             <input type="number" name="age" class="form-input age-input" min="1" max="120" required>
                             <div class="error-message" id="age-error"></div>
                         </div>
-  
+
                         <!-- Smoking Status -->
                         <div class="form-group">
                             <label class="form-label">Smoking Status *</label>
@@ -92,7 +92,7 @@
                             <div class="error-message" id="smokingStatus-error"></div>
                         </div>
                     </div>
-  
+
                     <!-- Lifestyle Section -->
                     <div class="form-section compact">
                         <h3 class="section-title">Lifestyle</h3>
@@ -108,7 +108,7 @@
                             </select>
                             <div class="error-message" id="physicalActivity-error"></div>
                         </div>
-  
+
                         <!-- Alcohol Consumption -->
                         <div class="form-group">
                             <label class="form-label">Alcohol Consumption *</label>
@@ -121,7 +121,7 @@
                             </select>
                             <div class="error-message" id="alcoholConsumption-error"></div>
                         </div>
-  
+
                         <!-- Stress Level -->
                         <div class="form-group">
                             <label class="form-label">Stress Level *</label>
@@ -133,7 +133,7 @@
                             </select>
                             <div class="error-message" id="stressLevel-error"></div>
                         </div>
-  
+
                         <!-- Diet Type -->
                         <div class="form-group">
                             <label class="form-label">Diet Type *</label>
@@ -147,7 +147,7 @@
                             </select>
                             <div class="error-message" id="dietType-error"></div>
                         </div>
-  
+
                         <!-- Sleep Duration -->
                         <div class="form-group">
                             <label class="form-label">Sleep Duration *</label>
@@ -158,7 +158,7 @@
                             <div class="error-message" id="sleepDuration-error"></div>
                         </div>
                     </div>
-  
+
                     <!-- Basic Info Tab Actions -->
                     <div class="tab-navigation-buttons">
                         <div class="button-group">
@@ -175,7 +175,7 @@
                         </div>
                     </div>
                 </div>
-  
+
                 <!-- Health Tab -->
                 <div class="tab-content" id="health">
                     <!-- Medical History Section -->
@@ -193,7 +193,7 @@
                             </select>
                             <div class="error-message" id="diabetesType-error"></div>
                         </div>
-  
+
                         <div class="form-group">
                             <label class="form-label">Family History of DM? *</label>
                             <div class="radio-group">
@@ -210,23 +210,23 @@
                             </div>
                             <div class="error-message" id="familyHistory-error"></div>
                         </div>
-  
+
                         <div class="form-group">
                             <label class="form-label">Known Conditions</label>
                             <textarea name="knownConditions" class="form-textarea" rows="2" placeholder="List any known medical conditions"></textarea>
                         </div>
-  
+
                         <div class="form-group">
                             <label class="form-label">Current Medications</label>
                             <textarea name="currentMedications" class="form-textarea" rows="2" placeholder="List current medications and dosages"></textarea>
                         </div>
-  
+
                         <div class="form-group">
                             <label class="form-label">Allergies</label>
                             <textarea name="allergies" class="form-textarea" rows="2" placeholder="List any known allergies"></textarea>
                         </div>
                     </div>
-  
+
                     <!-- Clinical Data Section -->
                     <div class="form-section compact">
                         <h3 class="section-title">Clinical Data</h3>
@@ -240,7 +240,7 @@
                                 </div>
                                 <div class="error-message" id="height-error"></div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">Weight *</label>
                                 <div class="input-with-unit">
@@ -249,12 +249,12 @@
                                 </div>
                                 <div class="error-message" id="weight-error"></div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">BMI</label>
                                 <input type="number" name="bmi" class="form-input" step="0.1" min="10" max="50" readonly placeholder="24.2">
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">Blood Pressure *</label>
                                 <div class="input-with-unit">
@@ -263,7 +263,7 @@
                                 </div>
                                 <div class="error-message" id="bloodPressure-error"></div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">Fasting Glucose *</label>
                                 <div class="input-with-unit">
@@ -272,7 +272,7 @@
                                 </div>
                                 <div class="error-message" id="fastingGlucose-error"></div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">Blood Sugar Level *</label>
                                 <div class="input-with-unit">
@@ -281,7 +281,7 @@
                                 </div>
                                 <div class="error-message" id="bloodSugarLevel-error"></div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">HbA1c Level *</label>
                                 <div class="input-with-unit">
@@ -290,7 +290,7 @@
                                 </div>
                                 <div class="error-message" id="hba1c-error"></div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">Cholesterol Level</label>
                                 <div class="input-with-unit">
@@ -298,7 +298,7 @@
                                     <span class="input-unit">mg/dL</span>
                                 </div>
                             </div>
-  
+
                             <div class="form-group">
                                 <label class="form-label">Waist Circumference</label>
                                 <div class="input-with-unit">
@@ -308,7 +308,7 @@
                             </div>
                         </div>
                     </div>
-  
+
                     <!-- Health Tab Actions -->
                     <div class="tab-navigation-buttons">
                         <div class="button-group">
@@ -329,7 +329,7 @@
                         </div>
                     </div>
                 </div>
-  
+
                 <!-- Updated Insights Tab with Complications -->
                 <div class="tab-content" id="insights">
                     <!-- Empty State -->
@@ -430,7 +430,7 @@
                             <p class="notes-sub-prompt">Complete the Health tab to add notes</p>
                         </div>
                     </div>
-  
+
                     <!-- Notes Content -->
                     <div class="notes-content" id="notesContent" style="display: none;">
                         <div class="form-section">
@@ -455,13 +455,13 @@
                                     </label>
                                 </div>
                             </div>
-  
+
                             <!-- Initial Diagnosis -->
                             <div class="form-group">
                                 <label class="form-label">Initial Diagnosis:</label>
                                 <input type="text" name="initialDiagnosis" class="form-input" placeholder="Enter initial diagnosis">
                             </div>
-  
+
                             <!-- Dates -->
                             <div class="form-row">
                                 <div class="form-group">
@@ -476,7 +476,6 @@
                                 </div>
                             </div>
 
-  
                             <!-- Remarks/Notes Section -->
                             <div class="form-group">
                                 <label class="form-label">
@@ -486,7 +485,7 @@
                                 <textarea name="remarksNotes" class="form-textarea large" rows="6" placeholder="Enter any additional remarks, observations, or notes about the patient..."></textarea>
                             </div>
                         </div>
-  
+
                         <!-- Notes Tab Actions -->
                         <div class="tab-navigation-buttons">
                             <div class="button-group">
@@ -538,4 +537,3 @@
         </div>
     </div>
 </div>
-

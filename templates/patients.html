@@ -176,10 +176,10 @@
                                 <td>Monthly</td>
                                 <td>Retinopathy / Neuropathy</td>
                                 <td class="actions-cell">
-                                    <button class="view-btn" data-patient-id="P001" data-patient-number="1" data-age="37" data-sex="Male" data-risk="High Risk" data-frequency="Monthly" data-complications="Retinopathy / Neuropathy" data-bmi="38.4" data-glucose="160" data-bp="145/90" data-retinopathy="High" data-neuropathy="High" data-cardiovascular="High">
+                                    <button class="view-btn" data-patient-id="P001">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
-                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                    <button class="action-btn delete-btn" title="Delete Patient" onclick="window.deletePatient('P001')">
                                         <span class="material-symbols-outlined">delete</span>
                                     </button>
                                 </td>
@@ -193,10 +193,10 @@
                                 <td>Quarterly</td>
                                 <td>Neuropathy</td>
                                 <td class="actions-cell">
-                                    <button class="view-btn" data-patient-id="P002" data-patient-number="2" data-age="41" data-sex="Female" data-risk="Moderate Risk" data-frequency="Quarterly" data-complications="Neuropathy" data-bmi="32.1" data-glucose="140" data-bp="130/85" data-retinopathy="Low" data-neuropathy="High" data-cardiovascular="Moderate">
+                                    <button class="view-btn" data-patient-id="P002">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
-                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                    <button class="action-btn delete-btn" title="Delete Patient" onclick="window.deletePatient('P002')">
                                         <span class="material-symbols-outlined">delete</span>
                                     </button>
                                 </td>
@@ -210,10 +210,10 @@
                                 <td>Quarterly</td>
                                 <td>None</td>
                                 <td class="actions-cell">
-                                    <button class="view-btn" data-patient-id="P003" data-patient-number="3" data-age="25" data-sex="Female" data-risk="Low Risk" data-frequency="Quarterly" data-complications="None" data-bmi="24.8" data-glucose="95" data-bp="110/70" data-retinopathy="Low" data-neuropathy="Low" data-cardiovascular="Low">
+                                    <button class="view-btn" data-patient-id="P003">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
-                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                    <button class="action-btn delete-btn" title="Delete Patient" onclick="window.deletePatient('P003')">
                                         <span class="material-symbols-outlined">delete</span>
                                     </button>
                                 </td>
@@ -227,10 +227,10 @@
                                 <td>Monthly</td>
                                 <td>Cardiovascular</td>
                                 <td class="actions-cell">
-                                    <button class="view-btn" data-patient-id="P004" data-patient-number="4" data-age="56" data-sex="Male" data-risk="High Risk" data-frequency="Monthly" data-complications="Cardiovascular" data-bmi="42.3" data-glucose="185" data-bp="160/95" data-retinopathy="Moderate" data-neuropathy="Moderate" data-cardiovascular="High">
+                                    <button class="view-btn" data-patient-id="P004">
                                         <span class="material-symbols-outlined">visibility</span>
                                     </button>
-                                    <button class="action-btn delete-btn" title="Delete Patient">
+                                    <button class="action-btn delete-btn" title="Delete Patient" onclick="window.deletePatient('P004')">
                                         <span class="material-symbols-outlined">delete</span>
                                     </button>
                                 </td>
@@ -343,7 +343,6 @@
 
                 <!-- Patient Header -->
                 <div class="patient-header">
-                    <div class="patient-number" id="patientNumber">#1</div>
                     <div class="patient-info">
                         <h3 id="patientId">P001</h3>
                         <p><span>Complication:</span> <span id="patientComplications">Retinopathy / Neuropathy</span></p>
@@ -353,274 +352,225 @@
 
                 <!-- Modal Tabs -->
                 <div class="modal-tabs">
-                    <button class="tab-button active" data-tab="patient-info">Patient Information</button>
-                    <button class="tab-button" data-tab="complication-risk">Complication Risk</button>
-                    <button class="tab-button" data-tab="prescription">Prescription</button>
+                    <button class="tab-button active" data-tab="basic-info-tab">Basic Info</button>
+                    <button class="tab-button" data-tab="health-data-tab">Health Data</button>
+                    <button class="tab-button" data-tab="insights-tab">Insights</button>
+                    <button class="tab-button" data-tab="notes-tab">Notes</button>
                 </div>
 
-                <!-- Patient Information Tab -->
-                <div class="tab-content active" id="patient-info">
+                <!-- Basic Info Tab -->
+                <div class="tab-content active" id="basic-info-tab">
+                    <div class="general-section">
+                        <h4>General Information</h4>
+                        <div class="general-info">
+                            <div class="info-line">
+                                <span class="info-label">Patient ID</span>
+                                <span class="info-value" id="basicPatientId">P001</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Age</span>
+                                <span class="info-value" id="basicAge">37 years old</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Sex</span>
+                                <span class="info-value" id="basicSex">Male</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Date of Birth</span>
+                                <span class="info-value" id="basicDOB">January 15, 1987</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Smoking Status</span>
+                                <span class="info-value" id="basicSmoking">Non-Smoker</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="general-section">
+                        <h4>Lifestyle Information</h4>
+                        <div class="general-info">
+                            <div class="info-line">
+                                <span class="info-label">Physical Activity</span>
+                                <span class="info-value" id="basicActivity">Moderate</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Alcohol Consumption</span>
+                                <span class="info-value" id="basicAlcohol">Occasionally</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Stress Level</span>
+                                <span class="info-value" id="basicStress">Moderate</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Diet Type</span>
+                                <span class="info-value" id="basicDiet">Balanced</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Sleep Duration</span>
+                                <span class="info-value" id="basicSleep">7 hrs/night</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Data Tab -->
+                <div class="tab-content" id="health-data-tab">
                     <div class="health-section">
-                        <h4>Health</h4>
+                        <h4>Health Metrics</h4>
                         <div class="health-metrics">
                             <div class="health-metric">
                                 <div class="metric-icon">
                                     <span class="material-symbols-outlined">accessibility</span>
                                 </div>
                                 <div class="metric-label">BMI</div>
-                                <div class="metric-value" id="patientBMI">38.4</div>
+                                <div class="metric-value" id="healthBMI">38.4</div>
                             </div>
                             <div class="health-metric">
                                 <div class="metric-icon">
                                     <span class="material-symbols-outlined">bloodtype</span>
                                 </div>
                                 <div class="metric-label">Glucose Level</div>
-                                <div class="metric-value" id="patientGlucose">160 mg/dL</div>
+                                <div class="metric-value" id="healthGlucose">160 mg/dL</div>
                             </div>
                             <div class="health-metric">
                                 <div class="metric-icon">
                                     <span class="material-symbols-outlined">monitor_heart</span>
                                 </div>
                                 <div class="metric-label">Blood Pressure</div>
-                                <div class="metric-value" id="patientBP">145/90</div>
+                                <div class="metric-value" id="healthBP">145/90</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="general-section">
-                        <h4>General</h4>
+                        <h4>Medical History</h4>
                         <div class="general-info">
                             <div class="info-line">
-                                <span class="info-label">Age</span>
-                                <span class="info-value" id="patientAge">37 yrs old</span>
+                                <span class="info-label">Diabetes Type</span>
+                                <span class="info-value" id="healthDiabetesType">Type 2</span>
                             </div>
                             <div class="info-line">
-                                <span class="info-label">Sex</span>
-                                <span class="info-value" id="patientSex">Male</span>
+                                <span class="info-label">Family History</span>
+                                <span class="info-value" id="healthFamilyHistory">Yes</span>
                             </div>
                             <div class="info-line">
-                                <span class="info-label">Check-Up Frequency</span>
-                                <span class="info-value" id="patientFrequency">Monthly</span>
+                                <span class="info-label">Known Conditions</span>
+                                <span class="info-value" id="healthConditions">Hypertension</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Current Medications</span>
+                                <span class="info-value" id="healthMedications">Metformin 500mg</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Allergies</span>
+                                <span class="info-value" id="healthAllergies">None</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="general-section">
+                        <h4>Clinical Data</h4>
+                        <div class="general-info">
+                            <div class="info-line">
+                                <span class="info-label">Height</span>
+                                <span class="info-value" id="healthHeight">175 cm</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Weight</span>
+                                <span class="info-value" id="healthWeight">85 kg</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">HbA1c Level</span>
+                                <span class="info-value" id="healthHbA1c">8.2%</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Blood Sugar Level</span>
+                                <span class="info-value" id="healthBloodSugar">180 mg/dL</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Cholesterol Level</span>
+                                <span class="info-value" id="healthCholesterol">220 mg/dL</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Complication Risk Tab -->
-                <div class="tab-content" id="complication-risk">
+                <!-- Insights Tab -->
+                <div class="tab-content" id="insights-tab">
                     <div class="risk-assessment">
                         <div class="risk-item">
+                            <span class="info-label">Overall Risk Level</span>
+                            <span class="risk-badge high-risk" id="insightsOverallRisk">High Risk</span>
+                        </div>
+                        <div class="risk-item">
                             <span class="info-label">Retinopathy Risk</span>
-                            <span class="risk-badge high-risk" id="retinopathyRisk">High</span>
+                            <span class="risk-badge high-risk" id="insightsRetinopathy">High</span>
                         </div>
                         <div class="risk-item">
                             <span class="info-label">Neuropathy Risk</span>
-                            <span class="risk-badge high-risk" id="neuropathyRisk">High</span>
+                            <span class="risk-badge high-risk" id="insightsNeuropathy">High</span>
                         </div>
                         <div class="risk-item">
                             <span class="info-label">Cardiovascular Risk</span>
-                            <span class="risk-badge moderate-risk" id="cardiovascularRisk">Moderate</span>
+                            <span class="risk-badge moderate-risk" id="insightsCardiovascular">Moderate</span>
                         </div>
                     </div>
                     
-                    <div class="risk-warning">
-                        <span class="material-symbols-outlined warning-icon">warning</span>
-                        <span class="warning-text">Multiple risk factors detected including elevated glucose and blood pressure.</span>
+                    <div class="general-section">
+                        <h4>AI Recommendations</h4>
+                        <div class="general-info">
+                            <div class="info-line">
+                                <span class="info-label">Risk Score</span>
+                                <span class="info-value" id="insightsRiskScore">75%</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Monitoring Frequency</span>
+                                <span class="info-value" id="insightsMonitoring">Monthly</span>
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Complications</span>
+                                <span class="info-value" id="insightsComplications">Retinopathy, Neuropathy</span>
+                            </div>
+                        </div>
+                        
+                        <div class="risk-warning">
+                            <span class="material-symbols-outlined warning-icon">warning</span>
+                            <span class="warning-text" id="insightsSuggestion">Consider insulin dosage reassessment in 2 weeks based on fasting blood sugar patterns.</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Prescription Tab -->
-                <div class="tab-content" id="prescription">
-                    <!-- Loading Overlay -->
-                    <div class="loading-overlay" id="prescriptionLoadingOverlay">
-                        <div class="loading-spinner"></div>
-                        <div class="loading-text">Generating prescription...</div>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div class="prescription-empty" id="prescriptionEmpty">
-                        <p>Click here to generate prescription</p>
-                        <button class="generate-prescription-btn" id="generatePrescriptionBtn">Generate Prescription</button>
-                    </div>
-
-                    <!-- Generated Prescription (Edit Mode) -->
-                    <div class="prescription-generated" id="prescriptionGenerated" style="display: none;">
-                        <div class="prescription-section">
-                            <div class="prescription-header">
-                                <h4>Prescribed Medications</h4>
-                                <button class="print-btn">
-                                    <span class="material-symbols-outlined">print</span>
-                                    Print
-                                </button>
+                <!-- Notes Tab -->
+                <div class="tab-content" id="notes-tab">
+                    <div class="general-section">
+                        <h4>Medical Notes</h4>
+                        <div class="general-info">
+                            <div class="info-line">
+                                <span class="info-label">Monitoring Frequency</span>
+                                <span class="info-value" id="notesMonitoring">Monthly</span>
                             </div>
-                            
-                            <div class="medications-table-container">
-                                <table class="medications-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Medications</th>
-                                            <th>Dosage</th>
-                                            <th>Frequency</th>
-                                            <th>Duration</th>
-                                            <th>Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Metformin</td>
-                                            <td>500mg</td>
-                                            <td>2x a day</td>
-                                            <td>30 days</td>
-                                            <td>After meals</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Lisinopril</td>
-                                            <td>10mg</td>
-                                            <td>1x a day</td>
-                                            <td>30 days</td>
-                                            <td>Monitor BP</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Insulin Glargine</td>
-                                            <td>10 units</td>
-                                            <td>Nightly</td>
-                                            <td>Ongoing</td>
-                                            <td>Refrigerate</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="info-line">
+                                <span class="info-label">Initial Diagnosis</span>
+                                <span class="info-value" id="notesDiagnosis">Type 2 Diabetes Mellitus</span>
                             </div>
-                        </div>
-
-                        <div class="lifestyle-section">
-                            <h4>Lifestyle Recommendations</h4>
-                            <div class="lifestyle-recommendations">
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Exercise</span>
-                                    <span class="lifestyle-value">30 min/day walking</span>
-                                </div>
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Diet</span>
-                                    <span class="lifestyle-value">Low sugar/fiber foods</span>
-                                </div>
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Hydration</span>
-                                    <span class="lifestyle-value">Minimum 2 liters/day</span>
-                                </div>
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Stress</span>
-                                    <span class="lifestyle-value">Meditation or light yoga</span>
-                                </div>
+                            <div class="info-line">
+                                <span class="info-label">Last Check-Up Date</span>
+                                <span class="info-value" id="notesLastCheckup">December 15, 2024</span>
                             </div>
-                        </div>
-
-                        <div class="notes-section">
-                            <h4>Doctor's Additional Notes</h4>
-                            <textarea 
-                                class="doctor-notes-input" 
-                                id="doctorNotesInput"
-                                placeholder="Enter additional notes, recommendations, or special instructions for the patient..."
-                                rows="4"
-                            ></textarea>
-                            
-                            <!-- Suggestion Box -->
-                            <div class="suggestion-box">
-                                <span class="material-symbols-outlined suggestion-icon">lightbulb</span>
-                                <p class="suggestion-text">Suggestion: Consider insulin dosage reassessment in 2 weeks based on fasting blood sugar patterns.</p>
+                            <div class="info-line">
+                                <span class="info-label">Next Follow-Up</span>
+                                <span class="info-value" id="notesNextFollowup">January 15, 2025</span>
                             </div>
-                        </div>
-
-                        <!-- Edit Mode Action Buttons -->
-                        <div class="prescription-actions">
-                            <button class="btn-cancel" id="cancelPrescriptionBtn">Cancel</button>
-                            <button class="btn-save" id="savePrescriptionBtn">Save Prescription</button>
                         </div>
                     </div>
 
-                    <!-- Saved Prescription (View Mode) -->
-                    <div class="prescription-saved" id="prescriptionSaved" style="display: none;">
-                        <div class="prescription-section">
-                            <div class="prescription-header">
-                                <h4>Prescribed Medications</h4>
-                                <button class="print-btn">
-                                    <span class="material-symbols-outlined">print</span>
-                                    Print
-                                </button>
+                    <div class="general-section">
+                        <h4>Remarks & Additional Notes</h4>
+                        <div class="doctor-notes-display">
+                            <div class="note-suggestion">
+                                <span class="material-symbols-outlined note-icon">edit_note</span>
+                                <span class="note-text" id="notesRemarks">Patient shows good compliance with medication. Recommend dietary consultation and increased physical activity. Monitor blood glucose levels closely.</span>
                             </div>
-                            
-                            <div class="medications-table-container">
-                                <table class="medications-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Medications</th>
-                                            <th>Dosage</th>
-                                            <th>Frequency</th>
-                                            <th>Duration</th>
-                                            <th>Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Metformin</td>
-                                            <td>500mg</td>
-                                            <td>2x a day</td>
-                                            <td>30 days</td>
-                                            <td>After meals</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Lisinopril</td>
-                                            <td>10mg</td>
-                                            <td>1x a day</td>
-                                            <td>30 days</td>
-                                            <td>Monitor BP</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Insulin Glargine</td>
-                                            <td>10 units</td>
-                                            <td>Nightly</td>
-                                            <td>Ongoing</td>
-                                            <td>Refrigerate</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="lifestyle-section">
-                            <h4>Lifestyle Recommendations</h4>
-                            <div class="lifestyle-recommendations">
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Exercise</span>
-                                    <span class="lifestyle-value">30 min/day walking</span>
-                                </div>
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Diet</span>
-                                    <span class="lifestyle-value">Low sugar/fiber foods</span>
-                                </div>
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Hydration</span>
-                                    <span class="lifestyle-value">Minimum 2 liters/day</span>
-                                </div>
-                                <div class="lifestyle-item">
-                                    <span class="lifestyle-label">Stress</span>
-                                    <span class="lifestyle-value">Meditation or light yoga</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="notes-section">
-                            <h4>Doctor's Additional Notes</h4>
-                            <div class="doctor-notes-display" id="doctorNotesDisplay">
-                                <div class="note-suggestion">
-                                    <span class="material-symbols-outlined note-icon">lightbulb</span>
-                                    <span class="note-text" id="savedNotesText">No additional notes provided.</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Saved Mode Action Button -->
-                        <div class="prescription-saved-actions">
-                            <button class="btn-delete" id="deletePrescriptionBtn">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -633,63 +583,5 @@
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/patients.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modals/add-patient-modal.js') }}"></script>
-
-    <!-- Add confirmation modals at the end of the body, before closing </body> tag -->
-
-    <!-- Save Confirmation Modal -->
-    <div class="confirmation-modal-overlay" id="saveConfirmationModal">
-        <div class="confirmation-modal">
-            <button class="close-btn" onclick="closeSaveConfirmationModal()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <h3>Are you sure you want to save prescription?</h3>
-            <div class="confirmation-modal-actions">
-                <button class="btn-modal-cancel" onclick="closeSaveConfirmationModal()">Cancel</button>
-                <button class="btn-modal-confirm" onclick="confirmSavePrescription()">Save Prescription</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="confirmation-modal-overlay" id="deleteConfirmationModal">
-        <div class="confirmation-modal">
-            <button class="close-btn" onclick="closeDeleteConfirmationModal()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <h3>Are you sure you want to delete this prescription?</h3>
-            <div class="confirmation-modal-actions">
-                <button class="btn-modal-cancel" onclick="closeDeleteConfirmationModal()">Cancel</button>
-                <button class="btn-modal-delete" onclick="confirmDeletePrescription()">Delete Prescription</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="confirmation-modal-overlay" id="successModal">
-        <div class="confirmation-modal">
-            <button class="close-btn" onclick="closeSuccessModal()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <div class="success-indicator">
-                <div class="check-icon">✓</div>
-                <span id="successMessage">Saved!</span>
-            </div>
-            <h3 id="successTitle">Prescription saved successfully!</h3>
-        </div>
-    </div>
-
-    <!-- Prescription Success Modal -->
-    <div class="prescription-success-modal-overlay" id="prescriptionSuccessModal">
-        <div class="prescription-success-modal">
-            <button class="close-btn" onclick="closePrescriptionSuccessModal()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <div class="prescription-success-badge">
-                <div class="check-icon">✓</div>
-                <span>Generated!</span>
-            </div>
-            <h3>Prescription generated successfully!</h3>
-        </div>
-    </div>
 </body>
 </html>
