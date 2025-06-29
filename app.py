@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, render_template, redirect, url_for
+from flask import Flask, request, jsonify, session, render_template, redirect, url_for, flash
 from flask_mail import Mail, Message
 import os
 import random
@@ -10,6 +10,8 @@ import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from dotenv import load_dotenv
+from routes.prescription_routes import prescription_bp
+import sqlite3
 
 # Load environment variables
 load_dotenv()
@@ -46,6 +48,9 @@ DATABASE_CONFIG = {
   'password': url.password or 'root',
   'database': url.path[1:] if url.path else 'diabetech'
 }
+
+# Register prescription blueprint
+app.register_blueprint(prescription_bp)
 
 def get_db_connection():
   """Get database connection"""
