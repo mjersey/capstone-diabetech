@@ -1,0 +1,673 @@
+/* Prescription Details Modal Styles */
+
+.prescription-details-modal-content {
+  width: 700px;
+  max-width: 90vw;
+}
+
+.prescription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.prescription-info {
+  position: relative;
+  flex: 1;
+}
+
+.prescription-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.prescription-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.prescription-info span:first-child {
+  font-weight: 500;
+}
+
+.risk-badge-header {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 16px;
+}
+
+.risk-badge-header.high-risk {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.risk-badge-header.moderate-risk {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.risk-badge-header.low-risk {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Patient Summary */
+.patient-summary {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.patient-summary h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Pending Message */
+.pending-message {
+  padding: 48px 24px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pending-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.pending-icon {
+  font-size: 64px;
+  color: #f59e0b;
+  margin-bottom: 16px;
+}
+
+.pending-message h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.pending-message p {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Medications Section */
+.medications-section,
+.editable-medications-section {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.medications-section h4,
+.editable-medications-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.medications-table-container {
+  overflow-x: auto;
+}
+
+.medications-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.medications-table th {
+  background: #f9fafb;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.medications-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  color: #374151;
+}
+
+.medications-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Lifestyle Section */
+.lifestyle-section {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.lifestyle-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.lifestyle-recommendations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.lifestyle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.lifestyle-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.lifestyle-value {
+  color: #6b7280;
+  font-size: 14px;
+  text-align: right;
+}
+
+/* Notes Section */
+.notes-section,
+.editable-notes-section {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.notes-section h4,
+.editable-notes-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.doctor-notes {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.doctor-notes p {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.doctor-notes-textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 120px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.doctor-notes-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.doctor-notes-textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Modal Actions - IMPROVED SPACING */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+  justify-content: flex-end;
+  background: #fafbfc;
+}
+
+.action-group {
+  display: flex;
+  gap: 16px; /* Increased gap between buttons */
+  align-items: center;
+}
+
+.modal-actions .action-btn {
+  width: auto;
+  height: auto;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 8px;
+  border-radius: 8px; /* Less rounded */
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Action Button Styles - SOLID COLORS, NO SHADOWS */
+.generate-btn {
+  background: #10b981;
+  color: white;
+}
+
+.generate-btn:hover {
+  background: #059669;
+}
+
+.print-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.print-btn:hover {
+  background: #2563eb;
+}
+
+.edit-btn {
+  background: #6b7280;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #4b5563;
+}
+
+.cancel-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #d1d5db;
+}
+
+.cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.save-btn {
+  background: #10b981;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #059669;
+}
+
+/* Confirmation Modal - IMPROVED STYLING WITH LARGER BUTTONS */
+.confirmation-modal-overlay {
+  z-index: 2500;
+}
+
+.confirmation-modal {
+  width: 450px;
+  max-width: 90vw;
+}
+
+.confirmation-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.confirmation-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dbeafe;
+  color: #3b82f6;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.confirmation-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  flex: 1;
+}
+
+.confirmation-header .close-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.confirmation-header .close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.confirmation-content {
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.confirmation-content p {
+  margin: 0;
+  font-size: 16px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+  justify-content: flex-end;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+/* LARGER CONFIRMATION BUTTONS */
+.confirmation-actions .action-btn {
+  min-width: 120px;
+  padding: 14px 28px; /* Increased padding */
+  font-size: 15px; /* Slightly larger font */
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Toast Hidden State */
+.success-toast.hidden {
+  display: none !important;
+}
+
+/* Filter and Action Button Styles */
+.prescription-actions {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.generate-all-btn,
+.bulk-print-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generate-all-btn {
+  background: #10b981;
+  color: white;
+}
+
+.generate-all-btn:hover {
+  background: #059669;
+}
+
+.bulk-print-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.bulk-print-btn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.bulk-print-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Filter Icon Button */
+.filter-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #6b7280;
+}
+
+.filter-icon-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.filter-icon-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 180px;
+  display: none;
+}
+
+.filter-dropdown.show {
+  display: block;
+}
+
+.filter-option {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: background-color 0.2s ease;
+}
+
+.filter-option:hover {
+  background: #f3f4f6;
+}
+
+.filter-option.selected {
+  background: #eff6ff;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.search-input-list {
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 280px;
+}
+
+.search-input-list:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Risk badges without borders */
+.risk-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.risk-badge.high-risk {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.risk-badge.moderate-risk {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.risk-badge.low-risk {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* Responsive Design for Modal */
+@media (max-width: 768px) {
+  .prescription-details-modal-content {
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lifestyle-recommendations {
+    grid-template-columns: 1fr;
+  }
+
+  .lifestyle-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .lifestyle-value {
+    text-align: left;
+  }
+
+  .modal-header,
+  .patient-summary,
+  .medications-section,
+  .editable-medications-section,
+  .lifestyle-section,
+  .notes-section,
+  .editable-notes-section,
+  .modal-actions {
+    padding: 16px;
+  }
+
+  .prescription-header {
+    padding: 16px;
+  }
+
+  .search-input-list {
+    width: 100%;
+  }
+
+  .prescription-actions {
+    flex-direction: column;
+  }
+
+  .action-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .confirmation-modal {
+    width: 100%;
+    margin: 16px;
+  }
+
+  .confirmation-actions {
+    flex-direction: column;
+  }
+
+  .confirmation-actions .action-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

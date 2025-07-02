@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/prescription.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modals/prescription-details-modal.css') }}">
 </head>
 <body>
     <!-- Header -->
@@ -125,12 +126,8 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- Action Buttons - Moved to right and rounded -->
             <div class="prescription-actions">
-                <button class="refresh-btn" id="refreshBtn">
-                    <span class="material-symbols-outlined">refresh</span>
-                    Refresh
-                </button>
                 <button class="generate-all-btn" id="generateAllBtn">
                     <span class="material-symbols-outlined">auto_fix_high</span>
                     Generate All Pending
@@ -165,7 +162,11 @@
                         <div class="search-container-list">
                             <input type="text" placeholder="Search By Patient ID" class="search-input-list" id="searchPrescriptionInput">
                         </div>
-                        <select class="filter-select" id="riskFilter">
+                        <button class="filter-icon-btn" id="riskFilterBtn" title="Filter by Risk Level">
+                            <span class="material-symbols-outlined">filter_list</span>
+                        </button>
+                        <!-- Hidden select for functionality -->
+                        <select class="filter-select hidden" id="riskFilter">
                             <option value="">All Risk Levels</option>
                             <option value="High Risk">High Risk</option>
                             <option value="Moderate Risk">Moderate Risk</option>
@@ -215,8 +216,8 @@
         <div class="loading-text" id="loadingText">Processing...</div>
     </div>
 
-    <!-- Success Toast -->
-    <div class="success-toast" id="successToast">
+    <!-- Success Toast - Hidden by default -->
+    <div class="success-toast hidden" id="successToast">
         <div class="toast-content">
             <div class="toast-icon">
                 <span class="material-symbols-outlined">check_circle</span>
@@ -244,7 +245,6 @@
 
                 <!-- Prescription Header -->
                 <div class="prescription-header">
-                    <div class="prescription-number" id="prescriptionNumber">#1</div>
                     <div class="prescription-info">
                         <h3 id="prescriptionPatientId">P001</h3>
                         <p><span>Status:</span> <span class="status-badge" id="prescriptionStatus">Pending</span></p>
@@ -276,8 +276,19 @@
                     </div>
                 </div>
 
-                <!-- Medications Table -->
-                <div class="medications-section">
+                <!-- Pending Message -->
+                <div class="pending-message" id="pendingMessage" style="display: none;">
+                    <div class="pending-content">
+                        <div class="pending-icon">
+                            <span class="material-symbols-outlined">schedule</span>
+                        </div>
+                        <h3>No Prescription Generated</h3>
+                        <p>This prescription has not been generated yet. Click the Generate button below to create a prescription based on the patient's risk level and health data.</p>
+                    </div>
+                </div>
+
+                <!-- Medications Section -->
+                <div class="medications-section" id="medicationsSection" style="display: none;">
                     <h4>Prescribed Medications</h4>
                     <div class="medications-table-container">
                         <table class="medications-table" id="prescriptionMedicationsTable">
@@ -297,8 +308,29 @@
                     </div>
                 </div>
 
+                <!-- Editable Medications Section -->
+                <div class="editable-medications-section" id="editableMedicationsSection" style="display: none;">
+                    <h4>Prescribed Medications</h4>
+                    <div class="medications-table-container">
+                        <table class="medications-table" id="editableMedicationsTable">
+                            <thead>
+                                <tr>
+                                    <th>Medication</th>
+                                    <th>Dosage</th>
+                                    <th>Frequency</th>
+                                    <th>Duration</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Lifestyle Recommendations -->
-                <div class="lifestyle-section">
+                <div class="lifestyle-section" id="lifestyleSection" style="display: none;">
                     <h4>Lifestyle Recommendations</h4>
                     <div class="lifestyle-recommendations" id="prescriptionLifestyle">
                         <!-- Dynamic content -->
@@ -306,26 +338,96 @@
                 </div>
 
                 <!-- Doctor's Notes -->
-                <div class="notes-section">
+                <div class="notes-section" id="notesSection" style="display: none;">
                     <h4>Doctor's Additional Notes</h4>
                     <div class="doctor-notes" id="prescriptionDoctorNotes">
                         <p>No additional notes provided.</p>
                     </div>
                 </div>
 
+                <!-- Editable Doctor's Notes -->
+                <div class="editable-notes-section" id="editableNotesSection" style="display: none;">
+                    <h4>Doctor's Additional Notes</h4>
+                    <textarea 
+                        class="doctor-notes-textarea" 
+                        id="doctorNotesTextarea" 
+                        placeholder="Enter additional notes for this prescription..."
+                        rows="6">
+                    </textarea>
+                </div>
+
                 <!-- Modal Actions -->
                 <div class="modal-actions">
-                    <button class="action-btn generate-btn" id="generatePrescriptionBtn">
-                        <span class="material-symbols-outlined">auto_fix_high</span>
-                        Generate
+                    <!-- Normal Actions -->
+                    <div class="action-group" id="normalActions">
+                        <button class="action-btn generate-btn" id="generatePrescriptionBtn">
+                            <span class="material-symbols-outlined">auto_fix_high</span>
+                            Generate
+                        </button>
+                        <button class="action-btn print-btn" id="printSingleBtn" style="display: none;">
+                            <span class="material-symbols-outlined">print</span>
+                            Print
+                        </button>
+                        <button class="action-btn edit-btn" id="editPrescriptionBtn" style="display: none;">
+                            <span class="material-symbols-outlined">edit</span>
+                            Edit Notes
+                        </button>
+                    </div>
+
+                    <!-- Generation Actions -->
+                    <div class="action-group" id="generationActions" style="display: none;">
+                        <button class="action-btn cancel-btn" id="cancelGenerationBtn">
+                            <span class="material-symbols-outlined">close</span>
+                            Cancel
+                        </button>
+                        <button class="action-btn save-btn" id="saveGenerationBtn">
+                            <span class="material-symbols-outlined">save</span>
+                            Save Prescription
+                        </button>
+                    </div>
+
+                    <!-- Edit Actions -->
+                    <div class="action-group" id="editActions" style="display: none;">
+                        <button class="action-btn cancel-btn" id="cancelEditBtn">
+                            <span class="material-symbols-outlined">close</span>
+                            Cancel
+                        </button>
+                        <button class="action-btn save-btn" id="updatePrescriptionBtn">
+                            <span class="material-symbols-outlined">update</span>
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay confirmation-modal-overlay" id="confirmationModal">
+        <div class="modal confirmation-modal">
+            <div class="modal-content">
+                <div class="confirmation-header">
+                    <div class="confirmation-icon">
+                        <span class="material-symbols-outlined">help</span>
+                    </div>
+                    <h3 id="confirmationTitle">Confirm Action</h3>
+                    <button class="close-btn" id="confirmationCloseBtn">
+                        <span class="material-symbols-outlined">close</span>
                     </button>
-                    <button class="action-btn print-btn" id="printSingleBtn" style="display: none;">
-                        <span class="material-symbols-outlined">print</span>
-                        Print
+                </div>
+
+                <div class="confirmation-content">
+                    <p id="confirmationMessage">Are you sure you want to proceed?</p>
+                </div>
+
+                <div class="confirmation-actions">
+                    <button class="action-btn cancel-btn" id="confirmationCancelBtn">
+                        <span class="material-symbols-outlined">close</span>
+                        Cancel
                     </button>
-                    <button class="action-btn edit-btn" id="editPrescriptionBtn" style="display: none;">
-                        <span class="material-symbols-outlined">edit</span>
-                        Edit
+                    <button class="action-btn save-btn" id="confirmationConfirmBtn">
+                        <span class="material-symbols-outlined">check</span>
+                        Confirm
                     </button>
                 </div>
             </div>
@@ -402,7 +504,16 @@
         </div>
     </div>
 
+    <!-- Filter Dropdown Menu -->
+    <div class="filter-dropdown" id="filterDropdown">
+        <div class="filter-option" data-value="">All Risk Levels</div>
+        <div class="filter-option" data-value="High Risk">High Risk</div>
+        <div class="filter-option" data-value="Moderate Risk">Moderate Risk</div>
+        <div class="filter-option" data-value="Low Risk">Low Risk</div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/prescription.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modals/prescription-details-modal.js') }}"></script>
 </body>
 </html>
