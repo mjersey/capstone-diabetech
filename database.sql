@@ -1,124 +1,128 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Apr 23, 2025 at 05:41 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Create the database if it doesn't exist
+CREATE DATABASE IF NOT EXISTS diabetech;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- Use the database
+USE diabetech;
 
+SET SQL_SAFE_UPDATES = 0;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- Drop existing tables if you want to recreate them (uncomment if needed)
+-- DROP TABLE IF EXISTS password_reset_tokens;
+-- DROP TABLE IF EXISTS users;
 
---
--- Database: `diabetech`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `patients`
---
-create database diabetech;
-use diabetech;
-CREATE TABLE `patients` (
-  `id` int(11) NOT NULL,
-  `age` int(100) NOT NULL,
-  `bmi` varchar(100) NOT NULL,
-  `glucose` varchar(100) NOT NULL,
-  `systolic` int(100) NOT NULL,
-  `diastolic` int(100) NOT NULL,
-  `retinopathy_risk` enum('High','Medium','Low') DEFAULT NULL,
-  `neuropathy_risk` enum('High','Medium','Low') DEFAULT NULL,
-  `cardiovascular_risk` enum('High','Medium','Low') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `patients`
---
-ALTER TABLE `patients`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `patients`
---
-ALTER TABLE `patients`	
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-
-select * from patients;
-
-select * from insights;
-
-select * from users;
-
-
-truncate table users;
-truncate table patients;
-truncate table insights;
-
-
-ALTER TABLE `patients`
-  ADD COLUMN `region` varchar(100) NOT NULL,
-  ADD COLUMN `gender` enum('Male', 'Female', 'Other') NOT NULL,
-  ADD COLUMN `blood_glucose_level` varchar(100) NOT NULL,
-  ADD COLUMN `HbA1c_level` varchar(100) NOT NULL,
-  ADD COLUMN `smoking` enum('Yes', 'No') DEFAULT NULL,
-  ADD COLUMN `diabetes_duration` int(3) NOT NULL,
-  ADD COLUMN `family_diabetes` enum('Yes', 'No') DEFAULT NULL,
-  ADD COLUMN `retinopathy_status` enum('Yes', 'No') DEFAULT NULL,
-  ADD COLUMN `neuropathy_status` enum('Yes', 'No') DEFAULT NULL,
-  ADD COLUMN `cardiovascular_complications` enum('Yes', 'No') DEFAULT NULL;
-
-
-ALTER TABLE `patients`
-  DROP COLUMN GLUCOSE,
-  DROP COLUMN SYSTOLIC_BLOOD_PRESSURE,
-  DROP COLUMN DIASTOLIC_BLOOD_PRESSURE;
-  
-
-ALTER TABLE patients
-ADD COLUMN blood_pressure VARCHAR(10);
-
-CREATE TABLE insights (
+-- Create users table 
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    category VARCHAR(100),
-    insight_text TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'User',
+    is_verified TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- Indexes for better performance
+    INDEX idx_email (email),
+    INDEX idx_is_verified (is_verified)
 );
 
-ALTER TABLE patients
-ADD COLUMN cardiovascular_risk VARCHAR(10) DEFAULT 'Low',
-ADD COLUMN retinopathy_risk VARCHAR(10) DEFAULT 'Low',
-ADD COLUMN neuropathy_risk VARCHAR(10) DEFAULT 'Low';
-
-CREATE TABLE users (
+-- Create password reset tokens table 
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(255)
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    otp_code VARCHAR(10) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_email (email),
+    INDEX idx_expires_at (expires_at)
 );
 
-DROP DATABASE diabetech;
-DROP DATABASE diabetech_db;
+CREATE TABLE IF NOT EXISTS patients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id VARCHAR(20) UNIQUE NOT NULL,
+    doctor_id INT NOT NULL,
+    age INT NOT NULL,
+    sex ENUM('Male', 'Female') NOT NULL,
+    smoking_status ENUM('Smoker', 'Non-Smoker', 'Former'),
+    date_of_birth DATE,
+    bmi DECIMAL(5,2),
+    glucose_level INT,
+    blood_pressure VARCHAR(20),
+    physical_activity VARCHAR(50),
+    alcohol_consumption VARCHAR(50),
+    stress_level VARCHAR(50),
+    diet_type VARCHAR(50),
+    sleep_duration DECIMAL(3,1),
+    risk_level ENUM('Low Risk', 'Moderate Risk', 'High Risk'),
+    checkup_frequency VARCHAR(50),
+    complications TEXT,
+    medical_history TEXT,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Check existing data
+SELECT * FROM users;
+SELECT * FROM patients;
+
+DROP TABLE users;
+DROP TABLE patients;
+DROP TABLE password_reset_tokens;
+
+-- Backup existing data (optional but recommended)
+-- CREATE TABLE users_backup AS SELECT * FROM users;
+-- CREATE TABLE patients_backup AS SELECT * FROM patients;
+
+-- Add new columns to users table
+ALTER TABLE users 
+ADD COLUMN specialization VARCHAR(100) DEFAULT NULL AFTER role,
+ADD COLUMN medical_license VARCHAR(100) DEFAULT NULL AFTER specialization;
+
+-- Add new columns to patients table
+ALTER TABLE patients 
+ADD COLUMN diabetes_type VARCHAR(50) DEFAULT NULL AFTER date_of_birth,
+ADD COLUMN family_history ENUM('Yes', 'No') DEFAULT NULL AFTER diabetes_type,
+ADD COLUMN known_conditions TEXT DEFAULT NULL AFTER family_history,
+ADD COLUMN current_medications TEXT DEFAULT NULL AFTER known_conditions,
+ADD COLUMN allergies TEXT DEFAULT NULL AFTER current_medications,
+ADD COLUMN height DECIMAL(5,2) DEFAULT NULL AFTER allergies,
+ADD COLUMN weight DECIMAL(5,2) DEFAULT NULL AFTER height,
+ADD COLUMN fasting_glucose INT DEFAULT NULL AFTER blood_pressure,
+ADD COLUMN blood_sugar_level INT DEFAULT NULL AFTER glucose_level,
+ADD COLUMN hba1c DECIMAL(3,1) DEFAULT NULL AFTER blood_sugar_level,
+ADD COLUMN cholesterol_level INT DEFAULT NULL AFTER hba1c,
+ADD COLUMN waist_circumference DECIMAL(5,2) DEFAULT NULL AFTER cholesterol_level,
+ADD COLUMN monitoring_frequency VARCHAR(50) DEFAULT NULL AFTER checkup_frequency,
+ADD COLUMN initial_diagnosis VARCHAR(255) DEFAULT NULL AFTER monitoring_frequency,
+ADD COLUMN last_checkup_date DATE DEFAULT NULL AFTER initial_diagnosis,
+ADD COLUMN next_followup_date DATE DEFAULT NULL AFTER last_checkup_date,
+ADD COLUMN remarks_notes TEXT DEFAULT NULL AFTER notes;
+
+-- Add indexes
+ALTER TABLE patients 
+ADD INDEX idx_patient_id (patient_id),
+ADD INDEX idx_doctor_id (doctor_id),
+ADD INDEX idx_risk_level (risk_level),
+ADD INDEX idx_created_at (created_at);
+
+-- Update existing data
+UPDATE patients SET diabetes_type = 'Type 2' WHERE diabetes_type IS NULL;
+UPDATE patients SET monitoring_frequency = checkup_frequency WHERE monitoring_frequency IS NULL AND checkup_frequency IS NOT NULL;
+
+-- Verify the migration
+SELECT 'Migration completed successfully!' as Status;
+SELECT COUNT(*) as Total_Users FROM users;
+SELECT COUNT(*) as Total_Patients FROM patients;
+
+-- Show updated table structures
+DESCRIBE users;
+DESCRIBE patients;
